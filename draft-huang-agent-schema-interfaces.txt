@@ -16,7 +16,7 @@ Abstract
    Network management agents can use an Agent-to-Agent protocol to
    discover peers, delegate work, observe task state, receive results,
    and cancel work.  The protocol alone does not define the application
-   schemas used by a planning agent, incident-analysis agent,
+   schemas used by an analysis agent, incident-analysis agent,
    configuration agent, or other independently developed network
    management agent.
 
@@ -143,8 +143,8 @@ Table of Contents
      14.7.  Interface integrity and substitution
    15. Operational Considerations
    16. Non-Normative Examples
-     16.1.  Capacity-planning agent
-     16.2.  Event-analysis agent
+     16.1.  Analytical skill
+     16.2.  Diagnostic skill
      16.3.  Artifact used as both deliverable and a supporting record
    17. IANA Considerations
    18. Open Issues
@@ -252,7 +252,7 @@ Table of Contents
 
    *  authorization merely by successful schema validation; or
 
-   *  the semantics of vendor-specific planning, incident, or
+   *  the semantics of vendor-specific analysis, incident, or
       configuration data.
 
 4.  Terminology
@@ -260,8 +260,8 @@ Table of Contents
 4.1.  Network Management Agent
 
    A software component that performs or assists with network-management
-   work, including planning, configuration, assurance, incident
-   analysis, validation, simulation, or remediation.
+   work, including analysis, configuration, assurance, incident
+   handling, validation, simulation, or remediation.
 
 4.2.  Client Agent
 
@@ -433,9 +433,9 @@ Table of Contents
    paths.
 
    Agents A and B represent arbitrary independently developed network
-   management agents.  The capacity-planning and event-analysis agents
-   in the non-normative examples are non-normative examples and are not
-   named participants in the common architecture.
+   management agents.  The examples later in this document are
+   illustrative use cases, not named participants in the common
+   architecture.
 
 6.  Schema Reference
 
@@ -455,11 +455,12 @@ Table of Contents
 
    *  resolution: deployment-selected resolution information.
 
-   json { "schema_uri": "urn:example:planning:plan-network-input:1.0",
-   "version": "1.0", "dialect": "https://json-schema.org/draft/2020-12/
-   schema", "digest": "sha256:abc123...", "resolution": { "type":
-   "registry", "registry": "customer-agent-schema-registry", "id": 117,
-   "subject": "vendor.cp.plan-network.input", "registry_version": 3 } }
+   json { "schema_uri": "urn:example:network-management:skill-
+   input:1.0", "version": "1.0", "dialect": "https://json-schema.org/
+   draft/2020-12/schema", "digest": "sha256:abc123...", "resolution": {
+   "type": "registry", "registry": "customer-agent-schema-registry",
+   "id": 117, "subject": "example.network-management.skill-input",
+   "registry_version": 3 } }
 
    Registry-local numeric identifiers MUST NOT be treated as globally
    portable schema identities.  Two registries may assign the same
@@ -482,29 +483,30 @@ Table of Contents
    reflect deployment policy.  Assembly MUST NOT modify the standardized
    Skill Interface Schema.
 
-   json { "interface_version": "1.0", "skill_id": "plan_network",
+   json { "interface_version": "1.0", "skill_id": "example_skill",
    "skill_version": "1.0", "request_envelope": { "schema_uri":
    "urn:example:agent:skill-request-envelope:1.0", "version": "1.0",
    "dialect": "https://json-schema.org/draft/2020-12/schema", "digest":
    "sha256:...", "resolution": { "type": "inline", "schema": { "type":
-   "object" } } }, "input_schema": { "schema_uri":
-   "urn:example:planning:plan-network-input:1.0", "version": "1.0",
-   "dialect": "https://json-schema.org/draft/2020-12/schema", "digest":
+   "object" } } }, "input_schema": { "schema_uri": "urn:example:network-
+   management:example-skill-input:1.0", "version": "1.0", "dialect":
+   "https://json-schema.org/draft/2020-12/schema", "digest":
    "sha256:...", "resolution": { "type": "inline", "schema": { "type":
-   "object", "properties": { "prompt": { "type": "string" } },
-   "required": [ "prompt" ] } } }, "outcome_schema": { "schema_uri":
-   "urn:example:planning:plan-network-result:1.0", "version": "1.0",
-   "dialect": "https://json-schema.org/draft/2020-12/schema", "digest":
-   "sha256:...", "resolution": { "type": "inline", "schema": { "type":
-   "object", "properties": { "status": { "type": "string" } },
-   "required": [ "status" ] } } }, "supporting_record_schemas": [ {
-   "kind": "simulation-result", "schema_uri":
-   "urn:example:planning:simulation-record:1.0", "version": "1.0",
-   "dialect": "https://json-schema.org/draft/2020-12/schema", "digest":
-   "sha256:...", "resolution": { "type": "inline", "schema": { "type":
-   "object" } } } ], "interaction": { "supported_response_modes": [
-   "sync", "stream", "poll" ], "cancellable": true }, "authority": {
-   "default_mode": "read-only", "approval_may_be_required": true } }
+   "object", "properties": { "objective": { "type": "string" } },
+   "required": [ "objective" ] } } }, "outcome_schema": { "schema_uri":
+   "urn:example:network-management:example-skill-outcome:1.0",
+   "version": "1.0", "dialect": "https://json-schema.org/draft/2020-12/
+   schema", "digest": "sha256:...", "resolution": { "type": "inline",
+   "schema": { "type": "object", "properties": { "status": { "type":
+   "string" } }, "required": [ "status" ] } } },
+   "supporting_record_schemas": [ { "kind": "observation-record",
+   "schema_uri": "urn:example:network-management:observation-
+   record:1.0", "version": "1.0", "dialect": "https://json-schema.org/
+   draft/2020-12/schema", "digest": "sha256:...", "resolution": {
+   "type": "inline", "schema": { "type": "object" } } } ],
+   "interaction": { "supported_response_modes": [ "sync", "stream",
+   "poll" ], "cancellable": true }, "authority": { "default_mode":
+   "read-only", "approval_may_be_required": true } }
 
    The inline schemas above are domain content populated into the
    standardized document.  They are not additions to or replacements for
@@ -550,7 +552,7 @@ Table of Contents
    The request selects one advertised skill:
 
    json { "skill": "describe_skill", "arguments": { "skill_id":
-   "plan_network" } }
+   "example_skill" } }
 
 8.3.  describe_skill response
 
@@ -617,7 +619,7 @@ Table of Contents
    A generic client agent can validate and route an unfamiliar vendor
    schema without understanding its domain semantics.  A domain-aware
    orchestrator may install optional handlers keyed by stable schema URI
-   to evaluate planning thresholds, incident records, configuration
+   to evaluate operational thresholds, incident records, configuration
    policy, or other domain behavior.
 
 9.  Schema Publication and Packaging
@@ -852,12 +854,12 @@ Table of Contents
    connected entities.  The stored incident graph contains the validated
    causal edge. ```
 
-   For capacity planning:
+   For an analytical skill:
 
-   ```text Skill Outcome: The simulation completed with maximum
-   utilization of 42 percent and no congested interfaces.
+   ```text Skill Outcome: The analysis completed and found no threshold
+   violations.
 
-   Supporting Records: Input plan digest, topology revision, simulation
+   Supporting Records: Input-data digest, topology revision, analysis
    parameters, engine version, raw engine report, and validation result.
    ```
 
@@ -981,27 +983,26 @@ Table of Contents
 
 16.  Non-Normative Examples
 
-16.1.  Capacity-planning agent
+16.1.  Analytical skill
 
-   A planning skill may declare:
+   An analytical skill may declare:
 
-   ```text Input schema: planning goal, plan reference, constraints, and
-   requested scenario
+   ```text Input schema: analysis objective, input-data reference,
+   constraints, and requested scenario
 
-   Outcome schema: planning conclusion, candidate plan, and summarized
+   Outcome schema: analysis conclusion, candidate action, and summarized
    metrics
 
-   Supporting-record schemas: plan snapshot, topology revision,
-   simulation parameters, raw simulation report, policy-validation
-   report, and engine identity ```
+   Supporting-record schemas: input-data snapshot, topology revision,
+   analysis parameters, raw engine report, policy-validation report, and
+   engine identity ```
 
-   For a simulation task, the outcome may state that maximum utilization
-   is 42 percent and no interfaces are congested.  Supporting records
-   include the exact input plan digest, traffic level, simulation-engine
-   version, run identifier, and raw result from which the outcome was
-   produced.
+   For an analysis task, the outcome may state that no operational
+   thresholds were violated.  Supporting records include the exact
+   input-data digest, parameters, engine version, run identifier, and
+   raw result from which the outcome was produced.
 
-16.2.  Event-analysis agent
+16.2.  Diagnostic skill
 
    An incident-investigation skill may declare:
 

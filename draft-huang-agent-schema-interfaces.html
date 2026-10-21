@@ -9,7 +9,7 @@
 <meta content="
        Network management agents can use an Agent-to-Agent protocol to discover
 peers, delegate work, observe task state, receive results, and cancel work.
-The protocol alone does not define the application schemas used by a planning
+The protocol alone does not define the application schemas used by an analysis
 agent, incident-analysis agent, configuration agent, or other independently
 developed network management agent. 
        This document proposes a common framework for publishing and discovering the
@@ -1098,7 +1098,7 @@ svg {
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">Network management agents can use an Agent-to-Agent protocol to discover
 peers, delegate work, observe task state, receive results, and cancel work.
-The protocol alone does not define the application schemas used by a planning
+The protocol alone does not define the application schemas used by an analysis
 agent, incident-analysis agent, configuration agent, or other independently
 developed network management agent.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <p id="section-abstract-2">This document proposes a common framework for publishing and discovering the
@@ -1366,10 +1366,10 @@ dependency for every task.<a href="#section-abstract-3" class="pilcrow">¶</a></
             <p id="section-toc.1-1.16.1"><a href="#section-16" class="auto internal xref">16</a>. <a href="#name-non-normative-examples" class="internal xref">Non-Normative Examples</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.1">
-                <p id="section-toc.1-1.16.2.1.1"><a href="#section-16.1" class="auto internal xref">16.1</a>.  <a href="#name-capacity-planning-agent" class="internal xref">Capacity-planning agent</a></p>
+                <p id="section-toc.1-1.16.2.1.1"><a href="#section-16.1" class="auto internal xref">16.1</a>.  <a href="#name-analytical-skill" class="internal xref">Analytical skill</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.2">
-                <p id="section-toc.1-1.16.2.2.1"><a href="#section-16.2" class="auto internal xref">16.2</a>.  <a href="#name-event-analysis-agent" class="internal xref">Event-analysis agent</a></p>
+                <p id="section-toc.1-1.16.2.2.1"><a href="#section-16.2" class="auto internal xref">16.2</a>.  <a href="#name-diagnostic-skill" class="internal xref">Diagnostic skill</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.3">
                 <p id="section-toc.1-1.16.2.3.1"><a href="#section-16.3" class="auto internal xref">16.3</a>.  <a href="#name-artifact-used-as-both-deliv" class="internal xref">Artifact used as both deliverable and a supporting record</a></p>
@@ -1526,7 +1526,7 @@ Document returned by <code>describe_skill</code>;<a href="#section-3-2.4.1" clas
           <p id="section-3-4.6.1">authorization merely by successful schema validation; or<a href="#section-3-4.6.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-4.7">
-          <p id="section-3-4.7.1">the semantics of vendor-specific planning, incident, or configuration data.<a href="#section-3-4.7.1" class="pilcrow">¶</a></p>
+          <p id="section-3-4.7.1">the semantics of vendor-specific analysis, incident, or configuration data.<a href="#section-3-4.7.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -1542,7 +1542,7 @@ Document returned by <code>describe_skill</code>;<a href="#section-3-2.4.1" clas
 <a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-network-management-agent" class="section-name selfRef">Network Management Agent</a>
         </h3>
 <p id="section-4.1-1">A software component that performs or assists with network-management work,
-including planning, configuration, assurance, incident analysis, validation,
+including analysis, configuration, assurance, incident handling, validation,
 simulation, or remediation.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1797,9 +1797,8 @@ Agent-to-Agent protocol. The registry does not carry the task or its result.
 When no registry is deployed, trusted cache, agent-hosted schemas, inline
 schemas, or an offline bundle provide equivalent resolution paths.<a href="#section-5.7-4" class="pilcrow">¶</a></p>
 <p id="section-5.7-5">Agents A and B represent arbitrary independently developed network management
-agents. The capacity-planning and event-analysis agents in the non-normative examples are
-non-normative examples and are not named participants in the common
-architecture.<a href="#section-5.7-5" class="pilcrow">¶</a></p>
+agents. The examples later in this document are illustrative use cases, not
+named participants in the common architecture.<a href="#section-5.7-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1832,7 +1831,7 @@ or resolution mechanisms.<a href="#section-6-1" class="pilcrow">¶</a></p>
       </ul>
 <p id="section-6-4"><code>json
 {
-  "schema_uri": "urn:example:planning:plan-network-input:1.0",
+  "schema_uri": "urn:example:network-management:skill-input:1.0",
   "version": "1.0",
   "dialect": "https://json-schema.org/draft/2020-12/schema",
   "digest": "sha256:abc123...",
@@ -1840,7 +1839,7 @@ or resolution mechanisms.<a href="#section-6-1" class="pilcrow">¶</a></p>
     "type": "registry",
     "registry": "customer-agent-schema-registry",
     "id": 117,
-    "subject": "vendor.cp.plan-network.input",
+    "subject": "example.network-management.skill-input",
     "registry_version": 3
   }
 }
@@ -1870,7 +1869,7 @@ Authority declarations may additionally reflect deployment policy. Assembly
 <p id="section-7-3"><code>json
 {
   "interface_version": "1.0",
-  "skill_id": "plan_network",
+  "skill_id": "example_skill",
   "skill_version": "1.0",
   "request_envelope": {
     "schema_uri": "urn:example:agent:skill-request-envelope:1.0",
@@ -1885,7 +1884,7 @@ Authority declarations may additionally reflect deployment policy. Assembly
     }
   },
   "input_schema": {
-    "schema_uri": "urn:example:planning:plan-network-input:1.0",
+    "schema_uri": "urn:example:network-management:example-skill-input:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
     "digest": "sha256:...",
@@ -1894,18 +1893,18 @@ Authority declarations may additionally reflect deployment policy. Assembly
       "schema": {
         "type": "object",
         "properties": {
-          "prompt": {
+          "objective": {
             "type": "string"
           }
         },
         "required": [
-          "prompt"
+          "objective"
         ]
       }
     }
   },
   "outcome_schema": {
-    "schema_uri": "urn:example:planning:plan-network-result:1.0",
+    "schema_uri": "urn:example:network-management:example-skill-outcome:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
     "digest": "sha256:...",
@@ -1926,8 +1925,8 @@ Authority declarations may additionally reflect deployment policy. Assembly
   },
   "supporting_record_schemas": [
     {
-      "kind": "simulation-result",
-      "schema_uri": "urn:example:planning:simulation-record:1.0",
+      "kind": "observation-record",
+      "schema_uri": "urn:example:network-management:observation-record:1.0",
       "version": "1.0",
       "dialect": "https://json-schema.org/draft/2020-12/schema",
       "digest": "sha256:...",
@@ -2001,7 +2000,7 @@ that the agent does not provide the schema-discovery procedure defined here.<a h
 {
   "skill": "describe_skill",
   "arguments": {
-    "skill_id": "plan_network"
+    "skill_id": "example_skill"
   }
 }
 </code><a href="#section-8.2-2" class="pilcrow">¶</a></p>
@@ -2082,7 +2081,7 @@ invalidates the entry and requires a new <code>describe_skill</code> exchange be
 next delegation.<a href="#section-8.4-4" class="pilcrow">¶</a></p>
 <p id="section-8.4-5">A generic client agent can validate and route an unfamiliar vendor schema without
 understanding its domain semantics. A domain-aware orchestrator may install
-optional handlers keyed by stable schema URI to evaluate planning thresholds,
+optional handlers keyed by stable schema URI to evaluate operational thresholds,
 incident records, configuration policy, or other domain behavior.<a href="#section-8.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2468,13 +2467,12 @@ Skill Outcome:
   Both events resolve to connected entities.
   The stored incident graph contains the validated causal edge.
 ```<a href="#section-12.4-4" class="pilcrow">¶</a></p>
-<p id="section-12.4-5">For capacity planning:<a href="#section-12.4-5" class="pilcrow">¶</a></p>
+<p id="section-12.4-5">For an analytical skill:<a href="#section-12.4-5" class="pilcrow">¶</a></p>
 <p id="section-12.4-6">```text
 Skill Outcome:
-  The simulation completed with maximum utilization of 42 percent and no
-  congested interfaces.<a href="#section-12.4-6" class="pilcrow">¶</a></p>
+  The analysis completed and found no threshold violations.<a href="#section-12.4-6" class="pilcrow">¶</a></p>
 <p id="section-12.4-7">Supporting Records:
-  Input plan digest, topology revision, simulation parameters, engine version,
+  Input-data digest, topology revision, analysis parameters, engine version,
   raw engine report, and validation result.
 ```<a href="#section-12.4-7" class="pilcrow">¶</a></p>
 <p id="section-12.4-8">Supporting records are not merely additional unstructured output. They carry
@@ -2646,31 +2644,31 @@ and <span class="bcp14">SHOULD</span> define cache refresh and schema-revocation
       <h2 id="name-non-normative-examples">
 <a href="#section-16" class="section-number selfRef">16. </a><a href="#name-non-normative-examples" class="section-name selfRef">Non-Normative Examples</a>
       </h2>
-<div id="capacity-planning-agent">
+<div id="analytical-skill">
 <section id="section-16.1">
-        <h3 id="name-capacity-planning-agent">
-<a href="#section-16.1" class="section-number selfRef">16.1. </a><a href="#name-capacity-planning-agent" class="section-name selfRef">Capacity-planning agent</a>
+        <h3 id="name-analytical-skill">
+<a href="#section-16.1" class="section-number selfRef">16.1. </a><a href="#name-analytical-skill" class="section-name selfRef">Analytical skill</a>
         </h3>
-<p id="section-16.1-1">A planning skill may declare:<a href="#section-16.1-1" class="pilcrow">¶</a></p>
+<p id="section-16.1-1">An analytical skill may declare:<a href="#section-16.1-1" class="pilcrow">¶</a></p>
 <p id="section-16.1-2">```text
 Input schema:
-  planning goal, plan reference, constraints, and requested scenario<a href="#section-16.1-2" class="pilcrow">¶</a></p>
+  analysis objective, input-data reference, constraints, and requested scenario<a href="#section-16.1-2" class="pilcrow">¶</a></p>
 <p id="section-16.1-3">Outcome schema:
-  planning conclusion, candidate plan, and summarized metrics<a href="#section-16.1-3" class="pilcrow">¶</a></p>
+  analysis conclusion, candidate action, and summarized metrics<a href="#section-16.1-3" class="pilcrow">¶</a></p>
 <p id="section-16.1-4">Supporting-record schemas:
-  plan snapshot, topology revision, simulation parameters, raw simulation
+  input-data snapshot, topology revision, analysis parameters, raw engine
   report, policy-validation report, and engine identity
 ```<a href="#section-16.1-4" class="pilcrow">¶</a></p>
-<p id="section-16.1-5">For a simulation task, the outcome may state that maximum utilization is 42
-percent and no interfaces are congested. Supporting records include the exact
-input plan digest, traffic level, simulation-engine version, run identifier,
-and raw result from which the outcome was produced.<a href="#section-16.1-5" class="pilcrow">¶</a></p>
+<p id="section-16.1-5">For an analysis task, the outcome may state that no operational thresholds
+were violated. Supporting records include the exact input-data digest,
+parameters, engine version, run identifier, and raw result from which the
+outcome was produced.<a href="#section-16.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="event-analysis-agent">
+<div id="diagnostic-skill">
 <section id="section-16.2">
-        <h3 id="name-event-analysis-agent">
-<a href="#section-16.2" class="section-number selfRef">16.2. </a><a href="#name-event-analysis-agent" class="section-name selfRef">Event-analysis agent</a>
+        <h3 id="name-diagnostic-skill">
+<a href="#section-16.2" class="section-number selfRef">16.2. </a><a href="#name-diagnostic-skill" class="section-name selfRef">Diagnostic skill</a>
         </h3>
 <p id="section-16.2-1">An incident-investigation skill may declare:<a href="#section-16.2-1" class="pilcrow">¶</a></p>
 <p id="section-16.2-2">```text
