@@ -1,7 +1,7 @@
 ---
 title: "Schema Interfaces and Discovery for Network Management Agents"
 abbrev: "Agent Schema Interfaces"
-category: info
+category: std
 
 docname: draft-huang-agent-schema-interfaces-latest
 submissiontype: IETF
