@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentic-network-management.github.io/agent-schema-interfaces/schemas/skill-interface-v1.json",
+  "title": "Network Management Agent Skill Interface",
+  "description": "Language-neutral discovery contract for one agent skill.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "interface_version",
+    "skill_id",
+    "skill_version",
+    "request_envelope",
+    "input_schema",
+    "outcome_schema",
+    "supporting_record_schemas",
+    "interaction",
+    "authority"
+  ],
+  "properties": {
+    "interface_version": {
+      "const": "1.0"
+    },
+    "skill_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "skill_version": {
+      "$ref": "#/$defs/version"
+    },
+    "request_envelope": {
+      "$ref": "#/$defs/schemaReference"
+    },
+    "input_schema": {
+      "$ref": "#/$defs/schemaReference"
+    },
+    "outcome_schema": {
+      "$ref": "#/$defs/schemaReference"
+    },
+    "supporting_record_schemas": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/supportingRecordSchema"
+      }
+    },
+    "interaction": {
+      "$ref": "#/$defs/interaction"
+    },
+    "authority": {
+      "$ref": "#/$defs/authority"
+    }
+  },
+  "$defs": {
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "schema"
+      ],
+      "properties": {
+        "type": {
+          "const": "inline"
+        },
+        "schema": {
+          "type": "object"
+        }
+      }
+    },
+    "schemaReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_uri",
+        "version",
+        "dialect",
+        "digest",
+        "resolution"
+      ],
+      "properties": {
+        "schema_uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "resolution": {
+          "$ref": "#/$defs/resolution"
+        }
+      }
+    },
+    "supportingRecordSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_uri",
+        "version",
+        "dialect",
+        "digest",
+        "resolution"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "resolution": {
+          "$ref": "#/$defs/resolution"
+        }
+      }
+    },
+    "interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supported_response_modes",
+        "cancellable"
+      ],
+      "properties": {
+        "supported_response_modes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "sync",
+              "stream",
+              "poll"
+            ]
+          }
+        },
+        "cancellable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default_mode",
+        "approval_may_be_required"
+      ],
+      "properties": {
+        "default_mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approval_may_be_required": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

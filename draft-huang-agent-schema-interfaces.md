@@ -1,70 +1,1194 @@
 ---
-title: "TODO - Your title"
-abbrev: "TODO - Abbreviation"
+title: "Schema Interfaces and Discovery for Network Management Agents"
+abbrev: "Agent Schema Interfaces"
 category: info
 
 docname: draft-huang-agent-schema-interfaces-latest
-submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
+submissiontype: IETF
 number:
 date:
-consensus: true
+consensus: false
 v: 3
-# area: AREA
-# workgroup: WG Working Group
+area: "Operations and Management"
 keyword:
- - next generation
- - unicorn
- - AI-native
+ - network management
+ - network management agents
+ - schema discovery
+ - agent interoperability
 venue:
-#  group: WG
-#  type: Working Group
-#  mail: WG@example.com
-#  arch: https://example.com/WG
   github: "agentic-network-management/agent-schema-interfaces"
   latest: "https://agentic-network-management.github.io/agent-schema-interfaces/draft-huang-agent-schema-interfaces.html"
 
 author:
  -
     fullname: "Scott Huang"
-    organization: Your Organization Here
+    organization: "Cisco Systems, Inc."
     email: "scotthuang21@gmail.com"
 
 normative:
+  JSON-SCHEMA:
+    title: "JSON Schema: A Media Type for Describing JSON Documents"
+    target: "https://json-schema.org/draft/2020-12/json-schema-core.html"
 
 informative:
+  A2A:
+    title: "Agent2Agent Protocol Specification"
+    target: "https://a2a-protocol.org/latest/specification/"
+  CONFLUENT:
+    title: "Confluent Schema Registry Documentation"
+    target: "https://docs.confluent.io/platform/current/schema-registry/"
 
 ...
 
 --- abstract
 
-TODO Abstract
+Network management agents can use an Agent-to-Agent protocol to discover
+peers, delegate work, observe task state, receive results, and cancel work.
+The protocol alone does not define the application schemas used by a planning
+agent, incident-analysis agent, configuration agent, or other independently
+developed network management agent.
 
+This document proposes a common framework for publishing and discovering the
+machine-readable schema interfaces of network management agent skills. It
+defines a reusable Schema Reference, a standardized Skill Interface Schema,
+and a `describe_skill` operation through which an agent returns a validated
+Skill Interface Document. The document combines the common interface
+structure with the input, outcome, and supporting-record schemas defined by
+the agent's vendor or domain owner. The framework also defines common Skill
+Request, Skill Outcome, and Supporting Record Envelopes.
+
+Schema identity is portable, while schema resolution is deployment-specific.
+Schemas may be returned inline, served by the agent, installed as an offline
+bundle, or resolved through an optional customer-operated schema registry.
+The design does not require a public registry or make a registry a runtime
+dependency for every task.
 
 --- middle
 
 # Introduction {#intro}
 
-TODO Introduction
+Agent-to-Agent task exchange requires agreement at two different layers:
 
+1. a protocol for discovery, task identity, lifecycle, streaming, polling,
+   cancellation, and result transport; and
+2. application schemas that define the meaning of the skill request, outcome,
+   deliverables, and supporting records.
+
+The Agent2Agent (A2A) protocol {{A2A}} defines agent discovery, message transport,
+task lifecycle, streaming, polling, cancellation, and artifact delivery. It
+does not define the domain-specific input, outcome, or supporting-record
+schemas used by individual skills, nor a common interface for discovering and
+validating those schemas. This document addresses that application-schema gap
+while leaving A2A task and transport semantics unchanged.
+
+A common protocol envelope can deliver a JSON object without making that
+object semantically interoperable. If the original input and an upstream
+agent's result are opaque text or unconstrained JSON, a downstream agent must
+infer their meaning. Such inference may be useful for human-oriented content,
+but it is not an adequate substitute for a declared interface when agents make
+operational decisions or generate network changes.
+
+This document defines a framework in which:
+
+- common Skill Request, Skill Outcome, Supporting Record, and Skill Interface
+  structures are standardized without standardizing every domain payload;
+- each skill declares versioned input, outcome, and supporting-record schemas;
+- vendors and domain owners define the schemas specific to their agents;
+- an agent assembles and validates a Skill Interface Document from the common
+  structure and its domain schemas before advertising that document;
+- a master or supervising agent discovers those schemas before delegation;
+- schemas can be resolved without assuming a particular registry product; and
+- skill outcomes cite the supporting records used to derive, validate, or
+  audit them.
+
+The framework is intended to support independently developed agents from
+different network-management domains without forcing their domain payloads
+into one universal schema.
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
+# Scope
+
+This document defines:
+
+- a common schema-interface model;
+- the relationship among skill requests, skill outcomes, deliverables, and
+  supporting records;
+- a reusable Schema Reference;
+- a standardized Skill Interface Schema and a conforming Skill Interface
+  Document returned by `describe_skill`;
+- schema identity, integrity, versioning, and resolution behavior;
+- the relationship between these interfaces and Agent-to-Agent task state; and
+- requirements for validation, caching, trust, and failure handling.
+
+This document does not define:
+
+- the internal algorithm used by an agent;
+- a universal schema for every network-management domain;
+- a required schema-registry product or API;
+- a globally centralized schema service;
+- agent hosting, process lifecycle, or platform onboarding;
+- authorization merely by successful schema validation; or
+- the semantics of vendor-specific planning, incident, or configuration data.
+
+# Terminology
+
+## Network Management Agent
+
+A software component that performs or assists with network-management work,
+including planning, configuration, assurance, incident analysis, validation,
+simulation, or remediation.
+
+## Schema Reference
+
+A portable schema identity plus integrity and resolution information. A
+Schema Reference identifies schema content independently of the mechanism
+used by a particular deployment to retrieve it.
+
+## Schema Bundle
+
+A signed or otherwise integrity-protected collection of schemas and a
+manifest distributed with an agent release.
+
+## Schema Registry
+
+An optional deployment service that stores, versions, retrieves, and may
+check compatibility among schemas. Registry-local identifiers are not
+portable schema identities.
+
+## Skill
+
+A named capability advertised by an agent and invokable through an
+Agent-to-Agent protocol.
+
+## Skill Interface Schema
+
+The standardized, language-neutral schema that defines the permitted
+structure and interpretation of a Skill Interface Document. An agent uses a
+local or otherwise trusted copy of this schema to validate the documents it
+publishes. A master uses the same schema version to validate discovered
+documents.
+
+## Skill Interface Document
+
+A machine-readable description of a skill's accepted input, produced outcome,
+possible supporting records, interaction behavior, and applicable constraints.
+It is an instance of the Skill Interface Schema. It contains domain-specific
+Schema References supplied by the agent without modifying the standardized
+Skill Interface Schema.
+
+## Skill Request Envelope
+
+The application-level request for invoking a skill, including its goal, typed
+input, constraints, and workflow correlation. The Agent-to-Agent protocol
+remains authoritative for protocol task identity and lifecycle state.
+
+## Skill Outcome Envelope
+
+The typed claims and deliverables produced by a skill invocation. A claim is a
+conclusion intended to be consumed or acted upon. A deliverable is an artifact
+the invocation was requested to produce.
+
+## Supporting Record Envelope
+
+A provenance-bearing observation or artifact used to derive, validate, or
+audit a Skill Outcome.
+
+# Design Principles
+
+## Separate transport from application semantics
+
+The Agent-to-Agent protocol owns task submission, protocol task identifiers,
+context identifiers, lifecycle state, streaming, polling, and cancellation.
+The schema-interface framework owns the structure and meaning of the
+application payload.
+
+An application payload MUST NOT redefine an Agent-to-Agent task identifier as
+another unqualified `task_id`. An application MAY carry a `workflow_id`,
+`step_id`, `attempt_id`, or explicitly named `parent_a2a_task_id` for
+correlation.
+
+## Standardize reusable structures, not all domain semantics
+
+The common standard defines the Skill Request Envelope, Skill Outcome
+Envelope, Supporting Record Envelope, Skill Interface Schema, and Schema
+Reference. A vendor or domain owner defines the input, outcome, and
+supporting-record payload schemas used by a particular skill. A conforming
+implementation combines those domain schemas with the common structure to
+produce a Skill Interface Document; it does not redefine the common structure.
+
+## Treat schema resolution as deployment-specific
+
+The stable schema identity and digest remain the same across deployments. A
+customer deployment may resolve that identity from a registry, offline
+bundle, agent endpoint, inline schema, or trusted local cache.
+
+## Keep the registry optional
+
+An agent and master MUST be capable of interoperating without a schema
+registry when the necessary schemas are supplied through another supported
+resolution mechanism.
+
+## Distinguish outcomes from supporting records
+
+The Skill Outcome states what the agent concluded or delivered. Supporting
+records explain why that outcome can be trusted, reproduced, or audited. An
+artifact MAY be both a deliverable and a supporting record; it is stored once
+and referenced by its artifact or supporting-record identifier from each
+applicable role.
+
+## Assemble and validate before discovery
+
+An agent implementation owns its domain-specific input, outcome, and
+supporting-record schemas. Its protocol service combines those schemas with a
+trusted copy of the standardized Skill Interface Schema and applicable
+interaction and authority declarations. The resulting Skill Interface
+Document MUST be validated before it is advertised or returned.
+
+An implementation SHOULD perform this assembly during agent initialization or
+onboarding and retain an immutable validated document for each skill version.
+The `describe_skill` operation retrieves that document. It does not ask the
+agent's domain logic to construct or alter an interface while processing the
+discovery request.
+
+## Participants and schema-discovery flow
+
+The following figure shows the relationship among a master or supervising
+agent, network management agents, and the schema-resolution facilities of a
+customer deployment.
+
+```text
+                         +------------------------+
+                         | Master or Supervising  |
+                         | Agent                  |
+                         +-----------+------------+
+                                     |
+                          Agent Card discovery and
+                              describe_skill
+                                     |
+                 +-------------------+-------------------+
+                 |                                       |
+       +---------v----------+                  +---------v----------+
+       | Network Management |                  | Network Management |
+       | Agent A             |                  | Agent B             |
+       | Schema bundle       |                  | Schema bundle       |
+       +---------+----------+                  +----------+---------+
+                 |                                        |
+                 +--------------+  +----------------------+
+                                |  |
+                      Skill Interface Documents and
+                          Schema References
+                                |  |
+                 +--------------+--+----------------------+
+                 |                 |                       |
+       +---------v--------+ +------v---------+ +-----------v-------+
+       | Customer Schema  | | Trusted Cache | | Agent-hosted,     |
+       | Registry         | | or Installed  | | Inline, or Offline|
+       | (Optional)       | | Schema Bundle | | Schemas            |
+       +------------------+ +----------------+ +--------------------+
+
+       After interface resolution and validation:
+
+       Master or Supervising Agent
+          <==== Direct A2A tasks, skill outcomes, and supporting records ====>
+       Selected Network Management Agent
+```
+
+The master discovers a target through its Agent Card and obtains the selected
+skill's validated Skill Interface Document through `describe_skill`. The
+document contains stable Schema References rather than assuming one
+deployment-specific registry. The master validates the document against its
+trusted copy of the Skill Interface Schema, resolves and verifies the domain
+schema references using an allowed mechanism, validates the skill request,
+and exchanges the task directly with the target through the Agent-to-Agent
+protocol. The registry does not carry the task or its result. When no registry
+is deployed, trusted cache, agent-hosted schemas, inline schemas, or an offline
+bundle provide equivalent resolution paths.
+
+Agents A and B represent arbitrary independently developed network management
+agents. The capacity-planning and event-analysis agents in the non-normative examples are
+non-normative examples and are not named participants in the common
+architecture.
+
+# Schema Reference
+
+All schema roles use one generic Schema Reference. Skill-request,
+skill-outcome, and supporting-record schemas do not require different registry
+or resolution mechanisms.
+
+A Schema Reference contains:
+
+- `schema_uri`: stable portable identity;
+- `version`: version meaningful to the schema publisher;
+- `dialect`: schema language and version;
+- `digest`: digest of the resolved schema content; and
+- `resolution`: deployment-selected resolution information.
+
+```json
+{
+  "schema_uri": "urn:example:planning:plan-network-input:1.0",
+  "version": "1.0",
+  "dialect": "https://json-schema.org/draft/2020-12/schema",
+  "digest": "sha256:abc123...",
+  "resolution": {
+    "type": "registry",
+    "registry": "customer-agent-schema-registry",
+    "id": 117,
+    "subject": "vendor.cp.plan-network.input",
+    "registry_version": 3
+  }
+}
+```
+
+Registry-local numeric identifiers MUST NOT be treated as globally portable
+schema identities. Two registries may assign the same numeric identifier to
+different schema content. A registry reference therefore includes the stable
+schema URI and digest.
+
+# Skill Interface Schema and Documents
+
+The Skill Interface Schema standardizes the structure shown in this section.
+A Skill Interface Document is a conforming instance for one skill version. It
+binds common envelopes to the domain schemas used by that skill and identifies
+the request, input, outcome, supporting-record, interaction, and authority
+characteristics.
+
+The agent or domain owner supplies the skill identifier, skill version, and
+domain input, outcome, and supporting-record schemas. The agent protocol
+service supplies the common envelope reference and assembles the complete
+document. Interaction declarations reflect the agent implementation.
+Authority declarations may additionally reflect deployment policy. Assembly
+MUST NOT modify the standardized Skill Interface Schema.
+
+```json
+{
+  "interface_version": "1.0",
+  "skill_id": "plan_network",
+  "skill_version": "1.0",
+  "request_envelope": {
+    "schema_uri": "urn:example:agent:skill-request-envelope:1.0",
+    "version": "1.0",
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "digest": "sha256:...",
+    "resolution": {
+      "type": "inline",
+      "schema": {
+        "type": "object"
+      }
+    }
+  },
+  "input_schema": {
+    "schema_uri": "urn:example:planning:plan-network-input:1.0",
+    "version": "1.0",
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "digest": "sha256:...",
+    "resolution": {
+      "type": "inline",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt"
+        ]
+      }
+    }
+  },
+  "outcome_schema": {
+    "schema_uri": "urn:example:planning:plan-network-result:1.0",
+    "version": "1.0",
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "digest": "sha256:...",
+    "resolution": {
+      "type": "inline",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      }
+    }
+  },
+  "supporting_record_schemas": [
+    {
+      "kind": "simulation-result",
+      "schema_uri": "urn:example:planning:simulation-record:1.0",
+      "version": "1.0",
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "digest": "sha256:...",
+      "resolution": {
+        "type": "inline",
+        "schema": {
+          "type": "object"
+        }
+      }
+    }
+  ],
+  "interaction": {
+    "supported_response_modes": [
+      "sync",
+      "stream",
+      "poll"
+    ],
+    "cancellable": true
+  },
+  "authority": {
+    "default_mode": "read-only",
+    "approval_may_be_required": true
+  }
+}
+```
+
+The inline schemas above are domain content populated into the standardized
+document. They are not additions to or replacements for the Skill Interface
+Schema. A deployment may instead populate the same Schema References with an
+agent-hosted, bundle, or registry resolution mechanism supported by the
+selected interface version.
+
+Request validation is logically performed in two stages: the complete request
+is validated against the common Skill Request Envelope, and the envelope's
+typed input is validated against the domain `input_schema`. Outcome and
+supporting-record validation follow the same composition model. An
+implementation MAY compile these stages into an equivalent composed validator.
+
+Successful schema validation does not authorize execution. The receiving
+agent and hosting platform MUST independently authenticate the caller and
+authorize the requested skill, resources, and operation.
+
+# Skill Interface Discovery
+
+## Agent advertisement
+
+An agent supporting this framework advertises that support in its discovery
+metadata. The exact Agent-to-Agent extension mechanism is protocol-specific.
+The advertisement identifies the supported profile version, advertised skill
+versions, and whether `describe_skill` is available. An advertisement SHOULD
+also provide an interface-document digest when the Agent-to-Agent discovery
+extension permits that binding.
+
+A caller MUST NOT assume that every Agent-to-Agent implementation supports
+`describe_skill`.
+
+## `describe_skill` request
+
+The request selects one advertised skill:
+
+```json
+{
+  "skill": "describe_skill",
+  "arguments": {
+    "skill_id": "plan_network"
+  }
+}
+```
+
+## `describe_skill` response
+
+The response is a Skill Interface Document conforming to the advertised
+version of the standardized Skill Interface Schema. It MAY contain complete
+domain schemas inline or MAY contain Schema References resolved through
+another supported mechanism.
+
+The response MUST be the previously assembled and validated document for the
+selected skill version. The `describe_skill` operation MUST NOT redefine the
+standard structure or invoke domain logic to construct or modify the document
+while processing the request. The returned input, outcome, and
+supporting-record schemas remain specific to the selected agent and skill.
+
+The selected document MUST correspond to the skill version advertised by the
+agent. If the agent cannot provide a conforming compatible document, it MUST
+fail the request with a machine-readable error rather than accepting an
+unvalidated opaque payload.
+
+## Master-agent behavior
+
+A generic master or supervising agent performs the following sequence:
+
+1. discover the target agent and advertised skill identifiers;
+2. determine that the target supports the schema-interface profile;
+3. call `describe_skill` for the selected skill;
+4. validate the returned Skill Interface Document against a trusted local
+   copy of the selected Skill Interface Schema;
+5. verify and, when necessary, resolve the referenced domain schemas;
+6. validate the outgoing Skill Request;
+7. delegate the task through the Agent-to-Agent protocol;
+8. receive status, a Skill Outcome, and supporting records;
+9. validate the Skill Outcome and supporting records; and
+10. preserve, forward, display, or interpret them according to local policy.
+
+A generic master can validate and route an unfamiliar vendor schema without
+understanding its domain semantics. A domain-aware orchestrator may install
+optional handlers keyed by stable schema URI to evaluate planning thresholds,
+incident records, configuration policy, or other domain behavior.
+
+# Schema Publication and Packaging
+
+## Vendor release artifacts
+
+Agent domain schemas are deployment-independent source artifacts. The
+standardized Skill Interface Schema is a separately versioned common artifact;
+an implementation packages an exact trusted copy rather than maintaining an
+agent-specific variation. A vendor release pipeline SHOULD:
+
+1. validate all schemas;
+2. test representative inputs and outputs against them;
+3. assign stable schema URIs and versions;
+4. compute schema digests;
+5. produce a schema-bundle manifest; and
+6. sign or otherwise integrity-protect the bundle as part of the agent
+   package.
+
+The pipeline does not need access to a customer registry.
+
+## Agent initialization
+
+Before advertising schema-interface support, an agent SHOULD:
+
+1. load and integrity-check its packaged Skill Interface Schema;
+2. load its domain input, outcome, and supporting-record schemas;
+3. assemble a Skill Interface Document for each advertised skill version;
+4. validate each document and each inline schema digest; and
+5. retain an immutable validated representation for `describe_skill`.
+
+Failure to load, assemble, or validate an interface prevents that skill
+version from being advertised through this framework. An implementation MUST
+NOT silently fall back to an opaque unconstrained payload.
+
+## Customer onboarding
+
+At onboarding time, a customer deployment MAY:
+
+- register the bundle in a customer-operated registry;
+- install the bundle in a platform-controlled local store;
+- allow the agent to serve the bundled schemas; or
+- permit inline schemas in `describe_skill`.
+
+If a customer registry is present, onboarding registers the schemas and
+creates a deployment-local mapping from stable schema URI and digest to
+registry subject, version, and identifier. That mapping is supplied to the
+agent or made available to the master.
+
+# Schema Resolution
+
+## Trusted cache
+
+A master SHOULD cache verified schema content by stable schema URI and digest.
+A cached schema may be used while a registry or agent schema endpoint is
+temporarily unavailable.
+
+## Optional schema registry
+
+A registry may provide centralized storage, subject versioning, references,
+compatibility checks, publisher metadata, and governance.  {{CONFLUENT}} is one
+non-normative example of this class of service. The standard does
+not require a particular registry implementation or REST API.
+
+An agent identifies a registry by a logical deployment name. The master maps
+that name to an administrator-configured trusted endpoint. A master MUST NOT
+retrieve schemas from an arbitrary registry URL supplied in an untrusted task
+payload.
+
+## Agent-hosted schemas
+
+An agent MAY expose bundled schemas beneath a well-known path associated with
+the already discovered and authenticated agent endpoint. A Schema Reference
+using this mechanism contains a relative path and digest. It does not redirect
+the master to an arbitrary host.
+
+## Inline schemas
+
+`describe_skill` MAY return schemas inline. Inline resolution is suitable for
+small skill interfaces, local development, and deployments without a registry.
+The master still verifies the declared digest and applies publisher and size
+policy.
+
+## Offline bundle
+
+An air-gapped deployment MAY install an approved schema bundle alongside the
+master. The master resolves stable schema URIs from that bundle without
+network access.
+
+## Resolution order
+
+A deployment may use the following resolution order:
+
+1. trusted cache;
+2. configured customer registry;
+3. platform-installed bundle;
+4. authenticated agent-hosted schema endpoint; and
+5. inline schema.
+
+Local policy determines which mechanisms are permitted.
+
+# Schema Evolution and Compatibility
+
+Schema publishers MUST treat a published schema version and digest as
+immutable. A changed schema receives a new version and digest.
+
+Compatibility policy SHOULD be applied to a governed schema family. Structural
+compatibility checking is necessary but not sufficient. It cannot establish
+that units, operational interpretation, authority, or supporting-record
+quality remain compatible.
+
+A breaking semantic change requires a new major version even if a structural
+JSON Schema checker accepts the change. Examples include:
+
+- changing a utilization value from percent to a fraction;
+- changing a timestamp from observation time to processing time;
+- changing a supporting-record classification from authoritative to inferred;
+  or
+- changing a configuration artifact from candidate to applied state.
+
+The Skill Interface Document MUST identify the exact schema versions currently
+used by the skill. A caller MUST NOT substitute a registry's mutable `latest`
+version after accepting a document.
+
+# Skill Requests, Outcomes, and Supporting Records
+
+## Skill Request Envelope
+
+The Skill Request Envelope carries the application request associated with an
+Agent-to-Agent task. It includes common correlation and constraint fields and
+a typed input payload.
+
+An illustrative Skill Request Envelope is:
+
+```json
+{
+  "schema": {
+    "schema_uri": "urn:example:agent:skill-request-envelope:1.0",
+    "version": "1.0",
+    "digest": "sha256:..."
+  },
+  "workflow_id": "workflow-123",
+  "step_id": "investigate-incident",
+  "attempt_id": "attempt-1",
+  "skill_id": "investigate_incident",
+  "goal": "Identify the root cause of the incident",
+  "constraints": {
+    "deadline": "2026-10-19T22:00:00Z",
+    "authority": "read-only",
+    "approval_required": false
+  },
+  "input": {
+    "schema": {
+      "schema_uri": "urn:example:incident-analysis:investigate-incident-input:1.0",
+      "version": "1.0",
+      "digest": "sha256:..."
+    },
+    "data": {
+      "incident_id": "incident-000001"
+    }
+  }
+}
+```
+
+The `workflow_id`, `step_id`, and `attempt_id` are application-level
+correlation identifiers. They do not replace the protocol task and context
+identifiers.
+
+## Skill Outcome Envelope
+
+The Skill Outcome Envelope carries the final application outcome, deliverable
+references, and supporting-record references.
+
+```json
+{
+  "schema": {
+    "schema_uri": "urn:example:agent:skill-outcome-envelope:1.0",
+    "version": "1.0",
+    "digest": "sha256:..."
+  },
+  "skill_id": "investigate_incident",
+  "outcome": {
+    "schema": {
+      "schema_uri": "urn:example:incident-analysis:root-cause-result:1.0",
+      "version": "1.0",
+      "digest": "sha256:..."
+    },
+    "data": {
+      "incident_id": "incident-000001",
+      "root_cause_event_id": "1",
+      "summary": "A hardware fault initiated the downstream failures.",
+      "provisional": false
+    }
+  },
+  "deliverable_refs": [],
+  "supporting_record_refs": [
+    "event-record-1",
+    "causal-path-1"
+  ]
+}
+```
+
+The protocol task status indicates whether protocol execution completed. The
+Skill Outcome describes what the application concluded or produced.
+Completion of a protocol task does not by itself establish that a requested
+downstream network operation completed successfully.
+
+## Supporting Record Envelope
+
+A Supporting Record Envelope associates a typed observation or artifact with
+its producer, source, time, integrity information, derivation, and
+classification.
+
+```json
+{
+  "schema": {
+    "schema_uri": "urn:example:agent:supporting-record-envelope:1.0",
+    "version": "1.0",
+    "digest": "sha256:..."
+  },
+  "record_id": "causal-path-1",
+  "workflow_id": "workflow-123",
+  "step_id": "investigate-incident",
+  "attempt_id": "attempt-1",
+  "kind": "validated-causal-path",
+  "classification": "authoritative",
+  "producer": {
+    "agent": "event-analyzer",
+    "component": "incident-correlator",
+    "version": "1.0"
+  },
+  "source": {
+    "system": "incident-graph",
+    "resource": "incident-000001"
+  },
+  "observed_at": "2026-08-11T12:00:01Z",
+  "produced_at": "2026-10-19T18:00:00Z",
+  "derived_from": [
+    "event-record-1"
+  ],
+  "payload": {
+    "schema": {
+      "schema_uri": "urn:example:incident-analysis:causal-path-record:1.0",
+      "version": "1.0",
+      "digest": "sha256:..."
+    },
+    "data": {
+      "from_event_id": "1",
+      "to_event_id": "2",
+      "entity_path": [
+        "node-pe-15",
+        "node-pe-15/et-1-1-4"
+      ],
+      "topology_version": "standalone-fixture-v1"
+    }
+  }
+}
+```
+
+Supporting records SHOULD be append-only once published. Corrections SHOULD be
+expressed as new records that identify the record they supersede rather than
+by silently replacing earlier content.
+
+## Outcome and supporting-record relationship
+
+The Skill Outcome is the answer, decision, or deliverable normally consumed by
+the caller. Supporting records contain the observations and artifacts that
+support that outcome.
+
+For incident analysis:
+
+```text
+Skill Outcome:
+  Hardware fault event 1 is the root cause.
+
+Supporting Records:
+  Event 1 preceded event 2.
+  Both events resolve to connected entities.
+  The stored incident graph contains the validated causal edge.
+```
+
+For capacity planning:
+
+```text
+Skill Outcome:
+  The simulation completed with maximum utilization of 42 percent and no
+  congested interfaces.
+
+Supporting Records:
+  Input plan digest, topology revision, simulation parameters, engine version,
+  raw engine report, and validation result.
+```
+
+Supporting records are not merely additional unstructured output. They carry
+provenance, integrity, time, derivation, and an explicit relationship to the
+outcome they support.
+
+# Agent-to-Agent Mapping
+
+The Agent-to-Agent protocol remains authoritative for:
+
+- protocol task and context identifiers;
+- submitted, working, completed, failed, and canceled states;
+- synchronous task completion;
+- streaming task updates;
+- task retrieval and polling; and
+- cancellation delivery.
+
+The Skill Request Envelope adds an application-level goal, workflow
+correlation, typed input, and constraints. The Skill Outcome Envelope carries
+the application conclusion, deliverables, and supporting-record references.
+
+Task progress is not automatically a supporting record. A progress update
+becomes one only when published as a Supporting Record Envelope with the
+required provenance and integrity properties.
+
+Receiving a cancellation request does not prove that downstream network work
+has stopped. The final Skill Outcome and supporting records must describe the
+effective state of relevant downstream operations when that distinction
+matters.
 
 # Security Considerations {#security}
 
-TODO Security
+## Schema trust
 
+A syntactically valid schema is not necessarily trustworthy. A master applies
+policy for trusted publishers, schema identities, digests, versions, dialects,
+and resolution mechanisms.
+
+## Arbitrary retrieval
+
+Following arbitrary schema URLs can expose a master to server-side request
+forgery, credential leakage, malicious redirects, and availability attacks.
+Registry aliases and agent-relative paths are resolved only through trusted,
+administrator-configured endpoints.
+
+## Resource limits
+
+A master enforces limits on schema size, nesting, reference depth, reference
+cycles, compilation time, payload size, and cache consumption.
+
+## Schema validation and authorization
+
+Schema validation establishes structural conformance, not caller authority,
+operational safety, truth, or permission to modify a network. Authorization
+and policy checks occur at execution time.
+
+## Supporting-record integrity and provenance
+
+Supporting records can be stale, replayed, forged, selectively omitted, or
+derived from untrusted inputs. They include source, producer, observation and
+production times, digest, derivation, and classification. Deployments define
+freshness and retention policy appropriate to the operation.
+
+## Injection
+
+Text, CLI configuration, tool output, model output, and supporting-record
+payloads are untrusted data. An agent does not treat instructions embedded in
+those artifacts as authorized task instructions unless the applicable schema
+and policy explicitly assign them that role.
+
+## Interface integrity and substitution
+
+An agent and master MUST integrity-check the packaged Skill Interface Schema
+before using it. A local implementation MUST NOT modify the standardized
+schema while adding domain schemas.
+
+A master verifies that a discovered Skill Interface Document identifies the
+requested agent skill and advertised skill version. It validates the document
+against the selected Skill Interface Schema and verifies all resolved schema
+digests. A structurally valid document for a different skill or version MUST
+NOT be accepted as a substitute.
+
+# Operational Considerations
+
+Schema discovery and resolution SHOULD NOT add a `describe_skill` or registry
+lookup to every task. A master caches validated Skill Interface Documents,
+verified domain schemas, and compiled validators. A cache entry is bound to
+the agent identity, skill identifier, skill version, interface version, and,
+when advertised, interface-document digest. A changed advertised version or
+digest invalidates the corresponding entry.
+
+An implementation SHOULD expose diagnostics identifying:
+
+- the Skill Interface Schema version and skill version selected;
+- schema URIs, versions, and digests used;
+- the resolution mechanism used for each schema;
+- validation failures;
+- unavailable or untrusted schemas; and
+- compatibility or policy failures.
+
+Deployments SHOULD test operation during temporary registry unavailability
+and SHOULD define cache refresh and schema-revocation behavior.
+
+# Non-Normative Examples
+
+## Capacity-planning agent
+
+A planning skill may declare:
+
+```text
+Input schema:
+  planning goal, plan reference, constraints, and requested scenario
+
+Outcome schema:
+  planning conclusion, candidate plan, and summarized metrics
+
+Supporting-record schemas:
+  plan snapshot, topology revision, simulation parameters, raw simulation
+  report, policy-validation report, and engine identity
+```
+
+For a simulation task, the outcome may state that maximum utilization is 42
+percent and no interfaces are congested. Supporting records include the exact
+input plan digest, traffic level, simulation-engine version, run identifier,
+and raw result from which the outcome was produced.
+
+## Event-analysis agent
+
+An incident-investigation skill may declare:
+
+```text
+Input schema:
+  incident identifier and optional investigation constraints
+
+Outcome schema:
+  root-cause event, summary, reason, and provisional status
+
+Supporting-record schemas:
+  incident events, entity resolutions, topology version, and validated causal
+  edges or paths
+```
+
+The outcome may claim that a hardware-fault event initiated downstream
+interface and link failures. Supporting records include the authoritative
+stored events, their resolved entities, and the validated path through the
+incident graph. An inferred model proposal is distinguished from records
+validated against authoritative data.
+
+## Artifact used as both deliverable and a supporting record
+
+A simulation report may be the requested skill deliverable and also support a
+higher-level claim that a proposed change is safe. The report is published
+once with a stable identifier. The Skill Outcome includes that identifier in
+both `deliverable_refs` and `supporting_record_refs` when both roles apply.
 
 # IANA Considerations {#iana}
 
-This document has no IANA actions.
+This early version does not request any IANA actions. A later version may
+request identifiers for the schema-interface profile, media types, or URN
+namespaces after the representation and protocol mapping stabilize.
 
+# Open Issues
+
+The following issues require further review:
+
+1. whether `describe_skill` is represented as an Agent-to-Agent skill, a
+   protocol extension, or both;
+2. the exact JSON Schema definitions for the common structures;
+3. version-negotiation behavior when multiple interface versions are
+   supported;
+4. whether outcome claims require an explicit claim identifier and per-claim
+   supporting-record references;
+5. representation of confidential supporting records and access-controlled
+   artifact references;
+6. schema revocation and emergency withdrawal;
+7. signature format for schema bundles and Skill Interface Documents; and
+8. mapping to existing schema registries without making a registry API
+   normative.
 
 --- back
 
-# Acknowledgments
-{:numbered="false"}
+# Skill Interface JSON Schema
 
-TODO acknowledge.
+The following JSON Schema is the complete version 1.0 Skill Interface Schema
+defined by this document.  The same machine-readable artifact is published in
+the source repository as `schemas/skill-interface-v1.json`.
+
+~~~ json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentic-network-management.github.io/agent-schema-interfaces/schemas/skill-interface-v1.json",
+  "title": "Network Management Agent Skill Interface",
+  "description": "Language-neutral discovery contract for one agent skill.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "interface_version",
+    "skill_id",
+    "skill_version",
+    "request_envelope",
+    "input_schema",
+    "outcome_schema",
+    "supporting_record_schemas",
+    "interaction",
+    "authority"
+  ],
+  "properties": {
+    "interface_version": {
+      "const": "1.0"
+    },
+    "skill_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "skill_version": {
+      "$ref": "#/$defs/version"
+    },
+    "request_envelope": {
+      "$ref": "#/$defs/schemaReference"
+    },
+    "input_schema": {
+      "$ref": "#/$defs/schemaReference"
+    },
+    "outcome_schema": {
+      "$ref": "#/$defs/schemaReference"
+    },
+    "supporting_record_schemas": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/supportingRecordSchema"
+      }
+    },
+    "interaction": {
+      "$ref": "#/$defs/interaction"
+    },
+    "authority": {
+      "$ref": "#/$defs/authority"
+    }
+  },
+  "$defs": {
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "schema"
+      ],
+      "properties": {
+        "type": {
+          "const": "inline"
+        },
+        "schema": {
+          "type": "object"
+        }
+      }
+    },
+    "schemaReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_uri",
+        "version",
+        "dialect",
+        "digest",
+        "resolution"
+      ],
+      "properties": {
+        "schema_uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "resolution": {
+          "$ref": "#/$defs/resolution"
+        }
+      }
+    },
+    "supportingRecordSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_uri",
+        "version",
+        "dialect",
+        "digest",
+        "resolution"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "resolution": {
+          "$ref": "#/$defs/resolution"
+        }
+      }
+    },
+    "interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supported_response_modes",
+        "cancellable"
+      ],
+      "properties": {
+        "supported_response_modes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "sync",
+              "stream",
+              "poll"
+            ]
+          }
+        },
+        "cancellable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default_mode",
+        "approval_may_be_required"
+      ],
+      "properties": {
+        "default_mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approval_may_be_required": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
+~~~

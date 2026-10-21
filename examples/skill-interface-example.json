@@ -1,0 +1,112 @@
+{
+  "interface_version": "1.0",
+  "skill_id": "analyze_network",
+  "skill_version": "1.0",
+  "request_envelope": {
+    "schema_uri": "urn:example:network-management-agent:skill-request:1.0",
+    "version": "1.0",
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "digest": "sha256:7f8e312aa614cbbb9667ababfe3a202727ce88e6d1a5f9c90cb223f0436015cc",
+    "resolution": {
+      "type": "inline",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "goal": {
+            "type": "string"
+          },
+          "input": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "goal",
+          "input"
+        ]
+      }
+    }
+  },
+  "input_schema": {
+    "schema_uri": "urn:example:network-management-agent:analyze-network:input:1.0",
+    "version": "1.0",
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "digest": "sha256:8d076361c4dcc79f0dbf1afa4dbe864e6318a88e4a8e6d9441c7cc99a5837aeb",
+    "resolution": {
+      "type": "inline",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "objective": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "objective"
+        ]
+      }
+    }
+  },
+  "outcome_schema": {
+    "schema_uri": "urn:example:network-management-agent:analyze-network:outcome:1.0",
+    "version": "1.0",
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "digest": "sha256:e9cbc4ac8bb4814dfe55897af5360f7bc4c92a2e0c8301e14c942213c11e4740",
+    "resolution": {
+      "type": "inline",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "summary"
+        ]
+      }
+    }
+  },
+  "supporting_record_schemas": [
+    {
+      "kind": "observation",
+      "schema_uri": "urn:example:network-management-agent:observation:1.0",
+      "version": "1.0",
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "digest": "sha256:37c2ba3df7afd0c86a7f31b82f093bd97fad0e217b3163440d3f200f90f73678",
+      "resolution": {
+        "type": "inline",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "record_id": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "record_id",
+            "source"
+          ]
+        }
+      }
+    }
+  ],
+  "interaction": {
+    "supported_response_modes": [
+      "sync",
+      "stream",
+      "poll"
+    ],
+    "cancellable": true
+  },
+  "authority": {
+    "default_mode": "read-only",
+    "approval_may_be_required": false
+  }
+}

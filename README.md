@@ -1,8 +1,9 @@
 <!-- regenerate: on (set to off if you edit this file) -->
 
-# TODO - Your title
+# Schema Interfaces and Discovery for Network Management Agents
 
-This is the working area for the individual Internet-Draft, "TODO - Your title".
+This is the working area for the individual Internet-Draft, "Schema Interfaces
+and Discovery for Network Management Agents".
 
 * [Editor's Copy](https://agentic-network-management.github.io/agent-schema-interfaces/#go.draft-huang-agent-schema-interfaces.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-huang-agent-schema-interfaces)
@@ -13,7 +14,7 @@ This is the working area for the individual Internet-Draft, "TODO - Your title".
 ## Contributing
 
 See the
-[guidelines for contributions](https://github.com/agentic-network-management/agent-schema-interfaces/blob//CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/agentic-network-management/agent-schema-interfaces/blob/main/CONTRIBUTING.md).
 
 The contributing file also has tips on how to make contributions, if you
 don't already know how to do that.
@@ -28,4 +29,3 @@ $ make
 
 Command line usage requires that you have the necessary software installed.  See
 [the instructions](https://github.com/martinthomson/i-d-template/blob/main/doc/SETUP.md).
-
