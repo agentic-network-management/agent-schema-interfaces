@@ -26,14 +26,14 @@ author:
     email: "scohuang@cisco.com"
 
 normative:
+  A2A:
+    title: "Agent2Agent Protocol Specification, Version 1.0.1"
+    target: "https://a2a-protocol.org/v1.0.1/specification/"
   JSON-SCHEMA:
     title: "JSON Schema: A Media Type for Describing JSON Documents"
     target: "https://json-schema.org/draft/2020-12/json-schema-core.html"
 
 informative:
-  A2A:
-    title: "Agent2Agent Protocol Specification"
-    target: "https://a2a-protocol.org/latest/specification/"
   CONFLUENT:
     title: "Confluent Schema Registry Documentation"
     target: "https://docs.confluent.io/platform/current/schema-registry/"
@@ -96,7 +96,7 @@ This document defines a framework in which:
 - vendors and domain owners define the schemas specific to their agents;
 - an agent assembles and validates a Skill Interface Document from the common
   structure and its domain schemas before advertising that document;
-- a master or supervising agent discovers those schemas before delegation;
+- a client agent discovers those schemas before delegation;
 - schemas can be resolved without assuming a particular registry product; and
 - skill outcomes cite the supporting records used to derive, validate, or
   audit them.
@@ -141,6 +141,18 @@ A software component that performs or assists with network-management work,
 including planning, configuration, assurance, incident analysis, validation,
 simulation, or remediation.
 
+## Client Agent
+
+An A2A Client that discovers a remote agent, obtains and validates its Skill
+Interface Documents, and delegates tasks on behalf of a user or another
+system. This term describes a protocol role and does not imply administrative
+control over the remote agent.
+
+## Remote Agent
+
+An A2A Server that publishes an Agent Card, exposes skills, receives delegated
+tasks, and returns task status and results.
+
 ## Schema Reference
 
 A portable schema identity plus integrity and resolution information. A
@@ -168,7 +180,7 @@ Agent-to-Agent protocol.
 The standardized, language-neutral schema that defines the permitted
 structure and interpretation of a Skill Interface Document. An agent uses a
 local or otherwise trusted copy of this schema to validate the documents it
-publishes. A master uses the same schema version to validate discovered
+publishes. A client agent uses the same schema version to validate discovered
 documents.
 
 ## Skill Interface Document
@@ -227,9 +239,9 @@ bundle, agent endpoint, inline schema, or trusted local cache.
 
 ## Keep the registry optional
 
-An agent and master MUST be capable of interoperating without a schema
-registry when the necessary schemas are supplied through another supported
-resolution mechanism.
+The remote agent and client agent MUST be capable of interoperating without a
+schema registry when the necessary schemas are supplied through another
+supported resolution mechanism.
 
 ## Distinguish outcomes from supporting records
 
@@ -255,14 +267,13 @@ discovery request.
 
 ## Participants and schema-discovery flow
 
-The following figure shows the relationship among a master or supervising
-agent, network management agents, and the schema-resolution facilities of a
+The following figure shows the relationship among a client agent, remote
+network management agents, and the schema-resolution facilities of a
 customer deployment.
 
 ```text
                          +------------------------+
-                         | Master or Supervising  |
-                         | Agent                  |
+                         | Client Agent           |
                          +-----------+------------+
                                      |
                           Agent Card discovery and
@@ -291,21 +302,21 @@ customer deployment.
 
        After interface resolution and validation:
 
-       Master or Supervising Agent
+       Client Agent
           <==== Direct A2A tasks, skill outcomes, and supporting records ====>
        Selected Network Management Agent
 ```
 
-The master discovers a target through its Agent Card and obtains the selected
-skill's validated Skill Interface Document through `describe_skill`. The
-document contains stable Schema References rather than assuming one
-deployment-specific registry. The master validates the document against its
-trusted copy of the Skill Interface Schema, resolves and verifies the domain
-schema references using an allowed mechanism, validates the skill request,
-and exchanges the task directly with the target through the Agent-to-Agent
-protocol. The registry does not carry the task or its result. When no registry
-is deployed, trusted cache, agent-hosted schemas, inline schemas, or an offline
-bundle provide equivalent resolution paths.
+The client agent discovers a remote agent through its Agent Card and obtains
+the selected skill's validated Skill Interface Document through
+`describe_skill`. The document contains stable Schema References rather than
+assuming one deployment-specific registry. The client agent validates the
+document against its trusted copy of the Skill Interface Schema, resolves and
+verifies the domain schema references using an allowed mechanism, validates
+the skill request, and exchanges the task directly with the target through the
+Agent-to-Agent protocol. The registry does not carry the task or its result.
+When no registry is deployed, trusted cache, agent-hosted schemas, inline
+schemas, or an offline bundle provide equivalent resolution paths.
 
 Agents A and B represent arbitrary independently developed network management
 agents. The capacity-planning and event-analysis agents in the non-normative examples are
@@ -469,15 +480,19 @@ authorize the requested skill, resources, and operation.
 
 ## Agent advertisement
 
-An agent supporting this framework advertises that support in its discovery
-metadata. The exact Agent-to-Agent extension mechanism is protocol-specific.
-The advertisement identifies the supported profile version, advertised skill
-versions, and whether `describe_skill` is available. An advertisement SHOULD
-also provide an interface-document digest when the Agent-to-Agent discovery
-extension permits that binding.
+An agent conforming to this framework MUST advertise `describe_skill` as a
+skill in its Agent Card. The Agent Card also advertises the domain skills that
+can be selected in a `describe_skill` request. The `describe_skill` skill MUST
+accept structured input identifying the selected `skill_id` and MUST produce
+structured output containing the corresponding Skill Interface Document.
 
-A caller MUST NOT assume that every Agent-to-Agent implementation supports
-`describe_skill`.
+The advertisement identifies the supported profile version and advertised
+skill versions. It SHOULD also provide an interface-document digest when the
+Agent-to-Agent discovery format permits that binding.
+
+A caller MUST NOT assume that every Agent-to-Agent implementation conforms to
+this framework. Absence of the `describe_skill` skill from the Agent Card means
+that the agent does not provide the schema-discovery procedure defined here.
 
 ## `describe_skill` request
 
@@ -510,12 +525,14 @@ agent. If the agent cannot provide a conforming compatible document, it MUST
 fail the request with a machine-readable error rather than accepting an
 unvalidated opaque payload.
 
-## Master-agent behavior
+## Client-agent behavior
 
-A generic master or supervising agent performs the following sequence:
+A client agent performs the following sequence:
 
-1. discover the target agent and advertised skill identifiers;
-2. determine that the target supports the schema-interface profile;
+1. retrieve the target Agent Card and discover its A2A endpoint, agent version,
+   and advertised skill identifiers;
+2. verify that both `describe_skill` and the selected domain skill are
+   advertised;
 3. call `describe_skill` for the selected skill;
 4. validate the returned Skill Interface Document against a trusted local
    copy of the selected Skill Interface Schema;
@@ -526,7 +543,21 @@ A generic master or supervising agent performs the following sequence:
 9. validate the Skill Outcome and supporting records; and
 10. preserve, forward, display, or interpret them according to local policy.
 
-A generic master can validate and route an unfamiliar vendor schema without
+Before delegating a domain skill under this framework, the client agent MUST
+possess a successfully validated Skill Interface Document obtained from that
+target's `describe_skill` skill. If `describe_skill` is absent, fails, returns
+a document for a different skill or version, or returns a document that cannot
+be validated, the client agent MUST NOT delegate the domain request under this
+profile.
+
+The client agent MAY reuse a cached Skill Interface Document without calling
+`describe_skill` before every task when the cache entry is bound to the same
+target identity, agent version, skill identifier, skill version, and, when
+advertised, interface-document digest. A change to any of those values
+invalidates the entry and requires a new `describe_skill` exchange before the
+next delegation.
+
+A generic client agent can validate and route an unfamiliar vendor schema without
 understanding its domain semantics. A domain-aware orchestrator may install
 optional handlers keyed by stable schema URI to evaluate planning thresholds,
 incident records, configuration policy, or other domain behavior.
@@ -576,13 +607,13 @@ At onboarding time, a customer deployment MAY:
 If a customer registry is present, onboarding registers the schemas and
 creates a deployment-local mapping from stable schema URI and digest to
 registry subject, version, and identifier. That mapping is supplied to the
-agent or made available to the master.
+agent or made available to the client agent.
 
 # Schema Resolution
 
 ## Trusted cache
 
-A master SHOULD cache verified schema content by stable schema URI and digest.
+A client agent SHOULD cache verified schema content by stable schema URI and digest.
 A cached schema may be used while a registry or agent schema endpoint is
 temporarily unavailable.
 
@@ -593,8 +624,8 @@ compatibility checks, publisher metadata, and governance.  {{CONFLUENT}} is one
 non-normative example of this class of service. The standard does
 not require a particular registry implementation or REST API.
 
-An agent identifies a registry by a logical deployment name. The master maps
-that name to an administrator-configured trusted endpoint. A master MUST NOT
+An agent identifies a registry by a logical deployment name. The client agent maps
+that name to an administrator-configured trusted endpoint. A client agent MUST NOT
 retrieve schemas from an arbitrary registry URL supplied in an untrusted task
 payload.
 
@@ -603,19 +634,19 @@ payload.
 An agent MAY expose bundled schemas beneath a well-known path associated with
 the already discovered and authenticated agent endpoint. A Schema Reference
 using this mechanism contains a relative path and digest. It does not redirect
-the master to an arbitrary host.
+the client agent to an arbitrary host.
 
 ## Inline schemas
 
 `describe_skill` MAY return schemas inline. Inline resolution is suitable for
 small skill interfaces, local development, and deployments without a registry.
-The master still verifies the declared digest and applies publisher and size
+The client agent still verifies the declared digest and applies publisher and size
 policy.
 
 ## Offline bundle
 
 An air-gapped deployment MAY install an approved schema bundle alongside the
-master. The master resolves stable schema URIs from that bundle without
+client agent. The client agent resolves stable schema URIs from that bundle without
 network access.
 
 ## Resolution order
@@ -854,20 +885,20 @@ matters.
 
 ## Schema trust
 
-A syntactically valid schema is not necessarily trustworthy. A master applies
+A syntactically valid schema is not necessarily trustworthy. A client agent applies
 policy for trusted publishers, schema identities, digests, versions, dialects,
 and resolution mechanisms.
 
 ## Arbitrary retrieval
 
-Following arbitrary schema URLs can expose a master to server-side request
+Following arbitrary schema URLs can expose a client agent to server-side request
 forgery, credential leakage, malicious redirects, and availability attacks.
 Registry aliases and agent-relative paths are resolved only through trusted,
 administrator-configured endpoints.
 
 ## Resource limits
 
-A master enforces limits on schema size, nesting, reference depth, reference
+A client agent enforces limits on schema size, nesting, reference depth, reference
 cycles, compilation time, payload size, and cache consumption.
 
 ## Schema validation and authorization
@@ -892,11 +923,11 @@ and policy explicitly assign them that role.
 
 ## Interface integrity and substitution
 
-An agent and master MUST integrity-check the packaged Skill Interface Schema
-before using it. A local implementation MUST NOT modify the standardized
-schema while adding domain schemas.
+The remote agent and client agent MUST integrity-check the packaged Skill
+Interface Schema before using it. A local implementation MUST NOT modify the
+standardized schema while adding domain schemas.
 
-A master verifies that a discovered Skill Interface Document identifies the
+A client agent verifies that a discovered Skill Interface Document identifies the
 requested agent skill and advertised skill version. It validates the document
 against the selected Skill Interface Schema and verifies all resolved schema
 digests. A structurally valid document for a different skill or version MUST
@@ -905,7 +936,7 @@ NOT be accepted as a substitute.
 # Operational Considerations
 
 Schema discovery and resolution SHOULD NOT add a `describe_skill` or registry
-lookup to every task. A master caches validated Skill Interface Documents,
+lookup to every task. A client agent caches validated Skill Interface Documents,
 verified domain schemas, and compiled validators. A cache entry is bound to
 the agent identity, skill identifier, skill version, interface version, and,
 when advertised, interface-document digest. A changed advertised version or
@@ -985,18 +1016,17 @@ namespaces after the representation and protocol mapping stabilize.
 
 The following issues require further review:
 
-1. whether `describe_skill` is represented as an Agent-to-Agent skill, a
-   protocol extension, or both;
-2. the exact JSON Schema definitions for the common structures;
-3. version-negotiation behavior when multiple interface versions are
+1. the exact JSON Schema definitions for the common Skill Request, Skill
+   Outcome, and Supporting Record Envelopes;
+2. version-negotiation behavior when multiple interface versions are
    supported;
-4. whether outcome claims require an explicit claim identifier and per-claim
+3. whether outcome claims require an explicit claim identifier and per-claim
    supporting-record references;
-5. representation of confidential supporting records and access-controlled
+4. representation of confidential supporting records and access-controlled
    artifact references;
-6. schema revocation and emergency withdrawal;
-7. signature format for schema bundles and Skill Interface Documents; and
-8. mapping to existing schema registries without making a registry API
+5. schema revocation and emergency withdrawal;
+6. signature format for schema bundles and Skill Interface Documents; and
+7. mapping to existing schema registries without making a registry API
    normative.
 
 --- back
