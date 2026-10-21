@@ -23,7 +23,7 @@ author:
  -
     fullname: "Scott Huang"
     organization: "Cisco Systems, Inc."
-    email: "scotthuang21@gmail.com"
+    email: "scohuang@cisco.com"
 
 normative:
   JSON-SCHEMA:
