@@ -4,7 +4,7 @@
 
 Network Working Group                                           S. Huang
 Internet-Draft                                       Cisco Systems, Inc.
-Intended status: Informational                           21 October 2026
+Intended status: Standards Track                         21 October 2026
 Expires: 24 April 2027
 
 
