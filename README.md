@@ -6,10 +6,10 @@ This is the working area for the individual Internet-Draft, "Schema Interfaces
 and Discovery for Network Management Agents".
 
 * [Main Draft Source](https://github.com/agentic-network-management/agent-schema-interfaces/blob/main/draft-huang-agent-schema-interfaces.md?plain=1)
-* [Rendered Editor's Copy](https://agentic-network-management.github.io/agent-schema-interfaces/draft-huang-agent-schema-interfaces.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-huang-agent-schema-interfaces)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-huang-agent-schema-interfaces)
-* [Compare Editor's Copy to Individual Draft](https://agentic-network-management.github.io/agent-schema-interfaces/#go.draft-huang-agent-schema-interfaces.diff)
+
+The rendered Editor's Copy will be linked here after the GitHub Pages workflow
+has published the current `main` branch. Datatracker and comparison links will
+be added after revision `-00` has been submitted and published by the IETF.
 
 
 ## Contributing
