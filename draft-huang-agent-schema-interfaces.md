@@ -11,16 +11,16 @@ consensus: false
 v: 3
 area: "Operations and Management"
 keyword:
- - network management
- - network management agents
- - schema discovery
- - agent interoperability
+  - network management
+  - network management agents
+  - schema discovery
+  - agent interoperability
 venue:
   github: "agentic-network-management/agent-schema-interfaces"
   latest: "https://agentic-network-management.github.io/agent-schema-interfaces/draft-huang-agent-schema-interfaces.html"
 
 author:
- -
+  -
     fullname: "Scott Huang"
     organization: "Cisco Systems, Inc."
     email: "scohuang@cisco.com"
