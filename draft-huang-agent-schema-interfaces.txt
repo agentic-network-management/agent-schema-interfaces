@@ -103,11 +103,12 @@ Table of Contents
    5.  Design Principles
      5.1.  Separate transport from application semantics
      5.2.  Standardize reusable structures, not all domain semantics
-     5.3.  Treat schema resolution as deployment-specific
-     5.4.  Keep the registry optional
-     5.5.  Distinguish outcomes from supporting records
-     5.6.  Assemble and validate before discovery
-     5.7.  Participants and schema-discovery flow
+     5.3.  Distinguish envelope conformance from semantic conformance
+     5.4.  Treat schema resolution as deployment-specific
+     5.5.  Keep the registry optional
+     5.6.  Distinguish outcomes from supporting records
+     5.7.  Assemble and validate before discovery
+     5.8.  Participants and schema-discovery flow
    6.  Schema Reference
    7.  Skill Interface Schema and Documents
    8.  Skill Interface Discovery
@@ -355,20 +356,75 @@ Table of Contents
    with the common structure to produce a Skill Interface Document; it
    does not redefine the common structure.
 
-5.3.  Treat schema resolution as deployment-specific
+5.3.  Distinguish envelope conformance from semantic conformance
+
+   Validation of an envelope containing a text field establishes the
+   structure of the envelope and the type of that field.  It does not
+   establish the syntax or operational meaning of commands contained in
+   the text.  For example, a schema that declares a CLI configuration as
+   a JSON string can require that the string is present and non-empty,
+   but cannot by itself identify the affected resources, validate
+   command dependencies, or establish that the commands implement the
+   requested intent.
+
+   When a skill expects a receiving agent to inspect, validate,
+   transform, simulate, or apply configuration, an opaque text string
+   MUST NOT be the sole normative representation of the intended
+   configuration change.  The skill-specific schema MUST define at least
+   one of the following:
+
+   *  a normalized structured representation of the intended change; or
+
+   *  a precisely identified configuration language and version together
+      with a deterministic validation mechanism supported by the
+      receiving agent.
+
+   A rendered CLI representation MAY accompany a normalized
+   representation for deployment, presentation, comparison, or audit.
+   The skill-specific schema MUST identify which representation is
+   authoritative and which representations are derived.  A successful
+   validation of the normalized representation MUST NOT be interpreted
+   as validation of a rendered representation unless the implementation
+   also verifies their correspondence.
+
+   Opaque text remains appropriate when a recipient only displays,
+   stores, or forwards it without interpreting its operational meaning.
+   In that case, the skill-specific schema MUST identify the media type
+   and syntax or platform profile when known, and the Skill Interface
+   MUST NOT imply that structural schema validation establishes the
+   safety, correctness, or intended effect of the text.
+
+   For example, a configuration outcome can carry a normalized
+   representation alongside derived CLI:
+
+   json { "device": "A", "configuration_change": { "normalized": {
+   "resource_type": "explicit_path", "name": "VIA-C1", "enabled": true,
+   "segments": [ { "index": 1, "next_label": 16002 }, { "index": 2,
+   "next_label": 16003 }, { "index": 3, "next_label": 16040 } ] },
+   "rendered": { "media_type": "text/vnd.vendor.cli", "syntax": "vendor-
+   platform", "syntax_version": "1.0", "content": "ip explicit-path name
+   VIA-C1 enable\n ..." }, "authoritative_representation": "normalized"
+   } }
+
+   The applicable input, outcome, or supporting-record schema defines
+   the normalized structure and rendered representations for a
+   particular skill.  The describe_skill operation makes those
+   requirements discoverable before a client agent delegates work.
+
+5.4.  Treat schema resolution as deployment-specific
 
    The stable schema identity and digest remain the same across
    deployments.  A customer deployment may resolve that identity from a
    registry, offline bundle, agent endpoint, inline schema, or trusted
    local cache.
 
-5.4.  Keep the registry optional
+5.5.  Keep the registry optional
 
    The remote agent and client agent MUST be capable of interoperating
    without a schema registry when the necessary schemas are supplied
    through another supported resolution mechanism.
 
-5.5.  Distinguish outcomes from supporting records
+5.6.  Distinguish outcomes from supporting records
 
    The Skill Outcome states what the agent concluded or delivered.
    Supporting records explain why that outcome can be trusted,
@@ -376,7 +432,7 @@ Table of Contents
    supporting record; it is stored once and referenced by its artifact
    or supporting-record identifier from each applicable role.
 
-5.6.  Assemble and validate before discovery
+5.7.  Assemble and validate before discovery
 
    An agent implementation owns its domain-specific input, outcome, and
    supporting-record schemas.  Its protocol service combines those
@@ -392,7 +448,7 @@ Table of Contents
    construct or alter an interface while processing the discovery
    request.
 
-5.7.  Participants and schema-discovery flow
+5.8.  Participants and schema-discovery flow
 
    The following figure shows the relationship among a client agent,
    remote network management agents, and the schema-resolution

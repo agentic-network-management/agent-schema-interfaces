@@ -1234,19 +1234,22 @@ dependency for every task.<a href="#section-abstract-3" class="pilcrow">¶</a></
                 <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-standardize-reusable-struct" class="internal xref">Standardize reusable structures, not all domain semantics</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
-                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-treat-schema-resolution-as-" class="internal xref">Treat schema resolution as deployment-specific</a></p>
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-distinguish-envelope-confor" class="internal xref">Distinguish envelope conformance from semantic conformance</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
-                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-keep-the-registry-optional" class="internal xref">Keep the registry optional</a></p>
+                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-treat-schema-resolution-as-" class="internal xref">Treat schema resolution as deployment-specific</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5">
-                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-distinguish-outcomes-from-s" class="internal xref">Distinguish outcomes from supporting records</a></p>
+                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-keep-the-registry-optional" class="internal xref">Keep the registry optional</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6">
-                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="auto internal xref">5.6</a>.  <a href="#name-assemble-and-validate-befor" class="internal xref">Assemble and validate before discovery</a></p>
+                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="auto internal xref">5.6</a>.  <a href="#name-distinguish-outcomes-from-s" class="internal xref">Distinguish outcomes from supporting records</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.7">
-                <p id="section-toc.1-1.5.2.7.1"><a href="#section-5.7" class="auto internal xref">5.7</a>.  <a href="#name-participants-and-schema-dis" class="internal xref">Participants and schema-discovery flow</a></p>
+                <p id="section-toc.1-1.5.2.7.1"><a href="#section-5.7" class="auto internal xref">5.7</a>.  <a href="#name-assemble-and-validate-befor" class="internal xref">Assemble and validate before discovery</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.8">
+                <p id="section-toc.1-1.5.2.8.1"><a href="#section-5.8" class="auto internal xref">5.8</a>.  <a href="#name-participants-and-schema-dis" class="internal xref">Participants and schema-discovery flow</a></p>
 </li>
             </ul>
 </li>
@@ -1692,64 +1695,132 @@ implementation combines those domain schemas with the common structure to
 produce a Skill Interface Document; it does not redefine the common structure.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="treat-schema-resolution-as-deployment-specific">
+<div id="distinguish-envelope-conformance-from-semantic-conformance">
 <section id="section-5.3">
-        <h3 id="name-treat-schema-resolution-as-">
-<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-treat-schema-resolution-as-" class="section-name selfRef">Treat schema resolution as deployment-specific</a>
+        <h3 id="name-distinguish-envelope-confor">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-distinguish-envelope-confor" class="section-name selfRef">Distinguish envelope conformance from semantic conformance</a>
         </h3>
-<p id="section-5.3-1">The stable schema identity and digest remain the same across deployments. A
+<p id="section-5.3-1">Validation of an envelope containing a text field establishes the structure
+of the envelope and the type of that field. It does not establish the syntax
+or operational meaning of commands contained in the text. For example, a
+schema that declares a CLI configuration as a JSON string can require that the
+string is present and non-empty, but cannot by itself identify the affected
+resources, validate command dependencies, or establish that the commands
+implement the requested intent.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.3-2">When a skill expects a receiving agent to inspect, validate, transform,
+simulate, or apply configuration, an opaque text string <span class="bcp14">MUST NOT</span> be the sole
+normative representation of the intended configuration change. The
+skill-specific schema <span class="bcp14">MUST</span> define at least one of the following:<a href="#section-5.3-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.3-3.1">
+            <p id="section-5.3-3.1.1">a normalized structured representation of the intended change; or<a href="#section-5.3-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-3.2">
+            <p id="section-5.3-3.2.1">a precisely identified configuration language and version together with a
+deterministic validation mechanism supported by the receiving agent.<a href="#section-5.3-3.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.3-4">A rendered CLI representation <span class="bcp14">MAY</span> accompany a normalized representation for
+deployment, presentation, comparison, or audit. The skill-specific schema
+<span class="bcp14">MUST</span> identify which representation is authoritative and which representations
+are derived. A successful validation of the normalized representation <span class="bcp14">MUST NOT</span> be interpreted as validation of a rendered representation unless the
+implementation also verifies their correspondence.<a href="#section-5.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.3-5">Opaque text remains appropriate when a recipient only displays, stores, or
+forwards it without interpreting its operational meaning. In that case, the
+skill-specific schema <span class="bcp14">MUST</span> identify the media type and syntax or platform
+profile when known, and the Skill Interface <span class="bcp14">MUST NOT</span> imply that structural
+schema validation establishes the safety, correctness, or intended effect of
+the text.<a href="#section-5.3-5" class="pilcrow">¶</a></p>
+<p id="section-5.3-6">For example, a configuration outcome can carry a normalized representation
+alongside derived CLI:<a href="#section-5.3-6" class="pilcrow">¶</a></p>
+<p id="section-5.3-7"><code>json
+{
+  "device": "A",
+  "configuration_change": {
+    "normalized": {
+      "resource_type": "explicit_path",
+      "name": "VIA-C1",
+      "enabled": true,
+      "segments": [
+        { "index": 1, "next_label": 16002 },
+        { "index": 2, "next_label": 16003 },
+        { "index": 3, "next_label": 16040 }
+      ]
+    },
+    "rendered": {
+      "media_type": "text/vnd.vendor.cli",
+      "syntax": "vendor-platform",
+      "syntax_version": "1.0",
+      "content": "ip explicit-path name VIA-C1 enable\n ..."
+    },
+    "authoritative_representation": "normalized"
+  }
+}
+</code><a href="#section-5.3-7" class="pilcrow">¶</a></p>
+<p id="section-5.3-8">The applicable input, outcome, or supporting-record schema defines the
+normalized structure and rendered representations for a particular skill.
+The <code>describe_skill</code> operation makes those requirements discoverable before a
+client agent delegates work.<a href="#section-5.3-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="treat-schema-resolution-as-deployment-specific">
+<section id="section-5.4">
+        <h3 id="name-treat-schema-resolution-as-">
+<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-treat-schema-resolution-as-" class="section-name selfRef">Treat schema resolution as deployment-specific</a>
+        </h3>
+<p id="section-5.4-1">The stable schema identity and digest remain the same across deployments. A
 customer deployment may resolve that identity from a registry, offline
-bundle, agent endpoint, inline schema, or trusted local cache.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+bundle, agent endpoint, inline schema, or trusted local cache.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="keep-the-registry-optional">
-<section id="section-5.4">
+<section id="section-5.5">
         <h3 id="name-keep-the-registry-optional">
-<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-keep-the-registry-optional" class="section-name selfRef">Keep the registry optional</a>
+<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-keep-the-registry-optional" class="section-name selfRef">Keep the registry optional</a>
         </h3>
-<p id="section-5.4-1">The remote agent and client agent <span class="bcp14">MUST</span> be capable of interoperating without a
+<p id="section-5.5-1">The remote agent and client agent <span class="bcp14">MUST</span> be capable of interoperating without a
 schema registry when the necessary schemas are supplied through another
-supported resolution mechanism.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+supported resolution mechanism.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="distinguish-outcomes-from-supporting-records">
-<section id="section-5.5">
+<section id="section-5.6">
         <h3 id="name-distinguish-outcomes-from-s">
-<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-distinguish-outcomes-from-s" class="section-name selfRef">Distinguish outcomes from supporting records</a>
+<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-distinguish-outcomes-from-s" class="section-name selfRef">Distinguish outcomes from supporting records</a>
         </h3>
-<p id="section-5.5-1">The Skill Outcome states what the agent concluded or delivered. Supporting
+<p id="section-5.6-1">The Skill Outcome states what the agent concluded or delivered. Supporting
 records explain why that outcome can be trusted, reproduced, or audited. An
 artifact <span class="bcp14">MAY</span> be both a deliverable and a supporting record; it is stored once
 and referenced by its artifact or supporting-record identifier from each
-applicable role.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
+applicable role.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="assemble-and-validate-before-discovery">
-<section id="section-5.6">
+<section id="section-5.7">
         <h3 id="name-assemble-and-validate-befor">
-<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-assemble-and-validate-befor" class="section-name selfRef">Assemble and validate before discovery</a>
+<a href="#section-5.7" class="section-number selfRef">5.7. </a><a href="#name-assemble-and-validate-befor" class="section-name selfRef">Assemble and validate before discovery</a>
         </h3>
-<p id="section-5.6-1">An agent implementation owns its domain-specific input, outcome, and
+<p id="section-5.7-1">An agent implementation owns its domain-specific input, outcome, and
 supporting-record schemas. Its protocol service combines those schemas with a
 trusted copy of the standardized Skill Interface Schema and applicable
 interaction and authority declarations. The resulting Skill Interface
-Document <span class="bcp14">MUST</span> be validated before it is advertised or returned.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
-<p id="section-5.6-2">An implementation <span class="bcp14">SHOULD</span> perform this assembly during agent initialization or
+Document <span class="bcp14">MUST</span> be validated before it is advertised or returned.<a href="#section-5.7-1" class="pilcrow">¶</a></p>
+<p id="section-5.7-2">An implementation <span class="bcp14">SHOULD</span> perform this assembly during agent initialization or
 onboarding and retain an immutable validated document for each skill version.
 The <code>describe_skill</code> operation retrieves that document. It does not ask the
 agent's domain logic to construct or alter an interface while processing the
-discovery request.<a href="#section-5.6-2" class="pilcrow">¶</a></p>
+discovery request.<a href="#section-5.7-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="participants-and-schema-discovery-flow">
-<section id="section-5.7">
+<section id="section-5.8">
         <h3 id="name-participants-and-schema-dis">
-<a href="#section-5.7" class="section-number selfRef">5.7. </a><a href="#name-participants-and-schema-dis" class="section-name selfRef">Participants and schema-discovery flow</a>
+<a href="#section-5.8" class="section-number selfRef">5.8. </a><a href="#name-participants-and-schema-dis" class="section-name selfRef">Participants and schema-discovery flow</a>
         </h3>
-<p id="section-5.7-1">The following figure shows the relationship among a client agent, remote
+<p id="section-5.8-1">The following figure shows the relationship among a client agent, remote
 network management agents, and the schema-resolution facilities of a
-customer deployment.<a href="#section-5.7-1" class="pilcrow">¶</a></p>
-<p id="section-5.7-2">```text
+customer deployment.<a href="#section-5.8-1" class="pilcrow">¶</a></p>
+<p id="section-5.8-2">```text
                          +------------------------+
                          | Client Agent           |
                          +-----------+------------+
@@ -1776,17 +1847,17 @@ customer deployment.<a href="#section-5.7-1" class="pilcrow">¶</a></p>
        | Customer Schema  | | Trusted Cache | | Agent-hosted,     |
        | Registry         | | or Installed  | | Inline, or Offline|
        | (Optional)       | | Schema Bundle | | Schemas            |
-       +------------------+ +----------------+ +--------------------+<a href="#section-5.7-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.7-3">
+       +------------------+ +----------------+ +--------------------+<a href="#section-5.8-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.8-3">
 <pre>
    After interface resolution and validation:
 
    Client Agent
       &lt;==== Direct A2A tasks, skill outcomes, and supporting records ====&gt;
    Selected Network Management Agent ```
-</pre><a href="#section-5.7-3" class="pilcrow">¶</a>
+</pre><a href="#section-5.8-3" class="pilcrow">¶</a>
 </div>
-<p id="section-5.7-4">The client agent discovers a remote agent through its Agent Card and obtains
+<p id="section-5.8-4">The client agent discovers a remote agent through its Agent Card and obtains
 the selected skill's validated Skill Interface Document through
 <code>describe_skill</code>. The document contains stable Schema References rather than
 assuming one deployment-specific registry. The client agent validates the
@@ -1795,10 +1866,10 @@ verifies the domain schema references using an allowed mechanism, validates
 the skill request, and exchanges the task directly with the target through the
 Agent-to-Agent protocol. The registry does not carry the task or its result.
 When no registry is deployed, trusted cache, agent-hosted schemas, inline
-schemas, or an offline bundle provide equivalent resolution paths.<a href="#section-5.7-4" class="pilcrow">¶</a></p>
-<p id="section-5.7-5">Agents A and B represent arbitrary independently developed network management
+schemas, or an offline bundle provide equivalent resolution paths.<a href="#section-5.8-4" class="pilcrow">¶</a></p>
+<p id="section-5.8-5">Agents A and B represent arbitrary independently developed network management
 agents. The examples later in this document are illustrative use cases, not
-named participants in the common architecture.<a href="#section-5.7-5" class="pilcrow">¶</a></p>
+named participants in the common architecture.<a href="#section-5.8-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
