@@ -1,9 +1,9 @@
 <!-- regenerate: on (set to off if you edit this file) -->
 
-# Schema Interfaces and Discovery for Network Management Agents
+# Schema Interfaces for Network Management Agent Skills
 
 This is the working area for the individual Internet-Draft, "Schema Interfaces
-and Discovery for Network Management Agents".
+for Network Management Agent Skills".
 
 * [Main Draft Source](https://github.com/agentic-network-management/agent-schema-interfaces/blob/main/draft-huang-agent-schema-interfaces.md?plain=1)
 

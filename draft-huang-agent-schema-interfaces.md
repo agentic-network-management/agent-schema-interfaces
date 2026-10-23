@@ -1,5 +1,5 @@
 ---
-title: "Schema Interfaces and Discovery for Network Management Agents"
+title: "Schema Interfaces for Network Management Agent Skills"
 abbrev: "Agent Schema Interfaces"
 category: std
 
@@ -13,11 +13,11 @@ area: "Operations and Management"
 keyword:
   - network management
   - network management agents
-  - schema discovery
+  - schema interfaces
+  - interface retrieval
   - agent interoperability
 venue:
   github: "agentic-network-management/agent-schema-interfaces"
-  latest: "https://agentic-network-management.github.io/agent-schema-interfaces/draft-huang-agent-schema-interfaces.html"
 
 author:
   -
@@ -48,7 +48,7 @@ The protocol alone does not define the application schemas used by an analysis
 agent, incident-analysis agent, configuration agent, or other independently
 developed network management agent.
 
-This document proposes a common framework for publishing and discovering the
+This document proposes a common framework for publishing and retrieving the
 machine-readable schema interfaces of network management agent skills. It
 defines a reusable Schema Reference, a standardized Skill Interface Schema,
 and a `describe_skill` operation through which an agent returns a validated
@@ -69,17 +69,24 @@ dependency for every task.
 
 Agent-to-Agent task exchange requires agreement at two different layers:
 
-1. a protocol for discovery, task identity, lifecycle, streaming, polling,
-   cancellation, and result transport; and
+1. a protocol for agent discovery, task identity, lifecycle, streaming,
+   polling, cancellation, and result transport; and
 2. application schemas that define the meaning of the skill request, outcome,
    deliverables, and supporting records.
 
 The Agent2Agent (A2A) protocol {{A2A}} defines agent discovery, message transport,
 task lifecycle, streaming, polling, cancellation, and artifact delivery. It
 does not define the domain-specific input, outcome, or supporting-record
-schemas used by individual skills, nor a common interface for discovering and
+schemas used by individual skills, nor a common interface for retrieving and
 validating those schemas. This document addresses that application-schema gap
 while leaving A2A task and transport semantics unchanged.
+
+Agent discovery and the schema-interface procedure are distinct. Agent
+discovery determines which agent to contact and how to reach it. The
+schema-interface procedure defined in this document occurs after an agent has
+been identified and provides the machine-readable interface for invoking one
+of its advertised skills. This document does not define how agents are found,
+selected, ranked, or matched to user intent.
 
 A common protocol envelope can deliver a JSON object without making that
 object semantically interoperable. If the original input and an upstream
@@ -96,7 +103,7 @@ This document defines a framework in which:
 - vendors and domain owners define the schemas specific to their agents;
 - an agent assembles and validates a Skill Interface Document from the common
   structure and its domain schemas before advertising that document;
-- a client agent discovers those schemas before delegation;
+- a client agent retrieves those schemas before delegation;
 - schemas can be resolved without assuming a particular registry product; and
 - skill outcomes cite the supporting records used to derive, validate, or
   audit them.
@@ -143,10 +150,10 @@ simulation, or remediation.
 
 ## Client Agent
 
-An A2A Client that discovers a remote agent, obtains and validates its Skill
-Interface Documents, and delegates tasks on behalf of a user or another
-system. This term describes a protocol role and does not imply administrative
-control over the remote agent.
+An A2A Client that identifies and contacts a remote agent, obtains and
+validates its Skill Interface Documents, and delegates tasks on behalf of a
+user or another system. This term describes a protocol role and does not imply
+administrative control over the remote agent.
 
 ## Remote Agent
 
@@ -180,7 +187,7 @@ Agent-to-Agent protocol.
 The standardized, language-neutral schema that defines the permitted
 structure and interpretation of a Skill Interface Document. An agent uses a
 local or otherwise trusted copy of this schema to validate the documents it
-publishes. A client agent uses the same schema version to validate discovered
+publishes. A client agent uses the same schema version to validate retrieved
 documents.
 
 ## Skill Interface Document
@@ -294,7 +301,7 @@ alongside derived CLI:
 
 The applicable input, outcome, or supporting-record schema defines the
 normalized structure and rendered representations for a particular skill.
-The `describe_skill` operation makes those requirements discoverable before a
+The `describe_skill` operation makes those requirements available before a
 client agent delegates work.
 
 ## Treat schema resolution as deployment-specific
@@ -317,7 +324,7 @@ artifact MAY be both a deliverable and a supporting record; it is stored once
 and referenced by its artifact or supporting-record identifier from each
 applicable role.
 
-## Assemble and validate before discovery
+## Assemble and validate before advertisement
 
 An agent implementation owns its domain-specific input, outcome, and
 supporting-record schemas. Its protocol service combines those schemas with a
@@ -329,9 +336,9 @@ An implementation SHOULD perform this assembly during agent initialization or
 onboarding and retain an immutable validated document for each skill version.
 The `describe_skill` operation retrieves that document. It does not ask the
 agent's domain logic to construct or alter an interface while processing the
-discovery request.
+interface request.
 
-## Participants and schema-discovery flow
+## Participants and schema-interface flow
 
 The following figure shows the relationship among a client agent, remote
 network management agents, and the schema-resolution facilities of a
@@ -342,8 +349,9 @@ customer deployment.
                          | Client Agent           |
                          +-----------+------------+
                                      |
-                          Agent Card discovery and
-                              describe_skill
+                    Identify agent and retrieve Agent Card
+                                  |
+                            describe_skill
                                      |
                  +-------------------+-------------------+
                  |                                       |
@@ -373,8 +381,8 @@ customer deployment.
        Selected Network Management Agent
 ```
 
-The client agent discovers a remote agent through its Agent Card and obtains
-the selected skill's validated Skill Interface Document through
+After identifying a remote agent and retrieving its Agent Card, the client
+agent obtains the selected skill's validated Skill Interface Document through
 `describe_skill`. The document contains stable Schema References rather than
 assuming one deployment-specific registry. The client agent validates the
 document against its trusted copy of the Skill Interface Schema, resolves and
@@ -541,7 +549,7 @@ Successful schema validation does not authorize execution. The receiving
 agent and hosting platform MUST independently authenticate the caller and
 authorize the requested skill, resources, and operation.
 
-# Skill Interface Discovery
+# Skill Interface Advertisement and Retrieval
 
 ## Agent advertisement
 
@@ -553,11 +561,11 @@ structured output containing the corresponding Skill Interface Document.
 
 The advertisement identifies the supported profile version and advertised
 skill versions. It SHOULD also provide an interface-document digest when the
-Agent-to-Agent discovery format permits that binding.
+Agent Card representation permits that binding.
 
 A caller MUST NOT assume that every Agent-to-Agent implementation conforms to
 this framework. Absence of the `describe_skill` skill from the Agent Card means
-that the agent does not provide the schema-discovery procedure defined here.
+that the agent does not provide the schema-interface procedure defined here.
 
 ## `describe_skill` request
 
@@ -594,7 +602,7 @@ unvalidated opaque payload.
 
 A client agent performs the following sequence:
 
-1. retrieve the target Agent Card and discover its A2A endpoint, agent version,
+1. retrieve the target Agent Card and obtain its A2A endpoint, agent version,
    and advertised skill identifiers;
 2. verify that both `describe_skill` and the selected domain skill are
    advertised;
@@ -697,7 +705,7 @@ payload.
 ## Agent-hosted schemas
 
 An agent MAY expose bundled schemas beneath a well-known path associated with
-the already discovered and authenticated agent endpoint. A Schema Reference
+the already identified and authenticated agent endpoint. A Schema Reference
 using this mechanism contains a relative path and digest. It does not redirect
 the client agent to an arbitrary host.
 
@@ -991,7 +999,7 @@ The remote agent and client agent MUST integrity-check the packaged Skill
 Interface Schema before using it. A local implementation MUST NOT modify the
 standardized schema while adding domain schemas.
 
-A client agent verifies that a discovered Skill Interface Document identifies the
+A client agent verifies that a retrieved Skill Interface Document identifies the
 requested agent skill and advertised skill version. It validates the document
 against the selected Skill Interface Schema and verifies all resolved schema
 digests. A structurally valid document for a different skill or version MUST
@@ -999,12 +1007,12 @@ NOT be accepted as a substitute.
 
 # Operational Considerations
 
-Schema discovery and resolution SHOULD NOT add a `describe_skill` or registry
-lookup to every task. A client agent caches validated Skill Interface Documents,
-verified domain schemas, and compiled validators. A cache entry is bound to
-the agent identity, skill identifier, skill version, interface version, and,
-when advertised, interface-document digest. A changed advertised version or
-digest invalidates the corresponding entry.
+Interface retrieval and schema resolution SHOULD NOT add a `describe_skill`
+or registry lookup to every task. A client agent caches validated Skill
+Interface Documents, verified domain schemas, and compiled validators. A
+cache entry is bound to the agent identity, skill identifier, skill version,
+interface version, and, when advertised, interface-document digest. A changed
+advertised version or digest invalidates the corresponding entry.
 
 An implementation SHOULD expose diagnostics identifying:
 
@@ -1106,7 +1114,7 @@ the source repository as `schemas/skill-interface-v1.json`.
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://agentic-network-management.github.io/agent-schema-interfaces/schemas/skill-interface-v1.json",
   "title": "Network Management Agent Skill Interface",
-  "description": "Language-neutral discovery contract for one agent skill.",
+  "description": "Language-neutral schema interface for one agent skill.",
   "type": "object",
   "additionalProperties": false,
   "required": [

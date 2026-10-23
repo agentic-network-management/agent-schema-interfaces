@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://agentic-network-management.github.io/agent-schema-interfaces/schemas/skill-interface-v1.json",
   "title": "Network Management Agent Skill Interface",
-  "description": "Language-neutral discovery contract for one agent skill.",
+  "description": "Language-neutral schema interface for one agent skill.",
   "type": "object",
   "additionalProperties": false,
   "required": [

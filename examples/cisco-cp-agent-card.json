@@ -27,7 +27,7 @@
       "description": "Returns the machine-readable interface for one advertised skill.",
       "tags": [
         "cp",
-        "discovery",
+        "interface-retrieval",
         "schema-interface-v1"
       ],
       "inputModes": [

@@ -7,9 +7,9 @@ They do not define a required network-management skill or domain vocabulary.
 `skill-interface-example.json` uses inline schema resolution so that the full
 example can be inspected and validated without a schema registry.
 
-## Discovery sequence
+## Agent identification and interface retrieval sequence
 
-The Skill Interface is the result of the second of two distinct discovery
+The Skill Interface is the result of the second of two distinct protocol
 exchanges:
 
 1. The client agent retrieves the remote agent's Agent Card from
@@ -17,7 +17,7 @@ exchanges:
    protocol version, capabilities, agent version, and advertised skills. It
    advertises `describe_skill` when the agent conforms to this framework.
 2. The client agent sends a structured `describe_skill` request to the
-   discovered A2A endpoint, naming the skill it intends to invoke. The
+   advertised A2A endpoint, naming the skill it intends to invoke. The
    completed A2A task contains a skill description whose `interface` member is
    a Skill Interface document conforming to
    `schemas/skill-interface-v1.json`.
@@ -27,9 +27,9 @@ returned Skill Interface, verifies that its `skill_id` and version identify
 the selected skill, and may cache the verified document using the target
 identity, agent version, and skill identifier. It then validates the domain
 input against `input_schema` before invoking the selected skill. The client
-agent MUST NOT delegate the skill under this framework if discovery or
-validation fails. It does not need to call `describe_skill` before every task
-while the matching cached interface remains valid.
+agent MUST NOT delegate the skill under this framework if interface retrieval
+or validation fails. It does not need to call `describe_skill` before every
+task while the matching cached interface remains valid.
 
 `skill-interface-example.json` represents only the standardized `interface`
 member. It is not a complete Agent Card, A2A request, A2A task, or
@@ -37,10 +37,10 @@ member. It is not a complete Agent Card, A2A request, A2A task, or
 
 ## Cisco CP integration example
 
-The following sanitized fixtures show the two discovery exchanges implemented
-by the Cisco Crosswork Planning (CP) Agent. They are provided to help an
-integrator implement a client agent that discovers CP and invokes its
-`plan_network` skill:
+The following sanitized fixtures show the Agent Card and interface-retrieval
+exchanges implemented by the Cisco Crosswork Planning (CP) Agent. They are
+provided to help an integrator implement a client agent that connects to CP
+and invokes its `plan_network` skill:
 
 - `cisco-cp-agent-card.json` is the response to
   `GET /.well-known/agent-card.json`.

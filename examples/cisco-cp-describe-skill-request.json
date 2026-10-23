@@ -6,7 +6,7 @@
     "message": {
       "messageId": "message-describe-plan-network-1",
       "taskId": "task-describe-plan-network-1",
-      "contextId": "context-schema-discovery-1",
+      "contextId": "context-schema-interface-1",
       "role": "ROLE_USER",
       "parts": [
         {
