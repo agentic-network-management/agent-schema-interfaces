@@ -48,14 +48,14 @@ The protocol alone does not define the application schemas used by an analysis
 agent, incident-analysis agent, configuration agent, or other independently
 developed network management agent.
 
-This document proposes a common framework for publishing and retrieving the
-machine-readable schema interfaces of network management agent skills. It
-defines a reusable Schema Reference, a standardized Skill Interface Schema,
-and a `describe_skill` operation through which an agent returns a validated
-Skill Interface Document. The document combines the common interface
-structure with the input, outcome, and supporting-record schemas defined by
-the agent's vendor or domain owner. The framework also defines common Skill
-Request, Skill Outcome, and Supporting Record Envelopes.
+This document standardizes three components for the machine-readable schema
+interfaces of network management agent skills: a Schema Reference structure
+for identifying, verifying, and resolving schemas; a Skill Interface Schema
+and conforming per-skill Skill Interface Document; and a Skill Interface
+advertisement and retrieval procedure using `describe_skill`. The Skill
+Interface combines common Skill Request, Skill Outcome, and Supporting Record
+Envelopes with the input, outcome, and supporting-record schemas defined by
+the agent's vendor or domain owner.
 
 Schema identity is portable, while schema resolution is deployment-specific.
 Schemas may be returned inline, served by the agent, installed as an offline
@@ -95,7 +95,7 @@ infer their meaning. Such inference may be useful for human-oriented content,
 but it is not an adequate substitute for a declared interface when agents make
 operational decisions or generate network changes.
 
-This document defines a framework in which:
+The three standardized components define a framework in which:
 
 - common Skill Request, Skill Outcome, Supporting Record, and Skill Interface
   structures are standardized without standardizing every domain payload;
@@ -103,7 +103,8 @@ This document defines a framework in which:
 - vendors and domain owners define the schemas specific to their agents;
 - an agent assembles and validates a Skill Interface Document from the common
   structure and its domain schemas before advertising that document;
-- a client agent retrieves those schemas before delegation;
+- a client agent retrieves and validates the selected Skill Interface before
+  delegation;
 - schemas can be resolved without assuming a particular registry product; and
 - skill outcomes cite the supporting records used to derive, validate, or
   audit them.
@@ -118,14 +119,19 @@ into one universal schema.
 
 # Scope
 
-This document defines:
+This document standardizes:
 
-- a common schema-interface model;
+- a common Schema Reference structure for identifying, verifying, and
+  resolving schemas;
+- a Skill Interface Schema and a conforming per-skill Skill Interface
+  Document; and
+- a Skill Interface advertisement and retrieval procedure using
+  `describe_skill`.
+
+In support of those three components, this document also defines:
+
 - the relationship among skill requests, skill outcomes, deliverables, and
   supporting records;
-- a reusable Schema Reference;
-- a standardized Skill Interface Schema and a conforming Skill Interface
-  Document returned by `describe_skill`;
 - schema identity, integrity, versioning, and resolution behavior;
 - the relationship between these interfaces and Agent-to-Agent task state; and
 - requirements for validation, caching, trust, and failure handling.
@@ -139,6 +145,35 @@ This document does not define:
 - agent hosting, process lifecycle, or platform onboarding;
 - authorization merely by successful schema validation; or
 - the semantics of vendor-specific analysis, incident, or configuration data.
+
+# Standardized Components
+
+## Schema Reference Structure
+
+The Schema Reference is a common structure for identifying a schema by stable
+URI and version, declaring its schema dialect, verifying its content by
+digest, and providing deployment-specific resolution information. The same
+structure is used for request, input, outcome, and supporting-record schemas.
+The structure is standardized so that a client can identify, retrieve, and
+verify every schema in a Skill Interface without agent-specific or
+registry-specific interpretation. The referenced domain schemas and the
+deployment's choice of resolution mechanism are not standardized by the
+Schema Reference structure.
+
+## Skill Interface
+
+The Skill Interface Schema defines the common structure of a Skill Interface
+Document. A conforming document describes one version of one skill and binds
+the common envelope schemas to the domain-specific input, outcome, and
+supporting-record schemas used by that skill.
+
+## Skill Interface Advertisement and Retrieval
+
+An agent advertises `describe_skill` in its Agent Card. A client invokes
+`describe_skill` to retrieve the validated Skill Interface Document for a
+selected advertised skill. The operation retrieves the interface document;
+schema content identified by its Schema References is then obtained through
+the applicable schema-resolution mechanism.
 
 # Terminology
 
@@ -398,9 +433,9 @@ named participants in the common architecture.
 
 # Schema Reference
 
-All schema roles use one generic Schema Reference. Skill-request,
-skill-outcome, and supporting-record schemas do not require different registry
-or resolution mechanisms.
+This document standardizes one Schema Reference structure for all schema
+roles. Skill-request, skill-outcome, and supporting-record schemas do not
+require different reference structures, registries, or resolution mechanisms.
 
 A Schema Reference contains:
 
@@ -550,6 +585,10 @@ agent and hosting platform MUST independently authenticate the caller and
 authorize the requested skill, resources, and operation.
 
 # Skill Interface Advertisement and Retrieval
+
+This section defines the standardized procedure for advertising
+`describe_skill` and retrieving a Skill Interface Document for a selected
+skill.
 
 ## Agent advertisement
 
