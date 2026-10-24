@@ -34,28 +34,3 @@ task while the matching cached interface remains valid.
 `skill-interface-example.json` represents only the standardized `interface`
 member. It is not a complete Agent Card, A2A request, A2A task, or
 `describe_skill` response envelope.
-
-## Cisco CP integration example
-
-The following sanitized fixtures show the Agent Card and interface-retrieval
-exchanges implemented by the Cisco Crosswork Planning (CP) Agent. They are
-provided to help an integrator implement a client agent that connects to CP
-and invokes its `plan_network` skill:
-
-- `cisco-cp-agent-card.json` is the response to
-  `GET /.well-known/agent-card.json`.
-- `cisco-cp-describe-skill-request.json` is the JSON-RPC request sent to the
-  CP A2A endpoint to describe `plan_network`.
-- `cisco-cp-describe-skill-response.json` is the completed A2A task returned
-  by CP. The standardized Skill Interface is located at
-  `result.task.artifacts[0].parts[0].data.result.interface`.
-
-The fixtures were produced from the CP implementation and then normalized to
-use stable example identifiers, timestamps, and the reserved hostname
-`cp-agent.example.com`. These values are illustrative; an integration MUST
-use the endpoint advertised by the deployed agent and MUST treat task,
-context, message, and artifact identifiers as runtime values.
-
-The CP fixtures illustrate one vendor implementation and are not normative.
-The common requirements are defined by the Internet-Draft and
-`schemas/skill-interface-v1.json`.
