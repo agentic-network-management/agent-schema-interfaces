@@ -674,6 +674,33 @@ understanding its domain semantics. A domain-aware orchestrator may install
 optional handlers keyed by stable schema URI to evaluate operational thresholds,
 incident records, configuration policy, or other domain behavior.
 
+## Composition of consecutive skills
+
+When the outcome of one skill becomes the input to another skill, the component
+initiating the downstream delegation is the client agent for that interaction.
+That component may be a centralized orchestrator or the upstream agent itself
+communicating directly with the downstream agent. The same composition rules
+apply in either topology.
+
+An orchestrator or delegating agent is not required to infer semantic
+compatibility between arbitrary schemas. Direct composition SHOULD require the
+upstream outcome Schema Reference and the downstream input Schema Reference to
+have the same `schema_uri`, `version`, `dialect`, and `digest`. The delegating
+component MUST validate the transferred instance against the downstream input
+schema before delegation, and the receiving agent MUST validate the received
+instance before processing it.
+
+If those Schema Reference fields do not match, composition requires an
+explicitly identified and trusted transformation. The transformed instance
+MUST validate against the downstream input schema. In the absence of either an
+exact match or such a transformation, the delegating component SHOULD reject
+the composition rather than infer a mapping from opaque JSON or text.
+
+Matching Schema References and successful instance validation establish
+structural compatibility, not operational correctness. The receiving agent
+remains responsible for domain-semantic validation, authorization, policy
+evaluation, and operational safety before acting on the input.
+
 # Schema Publication and Packaging
 
 ## Vendor release artifacts
