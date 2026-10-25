@@ -2105,9 +2105,9 @@ skill in its Agent Card. The Agent Card also advertises the domain skills that
 can be selected in a <code>describe_skill</code> request. The <code>describe_skill</code> skill <span class="bcp14">MUST</span>
 accept structured input identifying the selected <code>skill_id</code> and <span class="bcp14">MUST</span> produce
 structured output containing the corresponding Skill Interface Document.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.1-2">The advertisement identifies the supported profile version and advertised
-skill versions. It <span class="bcp14">SHOULD</span> also provide an interface-document digest when the
-Agent Card representation permits that binding.<a href="#section-9.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.1-2">The advertisement identifies the supported Skill Interface version and
+advertised skill versions. It <span class="bcp14">SHOULD</span> also provide an interface-document digest
+when the Agent Card representation permits that binding.<a href="#section-9.1-2" class="pilcrow">¶</a></p>
 <p id="section-9.1-3">A caller <span class="bcp14">MUST NOT</span> assume that every Agent-to-Agent implementation conforms to
 this framework. Absence of the <code>describe_skill</code> skill from the Agent Card means
 that the agent does not provide the schema-interface procedure defined here.<a href="#section-9.1-3" class="pilcrow">¶</a></p>
@@ -2194,8 +2194,8 @@ copy of the selected Skill Interface Schema;<a href="#section-9.4-2.4.1" class="
 possess a successfully validated Skill Interface Document obtained from that
 target's <code>describe_skill</code> skill. If <code>describe_skill</code> is absent, fails, returns
 a document for a different skill or version, or returns a document that cannot
-be validated, the client agent <span class="bcp14">MUST NOT</span> delegate the domain request under this
-profile.<a href="#section-9.4-3" class="pilcrow">¶</a></p>
+be validated, the client agent <span class="bcp14">MUST NOT</span> delegate the domain request using the
+procedure defined in this document.<a href="#section-9.4-3" class="pilcrow">¶</a></p>
 <p id="section-9.4-4">The client agent <span class="bcp14">MAY</span> reuse a cached Skill Interface Document without calling
 <code>describe_skill</code> before every task when the cache entry is bound to the same
 target identity, agent version, skill identifier, skill version, and, when
@@ -2900,7 +2900,7 @@ both <code>deliverable_refs</code> and <code>supporting_record_refs</code> when 
 <a href="#section-18" class="section-number selfRef">18. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
 <p id="section-18-1">This early version does not request any IANA actions. A later version may
-request identifiers for the schema-interface profile, media types, or URN
+request identifiers for Skill Interface versions, media types, or URN
 namespaces after the representation and protocol mapping stabilize.<a href="#section-18-1" class="pilcrow">¶</a></p>
 </section>
 </div>

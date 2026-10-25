@@ -645,8 +645,8 @@ Table of Contents
    selected skill_id and MUST produce structured output containing the
    corresponding Skill Interface Document.
 
-   The advertisement identifies the supported profile version and
-   advertised skill versions.  It SHOULD also provide an interface-
+   The advertisement identifies the supported Skill Interface version
+   and advertised skill versions.  It SHOULD also provide an interface-
    document digest when the Agent Card representation permits that
    binding.
 
@@ -715,7 +715,8 @@ Table of Contents
    obtained from that target's describe_skill skill.  If describe_skill
    is absent, fails, returns a document for a different skill or
    version, or returns a document that cannot be validated, the client
-   agent MUST NOT delegate the domain request under this profile.
+   agent MUST NOT delegate the domain request using the procedure
+   defined in this document.
 
    The client agent MAY reuse a cached Skill Interface Document without
    calling describe_skill before every task when the cache entry is
@@ -1215,8 +1216,8 @@ Table of Contents
 18.  IANA Considerations
 
    This early version does not request any IANA actions.  A later
-   version may request identifiers for the schema-interface profile,
-   media types, or URN namespaces after the representation and protocol
+   version may request identifiers for Skill Interface versions, media
+   types, or URN namespaces after the representation and protocol
    mapping stabilize.
 
 19.  Open Issues
