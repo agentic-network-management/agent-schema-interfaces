@@ -292,12 +292,10 @@ skill-specific schema MUST define at least one of the following:
 - a precisely identified configuration language and version together with a
   deterministic validation mechanism supported by the receiving agent.
 
-A rendered CLI representation MAY accompany a normalized representation for
-deployment, presentation, comparison, or audit. The skill-specific schema
-MUST identify which representation is authoritative and which representations
-are derived. A successful validation of the normalized representation MUST
-NOT be interpreted as validation of a rendered representation unless the
-implementation also verifies their correspondence.
+Device-specific rendering is a local implementation responsibility of the
+agent that requires it. It is not part of the common representation exchanged
+between agents, and communicating agents are not required to agree on a
+rendered syntax or platform-specific command language.
 
 Opaque text remains appropriate when a recipient only displays, stores, or
 forwards it without interpreting its operational meaning. In that case, the
@@ -306,38 +304,27 @@ profile when known, and the Skill Interface MUST NOT imply that structural
 schema validation establishes the safety, correctness, or intended effect of
 the text.
 
-For example, a configuration outcome can carry a normalized representation
-alongside derived CLI:
+For example, a configuration outcome can carry a normalized representation:
 
 ```json
 {
   "device": "A",
   "configuration_change": {
-    "normalized": {
-      "resource_type": "explicit_path",
-      "name": "VIA-C1",
-      "enabled": true,
-      "segments": [
-        { "index": 1, "next_label": 16002 },
-        { "index": 2, "next_label": 16003 },
-        { "index": 3, "next_label": 16040 }
-      ]
-    },
-    "rendered": {
-      "media_type": "text/vnd.vendor.cli",
-      "syntax": "vendor-platform",
-      "syntax_version": "1.0",
-      "content": "ip explicit-path name VIA-C1 enable\n ..."
-    },
-    "authoritative_representation": "normalized"
+    "resource_type": "explicit_path",
+    "name": "VIA-C1",
+    "enabled": true,
+    "segments": [
+      { "index": 1, "next_label": 16002 },
+      { "index": 2, "next_label": 16003 },
+      { "index": 3, "next_label": 16040 }
+    ]
   }
 }
 ```
 
 The applicable input, outcome, or supporting-record schema defines the
-normalized structure and rendered representations for a particular skill.
-The `describe_skill` operation makes those requirements available before a
-client agent delegates work.
+normalized structure for a particular skill. The `describe_skill` operation
+makes those requirements available before a client agent delegates work.
 
 ## Treat schema resolution as deployment-specific
 
