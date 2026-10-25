@@ -140,15 +140,11 @@ Table of Contents
      13.6.  Injection
      13.7.  Interface integrity and substitution
    14. Operational Considerations
-   15. Non-Normative Examples
-     15.1.  Analytical skill
-     15.2.  Diagnostic skill
-     15.3.  Artifact used as both deliverable and a supporting record
-   16. IANA Considerations
-   17. Open Issues
-   18. References
-     18.1.  Normative References
-     18.2.  Informative References
+   15. IANA Considerations
+   16. Open Issues
+   17. References
+     17.1.  Normative References
+     17.2.  Informative References
    Appendix A.  Skill Interface JSON Schema
    Author's Address
 
@@ -1048,63 +1044,14 @@ Table of Contents
    unavailability and SHOULD define cache refresh and schema-revocation
    behavior.
 
-15.  Non-Normative Examples
-
-15.1.  Analytical skill
-
-   An analytical skill may declare:
-
-   ```text Input schema: analysis objective, input-data reference,
-   constraints, and requested scenario
-
-   Output schema: analysis conclusion, candidate action, and summarized
-   metrics
-
-   Supporting-record schemas: input-data snapshot, topology revision,
-   analysis parameters, raw engine report, policy-validation report, and
-   engine identity ```
-
-   For an analysis task, the output may state that no operational
-   thresholds were violated.  Supporting records include the exact
-   input-data digest, parameters, engine version, run identifier, and
-   raw result from which the output was produced.
-
-15.2.  Diagnostic skill
-
-   An incident-investigation skill may declare:
-
-   ```text Input schema: incident identifier and optional investigation
-   constraints
-
-   Output schema: root-cause event, summary, reason, and provisional
-   status
-
-   Supporting-record schemas: incident events, entity resolutions,
-   topology version, and validated causal edges or paths ```
-
-   The output may state that a hardware-fault event initiated downstream
-   interface and link failures.  Supporting records include the
-   authoritative stored events, their resolved entities, and the
-   validated path through the incident graph.  An inferred model
-   proposal is distinguished from records validated against
-   authoritative data.
-
-15.3.  Artifact used as both deliverable and a supporting record
-
-   A simulation report may be the requested skill deliverable and also
-   support a higher-level claim that a proposed change is safe.  The
-   report is published once with a stable identifier.  A skill-specific
-   output schema MAY reference that identifier, and the same artifact
-   MAY also be published as a supporting record when both roles apply.
-
-16.  IANA Considerations
+15.  IANA Considerations
 
    This early version does not request any IANA actions.  A later
    version may request identifiers for Skill Interface versions, media
    types, or URN namespaces after the representation and protocol
    mapping stabilize.
 
-17.  Open Issues
+16.  Open Issues
 
    The following issues require further review:
 
@@ -1122,9 +1069,9 @@ Table of Contents
    5.  mapping to existing schema registries without making a registry
        API normative.
 
-18.  References
+17.  References
 
-18.1.  Normative References
+17.1.  Normative References
 
    [A2A]      "Agent2Agent Protocol Specification, Version 1.0.1", n.d.,
               <https://a2a-protocol.org/v1.0.1/specification/>.
@@ -1143,7 +1090,7 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-18.2.  Informative References
+17.2.  Informative References
 
    [CONFLUENT]
               "Confluent Schema Registry Documentation", n.d.,
