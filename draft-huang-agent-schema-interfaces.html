@@ -1946,18 +1946,26 @@ require different reference structures, registries, or resolution mechanisms.<a 
   "dialect": "https://json-schema.org/draft/2020-12/schema",
   "digest": "sha256:abc123...",
   "resolution": {
-    "type": "registry",
-    "registry": "customer-agent-schema-registry",
-    "id": 117,
-    "subject": "example.network-management.skill-input",
-    "registry_version": 3
+    "type": "inline",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "objective": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "objective"
+      ],
+      "additionalProperties": false
+    }
   }
 }
 </code><a href="#section-7-4" class="pilcrow">¶</a></p>
-<p id="section-7-5">Registry-local numeric identifiers <span class="bcp14">MUST NOT</span> be treated as globally portable
-schema identities. Two registries may assign the same numeric identifier to
-different schema content. A registry reference therefore includes the stable
-schema URI and digest.<a href="#section-7-5" class="pilcrow">¶</a></p>
+<p id="section-7-5">When registry resolution is used, registry-local numeric identifiers <span class="bcp14">MUST NOT</span>
+be treated as globally portable schema identities. Two registries may assign
+the same numeric identifier to different schema content. A registry reference
+therefore includes the stable schema URI and digest.<a href="#section-7-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="skill-interface-schema-and-documents">
