@@ -927,59 +927,6 @@ An implementation SHOULD expose diagnostics identifying:
 Deployments SHOULD test operation during temporary registry unavailability
 and SHOULD define cache refresh and schema-revocation behavior.
 
-# Non-Normative Examples
-
-## Analytical skill
-
-An analytical skill may declare:
-
-```text
-Input schema:
-  analysis objective, input-data reference, constraints, and requested scenario
-
-Output schema:
-  analysis conclusion, candidate action, and summarized metrics
-
-Supporting-record schemas:
-  input-data snapshot, topology revision, analysis parameters, raw engine
-  report, policy-validation report, and engine identity
-```
-
-For an analysis task, the output may state that no operational thresholds
-were violated. Supporting records include the exact input-data digest,
-parameters, engine version, run identifier, and raw result from which the
-output was produced.
-
-## Diagnostic skill
-
-An incident-investigation skill may declare:
-
-```text
-Input schema:
-  incident identifier and optional investigation constraints
-
-Output schema:
-  root-cause event, summary, reason, and provisional status
-
-Supporting-record schemas:
-  incident events, entity resolutions, topology version, and validated causal
-  edges or paths
-```
-
-The output may state that a hardware-fault event initiated downstream
-interface and link failures. Supporting records include the authoritative
-stored events, their resolved entities, and the validated path through the
-incident graph. An inferred model proposal is distinguished from records
-validated against authoritative data.
-
-## Artifact used as both deliverable and a supporting record
-
-A simulation report may be the requested skill deliverable and also support a
-higher-level claim that a proposed change is safe. The report is published
-once with a stable identifier. A skill-specific output schema MAY reference
-that identifier, and the same artifact MAY also be published as a supporting
-record when both roles apply.
-
 # IANA Considerations {#iana}
 
 This early version does not request any IANA actions. A later version may
