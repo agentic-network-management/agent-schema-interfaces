@@ -521,7 +521,8 @@ A supporting record is a domain-specific observation or artifact used to
 derive, validate, reproduce, or audit a skill output. Each entry in
 `supporting_record_schemas` associates a `kind` with the Schema Reference for
 the complete record. A produced record MUST validate against the schema for
-its identified kind.
+its identified kind. A protocol progress update is not a supporting record
+unless it is published in that form and passes this validation.
 
 This framework does not define an additional common record envelope. The
 domain schema defines any required record identifier, producer, source,
@@ -851,31 +852,6 @@ JSON Schema checker accepts the change. Examples include:
 The Skill Interface Document MUST identify the exact schema versions currently
 used by the skill. A caller MUST NOT substitute a registry's mutable `latest`
 version after accepting a document.
-
-# Agent-to-Agent Mapping
-
-The Agent-to-Agent protocol remains authoritative for:
-
-- protocol task and context identifiers;
-- submitted, working, completed, failed, and canceled states;
-- synchronous task completion;
-- streaming task updates;
-- task retrieval and polling; and
-- cancellation delivery.
-
-The Agent-to-Agent binding identifies the skill input and output carried by
-protocol messages or artifacts. The domain-specific input and output are
-validated against the `input_schema` and `output_schema` in the selected Skill
-Interface.
-
-Task progress is not automatically a supporting record. A progress update
-becomes one only when it is published as a record that validates against an
-applicable `supporting_record_schemas` entry.
-
-Receiving a cancellation request does not prove that downstream network work
-has stopped. The final skill output and supporting records must describe the
-effective state of relevant downstream operations when that distinction
-matters.
 
 # Security Considerations {#security}
 
