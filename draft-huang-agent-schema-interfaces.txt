@@ -99,17 +99,21 @@ Table of Contents
      5.7.  Skill
      5.8.  Skill Interface Schema
      5.9.  Skill Interface Document
-     5.10. Supporting Record Envelope
+     5.10. Supporting Record
    6.  Design Principles
      6.1.  Separate transport from application semantics
      6.2.  Standardize reusable structures, not all domain semantics
-     6.3.  Distinguish envelope conformance from semantic conformance
+     6.3.  Distinguish structural conformance from semantic
+           conformance
      6.4.  Treat schema resolution as deployment-specific
      6.5.  Keep the registry optional
      6.6.  Distinguish outputs from supporting records
      6.7.  Assemble and validate before advertisement
    7.  Schema Reference
    8.  Skill Interface Schema and Documents
+     8.1.  Skill input
+     8.2.  Skill output
+     8.3.  Supporting-record schemas
    9.  Skill Interface Advertisement and Retrieval
      9.1.  Agent advertisement
      9.2.  describe_skill request
@@ -127,30 +131,25 @@ Table of Contents
      11.5.  Offline bundle
      11.6.  Resolution policy
    12. Schema Evolution and Compatibility
-   13. Skill Inputs, Outputs, and Supporting Records
-     13.1.  Skill Input
-     13.2.  Skill Output
-     13.3.  Supporting Record Envelope
-     13.4.  Output and supporting-record relationship
-   14. Agent-to-Agent Mapping
-   15. Security Considerations
-     15.1.  Schema trust
-     15.2.  Arbitrary retrieval
-     15.3.  Resource limits
-     15.4.  Schema validation and authorization
-     15.5.  Supporting-record integrity and provenance
-     15.6.  Injection
-     15.7.  Interface integrity and substitution
-   16. Operational Considerations
-   17. Non-Normative Examples
-     17.1.  Analytical skill
-     17.2.  Diagnostic skill
-     17.3.  Artifact used as both deliverable and a supporting record
-   18. IANA Considerations
-   19. Open Issues
-   20. References
-     20.1.  Normative References
-     20.2.  Informative References
+   13. Agent-to-Agent Mapping
+   14. Security Considerations
+     14.1.  Schema trust
+     14.2.  Arbitrary retrieval
+     14.3.  Resource limits
+     14.4.  Schema validation and authorization
+     14.5.  Supporting-record integrity and provenance
+     14.6.  Injection
+     14.7.  Interface integrity and substitution
+   15. Operational Considerations
+   16. Non-Normative Examples
+     16.1.  Analytical skill
+     16.2.  Diagnostic skill
+     16.3.  Artifact used as both deliverable and a supporting record
+   17. IANA Considerations
+   18. Open Issues
+   19. References
+     19.1.  Normative References
+     19.2.  Informative References
    Appendix A.  Skill Interface JSON Schema
    Author's Address
 
@@ -191,7 +190,7 @@ Table of Contents
 
    The three standardized components define a framework in which:
 
-   *  common Supporting Record and Skill Interface structures are
+   *  common Schema Reference and Skill Interface structures are
       standardized without standardizing every domain payload;
 
    *  each skill declares versioned input, output, and supporting-record
@@ -366,10 +365,12 @@ Table of Contents
    Schema.  It contains domain-specific Schema References supplied by
    the agent without modifying the standardized Skill Interface Schema.
 
-5.10.  Supporting Record Envelope
+5.10.  Supporting Record
 
-   A provenance-bearing observation or artifact used to derive,
-   validate, or audit a skill output.
+   A domain-specific observation or artifact used to derive, validate,
+   reproduce, or audit a skill output.  A supporting record is validated
+   against the applicable schema identified by the Skill Interface
+   Document.
 
 6.  Design Principles
 
@@ -387,14 +388,14 @@ Table of Contents
 
 6.2.  Standardize reusable structures, not all domain semantics
 
-   The common standard defines the Supporting Record Envelope, Skill
-   Interface Schema, and Schema Reference.  A vendor or domain owner
-   defines the input, output, and supporting-record payload schemas used
-   by a particular skill.  A conforming implementation combines those
-   domain schemas with the common structure to produce a Skill Interface
-   Document; it does not redefine the common structure.
+   The common standard defines the Skill Interface Schema and Schema
+   Reference.  A vendor or domain owner defines the input, output, and
+   supporting-record schemas used by a particular skill.  A conforming
+   implementation combines those domain schemas with the common
+   structure to produce a Skill Interface Document; it does not redefine
+   the common structure.
 
-6.3.  Distinguish envelope conformance from semantic conformance
+6.3.  Distinguish structural conformance from semantic conformance
 
    Matching Schema References establishes that communicating agents use
    the same schema; it does not establish that the schema exposes
@@ -462,7 +463,7 @@ Table of Contents
 7.  Schema Reference
 
    This document standardizes one Schema Reference structure for all
-   schema roles.  Skill-request, skill-output, and supporting-record
+   schema roles.  Skill-input, skill-output, and supporting-record
    schemas do not require different reference structures, registries, or
    resolution mechanisms.
 
@@ -514,10 +515,12 @@ Table of Contents
    "urn:example:network-management:example-skill-input:1.0", "version":
    "1.0", "dialect": "https://json-schema.org/draft/2020-12/schema",
    "digest":
-   "sha256:8d076361c4dcc79f0dbf1afa4dbe864e6318a88e4a8e6d9441c7cc99a5837aeb",
+   "sha256:04f6775d30ad5d0f6661a7741f2da3a8dd3918938219d0f815c6a9e6009cb606",
    "resolution": { "type": "inline", "schema": { "type": "object",
-   "properties": { "objective": { "type": "string" } }, "required": [
-   "objective" ] } } }, "output_schema": { "schema_uri":
+   "properties": { "objective": { "type": "string" }, "constraints": {
+   "type": "object", "description": "Skill-specific constraints defined
+   by the domain schema." } }, "required": [ "objective" ],
+   "additionalProperties": false } } }, "output_schema": { "schema_uri":
    "urn:example:network-management:example-skill-output:1.0", "version":
    "1.0", "dialect": "https://json-schema.org/draft/2020-12/schema",
    "digest":
@@ -549,6 +552,67 @@ Table of Contents
    receiving agent and hosting platform MUST independently authenticate
    the caller and authorize the requested skill, resources, and
    operation.
+
+8.1.  Skill input
+
+   The skill input is the domain-specific application data submitted to
+   a skill invocation.  The Agent-to-Agent binding identifies the
+   message part or data member that contains this input, and the input
+   MUST validate against the input_schema in the selected Skill
+   Interface Document.  This document does not define an additional
+   common request envelope around that data.  The Agent-to-Agent
+   protocol remains authoritative for protocol task identity, context,
+   lifecycle state, and transport.
+
+   Constraints that affect skill execution MUST be represented in and
+   validated by the skill's input_schema.  A receiving agent MUST
+   enforce a supplied constraint or reject the invocation with a
+   machine-readable error; it MUST NOT silently ignore a valid
+   constraint.  Constraints enforced solely by a delegating system need
+   not be transmitted.  The names, structures, and semantics of
+   transmitted constraints are defined by the domain-specific input
+   schema rather than by this framework.  Protocol lifecycle and
+   authorization controls remain the responsibility of the Agent-to-
+   Agent binding and deployment policy.
+
+8.2.  Skill output
+
+   The skill output is the domain-specific application data produced by
+   a skill invocation.  The Agent-to-Agent binding identifies the
+   message part or artifact data that contains this output, and the
+   output MUST validate against the output_schema in the selected Skill
+   Interface Document.  This document does not define an additional
+   common output envelope around that data.
+
+   Protocol task status indicates whether protocol execution completed;
+   it is not part of the skill output.  Completion of a protocol task
+   does not by itself establish that a requested downstream network
+   operation completed successfully.  The domain output schema defines
+   how the skill reports the result of that operation.
+
+8.3.  Supporting-record schemas
+
+   A supporting record is a domain-specific observation or artifact used
+   to derive, validate, reproduce, or audit a skill output.  Each entry
+   in supporting_record_schemas associates a kind with the Schema
+   Reference for the complete record.  A produced record MUST validate
+   against the schema for its identified kind.
+
+   This framework does not define an additional common record envelope.
+   The domain schema defines any required record identifier, producer,
+   source, observation time, production time, integrity, derivation,
+   classification, or payload fields.  Association with an Agent-to-
+   Agent task or context is carried by the protocol binding and need not
+   be duplicated in the record.  A deployment MAY attach additional
+   correlation metadata when application-level workflow correlation is
+   required.
+
+   The skill output is the answer, decision, or deliverable normally
+   consumed by the caller.  Supporting records contain the observations
+   and artifacts that support that output.  An artifact MAY be both
+   output and a supporting record; implementations SHOULD publish it
+   once and use a stable reference when the applicable domain schemas
+   permit that relationship.
 
 9.  Skill Interface Advertisement and Retrieval
 
@@ -898,90 +962,7 @@ Table of Contents
    currently used by the skill.  A caller MUST NOT substitute a
    registry's mutable latest version after accepting a document.
 
-13.  Skill Inputs, Outputs, and Supporting Records
-
-13.1.  Skill Input
-
-   The skill input is the domain-specific application data submitted to
-   a skill invocation.  It MUST validate against the input_schema in the
-   selected Skill Interface Document.  This document does not define an
-   additional common request envelope around that data.
-
-   The Agent-to-Agent binding identifies the message part or data member
-   that contains the skill input.  The Agent-to-Agent protocol remains
-   authoritative for protocol task identity, context, lifecycle state,
-   and transport.
-
-13.2.  Skill Output
-
-   The skill output is the domain-specific application data produced by
-   a skill invocation.  It MUST validate against the output_schema in
-   the selected Skill Interface Document.  This document does not define
-   an additional common output envelope around that data.
-
-   The Agent-to-Agent binding identifies the message part or artifact
-   data that contains the skill output.  Protocol task status indicates
-   whether protocol execution completed; it is not part of the skill
-   output.  Completion of a protocol task does not by itself establish
-   that a requested downstream network operation completed successfully.
-
-13.3.  Supporting Record Envelope
-
-   A Supporting Record Envelope associates a typed observation or
-   artifact with its producer, source, time, integrity information,
-   derivation, and classification.
-
-   json { "schema": { "schema_uri": "urn:example:agent:supporting-
-   record-envelope:1.0", "version": "1.0", "digest": "sha256:..." },
-   "record_id": "observation-record-1", "workflow_id": "workflow-123",
-   "step_id": "evaluate-objective", "attempt_id": "attempt-1", "kind":
-   "validated-observation", "classification": "authoritative",
-   "producer": { "agent": "example-agent", "component": "analysis-
-   component", "version": "1.0" }, "source": { "system": "network-
-   monitor", "resource": "network-resource-123" }, "observed_at":
-   "2026-08-11T12:00:01Z", "produced_at": "2026-10-19T18:00:00Z",
-   "derived_from": [ "source-record-1" ], "payload": { "resource_id":
-   "network-resource-123", "metric": "utilization", "value": 42, "unit":
-   "percent" } }
-
-   The kind value selects the corresponding entry in
-   supporting_record_schemas.  The payload value is validated against
-   that entry's schema; the record does not repeat its Schema Reference.
-
-   Supporting records SHOULD be append-only once published.  Corrections
-   SHOULD be expressed as new records that identify the record they
-   supersede rather than by silently replacing earlier content.
-
-13.4.  Output and supporting-record relationship
-
-   The skill output is the answer, decision, or deliverable normally
-   consumed by the caller.  Supporting records contain the observations
-   and artifacts that support that output.
-
-   For incident analysis:
-
-   ```text Skill output: Hardware fault event 1 is the root cause.
-
-   Supporting Records: Event 1 preceded event 2.  Both events resolve to
-   connected entities.  The stored incident graph contains the validated
-   causal edge. ```
-
-   For an analytical skill:
-
-   ```text Skill output: The analysis completed and found no threshold
-   violations.
-
-   Supporting Records: Input-data digest, topology revision, analysis
-   parameters, engine version, raw engine report, and validation result.
-   ```
-
-   Supporting records are not merely additional unstructured output.
-   They carry provenance, integrity, time, and derivation.  A skill-
-   specific output schema MAY define identifiers that associate an
-   output with its supporting records.  This document does not require a
-   common output-envelope reference field.
-
-14.  Agent-to-Agent Mapping
+13.  Agent-to-Agent Mapping
 
    The Agent-to-Agent protocol remains authoritative for:
 
@@ -1003,50 +984,51 @@ Table of Contents
    in the selected Skill Interface.
 
    Task progress is not automatically a supporting record.  A progress
-   update becomes one only when published as a Supporting Record
-   Envelope with the required provenance and integrity properties.
+   update becomes one only when it is published as a record that
+   validates against an applicable supporting_record_schemas entry.
 
    Receiving a cancellation request does not prove that downstream
    network work has stopped.  The final skill output and supporting
    records must describe the effective state of relevant downstream
    operations when that distinction matters.
 
-15.  Security Considerations
+14.  Security Considerations
 
-15.1.  Schema trust
+14.1.  Schema trust
 
    A syntactically valid schema is not necessarily trustworthy.  A
    client agent applies policy for trusted publishers, schema
    identities, digests, versions, dialects, and resolution mechanisms.
 
-15.2.  Arbitrary retrieval
+14.2.  Arbitrary retrieval
 
    Following arbitrary schema URLs can expose a client agent to server-
    side request forgery, credential leakage, malicious redirects, and
    availability attacks.  Registry aliases and agent-relative paths are
    resolved only through trusted, administrator-configured endpoints.
 
-15.3.  Resource limits
+14.3.  Resource limits
 
    A client agent enforces limits on schema size, nesting, reference
    depth, reference cycles, compilation time, payload size, and cache
    consumption.
 
-15.4.  Schema validation and authorization
+14.4.  Schema validation and authorization
 
    Schema validation establishes structural conformance, not caller
    authority, operational safety, truth, or permission to modify a
    network.  Authorization and policy checks occur at execution time.
 
-15.5.  Supporting-record integrity and provenance
+14.5.  Supporting-record integrity and provenance
 
    Supporting records can be stale, replayed, forged, selectively
-   omitted, or derived from untrusted inputs.  They include source,
-   producer, observation and production times, digest, derivation, and
-   classification.  Deployments define freshness and retention policy
-   appropriate to the operation.
+   omitted, or derived from untrusted inputs.  A supporting-record
+   schema SHOULD require the source, producer, relevant observation and
+   production times, integrity data, derivation, and classification
+   needed by its domain.  Deployments define freshness and retention
+   policy appropriate to the operation.
 
-15.6.  Injection
+14.6.  Injection
 
    Text, CLI configuration, tool output, model output, and supporting-
    record payloads are untrusted data.  An agent does not treat
@@ -1054,7 +1036,7 @@ Table of Contents
    instructions unless the applicable schema and policy explicitly
    assign them that role.
 
-15.7.  Interface integrity and substitution
+14.7.  Interface integrity and substitution
 
    The remote agent and client agent MUST integrity-check the packaged
    Skill Interface Schema before using it.  A local implementation MUST
@@ -1067,7 +1049,7 @@ Table of Contents
    document for a different skill or version MUST NOT be accepted as a
    substitute.
 
-16.  Operational Considerations
+15.  Operational Considerations
 
    Interface retrieval and schema resolution SHOULD NOT add a
    describe_skill or registry lookup to every task.  A client agent
@@ -1095,9 +1077,9 @@ Table of Contents
    unavailability and SHOULD define cache refresh and schema-revocation
    behavior.
 
-17.  Non-Normative Examples
+16.  Non-Normative Examples
 
-17.1.  Analytical skill
+16.1.  Analytical skill
 
    An analytical skill may declare:
 
@@ -1116,7 +1098,7 @@ Table of Contents
    input-data digest, parameters, engine version, run identifier, and
    raw result from which the output was produced.
 
-17.2.  Diagnostic skill
+16.2.  Diagnostic skill
 
    An incident-investigation skill may declare:
 
@@ -1136,7 +1118,7 @@ Table of Contents
    proposal is distinguished from records validated against
    authoritative data.
 
-17.3.  Artifact used as both deliverable and a supporting record
+16.3.  Artifact used as both deliverable and a supporting record
 
    A simulation report may be the requested skill deliverable and also
    support a higher-level claim that a proposed change is safe.  The
@@ -1144,37 +1126,34 @@ Table of Contents
    output schema MAY reference that identifier, and the same artifact
    MAY also be published as a supporting record when both roles apply.
 
-18.  IANA Considerations
+17.  IANA Considerations
 
    This early version does not request any IANA actions.  A later
    version may request identifiers for Skill Interface versions, media
    types, or URN namespaces after the representation and protocol
    mapping stabilize.
 
-19.  Open Issues
+18.  Open Issues
 
    The following issues require further review:
 
-   1.  the exact JSON Schema definition for the common Supporting Record
-       Envelope;
-
-   2.  version-negotiation behavior when multiple interface versions are
+   1.  version-negotiation behavior when multiple interface versions are
        supported;
 
-   3.  representation of confidential supporting records and access-
+   2.  representation of confidential supporting records and access-
        controlled artifact references;
 
-   4.  schema revocation and emergency withdrawal;
+   3.  schema revocation and emergency withdrawal;
 
-   5.  signature format for schema bundles and Skill Interface
+   4.  signature format for schema bundles and Skill Interface
        Documents; and
 
-   6.  mapping to existing schema registries without making a registry
+   5.  mapping to existing schema registries without making a registry
        API normative.
 
-20.  References
+19.  References
 
-20.1.  Normative References
+19.1.  Normative References
 
    [A2A]      "Agent2Agent Protocol Specification, Version 1.0.1", n.d.,
               <https://a2a-protocol.org/v1.0.1/specification/>.
@@ -1193,7 +1172,7 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-20.2.  Informative References
+19.2.  Informative References
 
    [CONFLUENT]
               "Confluent Schema Registry Documentation", n.d.,
