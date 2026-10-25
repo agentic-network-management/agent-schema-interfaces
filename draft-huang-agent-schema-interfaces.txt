@@ -27,7 +27,7 @@ Abstract
    Interface Document; and a Skill Interface advertisement and retrieval
    procedure using describe_skill.  The Skill Interface combines common
    Skill Request, Skill Outcome, and Supporting Record Envelopes with
-   the input, outcome, and supporting-record schemas defined by the
+   the input, output, and supporting-record schemas defined by the
    agent's vendor or domain owner.
 
    Schema identity is portable, while schema resolution is deployment-
@@ -166,14 +166,14 @@ Table of Contents
    1.  a protocol for agent discovery, task identity, lifecycle,
        streaming, polling, cancellation, and result transport; and
 
-   2.  application schemas that define the meaning of the skill request,
-       outcome, deliverables, and supporting records.
+   2.  application schemas that define the meaning of the skill input,
+       output, deliverables, and supporting records.
 
    The Agent2Agent (A2A) protocol [A2A] defines agent discovery, message
    transport, task lifecycle, streaming, polling, cancellation, and
    artifact delivery.  It does not define the domain-specific input,
-   outcome, or supporting-record schemas used by individual skills, nor
-   a common interface for retrieving and validating those schemas.  This
+   output, or supporting-record schemas used by individual skills, nor a
+   common interface for retrieving and validating those schemas.  This
    document addresses that application-schema gap while leaving A2A task
    and transport semantics unchanged.
 
@@ -199,8 +199,8 @@ Table of Contents
       Interface structures are standardized without standardizing every
       domain payload;
 
-   *  each skill declares versioned input, outcome, and supporting-
-      record schemas;
+   *  each skill declares versioned input, output, and supporting-record
+      schemas;
 
    *  vendors and domain owners define the schemas specific to their
       agents;
@@ -279,7 +279,7 @@ Table of Contents
    The Schema Reference is a common structure for identifying a schema
    by stable URI and version, declaring its schema dialect, verifying
    its content by digest, and providing deployment-specific resolution
-   information.  The same structure is used for request, input, outcome,
+   information.  The same structure is used for request, input, output,
    and supporting-record schemas.  The structure is standardized so that
    a client can identify, retrieve, and verify every schema in a Skill
    Interface without agent-specific or registry-specific interpretation.
@@ -301,7 +301,7 @@ Table of Contents
    The Skill Interface Schema defines the common structure of a Skill
    Interface Document.  A conforming document describes one version of
    one skill and binds the common envelope schemas to the domain-
-   specific input, outcome, and supporting-record schemas used by that
+   specific input, output, and supporting-record schemas used by that
    skill.
 
 4.3.  Skill Interface Advertisement and Retrieval
@@ -408,7 +408,7 @@ Table of Contents
    The common standard defines the Skill Request Envelope, Skill Outcome
    Envelope, Supporting Record Envelope, Skill Interface Schema, and
    Schema Reference.  A vendor or domain owner defines the input,
-   outcome, and supporting-record payload schemas used by a particular
+   output, and supporting-record payload schemas used by a particular
    skill.  A conforming implementation combines those domain schemas
    with the common structure to produce a Skill Interface Document; it
    does not redefine the common structure.
@@ -436,8 +436,8 @@ Table of Contents
    communicating agents are not required to agree on a rendered syntax
    or platform-specific command language.
 
-   The applicable input, outcome, or supporting-record schema defines
-   the normalized structure for a particular skill.  The describe_skill
+   The applicable input, output, or supporting-record schema defines the
+   normalized structure for a particular skill.  The describe_skill
    operation makes those requirements available before a client agent
    delegates work.
 
@@ -464,7 +464,7 @@ Table of Contents
 
 6.7.  Assemble and validate before advertisement
 
-   An agent implementation owns its domain-specific input, outcome, and
+   An agent implementation owns its domain-specific input, output, and
    supporting-record schemas.  Its protocol service combines those
    schemas with a trusted copy of the standardized Skill Interface
    Schema and applicable interaction and authority declarations.  The
@@ -495,7 +495,7 @@ Table of Contents
                |<-- Skill Interface Document -------|
                |       Schema References:           |
                |       - input schema               |
-               |       - outcome schema             |
+               |       - output schema              |
                |       - supporting records         |
                |       resolution.type = inline     |
                |       embedded schema content      |
@@ -535,7 +535,7 @@ Table of Contents
 7.  Schema Reference
 
    This document standardizes one Schema Reference structure for all
-   schema roles.  Skill-request, skill-outcome, and supporting-record
+   schema roles.  Skill-request, skill-output, and supporting-record
    schemas do not require different reference structures, registries, or
    resolution mechanisms.
 
@@ -568,11 +568,11 @@ Table of Contents
    The Skill Interface Schema standardizes the structure shown in this
    section.  A Skill Interface Document is a conforming instance for one
    skill version.  It binds common envelopes to the domain schemas used
-   by that skill and identifies the request, input, outcome, supporting-
+   by that skill and identifies the request, input, output, supporting-
    record, interaction, and authority characteristics.
 
    The agent or domain owner supplies the skill identifier, skill
-   version, and domain input, outcome, and supporting-record schemas.
+   version, and domain input, output, and supporting-record schemas.
    The agent protocol service supplies the common envelope reference and
    assembles the complete document.  Interaction declarations reflect
    the agent implementation.  Authority declarations may additionally
@@ -589,20 +589,19 @@ Table of Contents
    "https://json-schema.org/draft/2020-12/schema", "digest":
    "sha256:...", "resolution": { "type": "inline", "schema": { "type":
    "object", "properties": { "objective": { "type": "string" } },
-   "required": [ "objective" ] } } }, "outcome_schema": { "schema_uri":
-   "urn:example:network-management:example-skill-outcome:1.0",
-   "version": "1.0", "dialect": "https://json-schema.org/draft/2020-12/
-   schema", "digest": "sha256:...", "resolution": { "type": "inline",
-   "schema": { "type": "object", "properties": { "status": { "type":
-   "string" } }, "required": [ "status" ] } } },
-   "supporting_record_schemas": [ { "kind": "observation-record",
-   "schema_uri": "urn:example:network-management:observation-
-   record:1.0", "version": "1.0", "dialect": "https://json-schema.org/
-   draft/2020-12/schema", "digest": "sha256:...", "resolution": {
-   "type": "inline", "schema": { "type": "object" } } } ],
-   "interaction": { "supported_response_modes": [ "sync", "stream",
-   "poll" ], "cancellable": true }, "authority": { "default_mode":
-   "read-only", "approval_may_be_required": true } }
+   "required": [ "objective" ] } } }, "output_schema": { "schema_uri":
+   "urn:example:network-management:example-skill-output:1.0", "version":
+   "1.0", "dialect": "https://json-schema.org/draft/2020-12/schema",
+   "digest": "sha256:...", "resolution": { "type": "inline", "schema": {
+   "type": "object", "properties": { "status": { "type": "string" } },
+   "required": [ "status" ] } } }, "supporting_record_schemas": [ {
+   "kind": "observation-record", "schema_uri": "urn:example:network-
+   management:observation-record:1.0", "version": "1.0", "dialect":
+   "https://json-schema.org/draft/2020-12/schema", "digest":
+   "sha256:...", "resolution": { "type": "inline", "schema": { "type":
+   "object" } } } ], "interaction": { "supported_response_modes": [
+   "sync", "stream", "poll" ], "cancellable": true }, "authority": {
+   "default_mode": "read-only", "approval_may_be_required": true } }
 
    The inline schemas above are domain content populated into the
    standardized document.  They are not additions to or replacements for
@@ -665,8 +664,8 @@ Table of Contents
    for the selected skill version.  The describe_skill operation MUST
    NOT redefine the standard structure or invoke domain logic to
    construct or modify the document while processing the request.  The
-   returned input, outcome, and supporting-record schemas remain
-   specific to the selected agent and skill.
+   returned input, output, and supporting-record schemas remain specific
+   to the selected agent and skill.
 
    The selected document MUST correspond to the skill version advertised
    by the agent.  If the agent cannot provide a conforming compatible
@@ -737,7 +736,7 @@ Table of Contents
     Upstream Agent                 Delegating Component
           |                                  |
           |-- Outcome payload -------------->|
-          |   outcome_schema reference       |
+          |   output_schema reference        |
           |                                  |
           |                         Retrieve downstream
           |                         Skill Interface
@@ -827,7 +826,7 @@ Table of Contents
 
    1.  load and integrity-check its packaged Skill Interface Schema;
 
-   2.  load its domain input, outcome, and supporting-record schemas;
+   2.  load its domain input, output, and supporting-record schemas;
 
    3.  assemble a Skill Interface Document for each advertised skill
        version;
@@ -1164,7 +1163,7 @@ Table of Contents
    ```text Input schema: analysis objective, input-data reference,
    constraints, and requested scenario
 
-   Outcome schema: analysis conclusion, candidate action, and summarized
+   Output schema: analysis conclusion, candidate action, and summarized
    metrics
 
    Supporting-record schemas: input-data snapshot, topology revision,
@@ -1183,7 +1182,7 @@ Table of Contents
    ```text Input schema: incident identifier and optional investigation
    constraints
 
-   Outcome schema: root-cause event, summary, reason, and provisional
+   Output schema: root-cause event, summary, reason, and provisional
    status
 
    Supporting-record schemas: incident events, entity resolutions,
@@ -1283,7 +1282,7 @@ Appendix A.  Skill Interface JSON Schema
        "skill_version",
        "request_envelope",
        "input_schema",
-       "outcome_schema",
+       "output_schema",
        "supporting_record_schemas",
        "interaction",
        "authority"
@@ -1305,7 +1304,7 @@ Appendix A.  Skill Interface JSON Schema
        "input_schema": {
          "$ref": "#/$defs/schemaReference"
        },
-       "outcome_schema": {
+       "output_schema": {
          "$ref": "#/$defs/schemaReference"
        },
        "supporting_record_schemas": {
