@@ -211,8 +211,8 @@ used by a particular deployment to retrieve it.
 
 ## Schema Bundle
 
-A signed or otherwise integrity-protected collection of schemas and a
-manifest distributed with an agent release.
+An optional, signed or otherwise integrity-protected collection of schemas and
+a manifest distributed with an agent release.
 
 ## Schema Registry
 
@@ -716,11 +716,13 @@ agent-specific variation. A vendor release pipeline SHOULD:
 2. test representative inputs and outputs against them;
 3. assign stable schema URIs and versions;
 4. compute schema digests;
-5. produce a schema-bundle manifest; and
-6. sign or otherwise integrity-protect the bundle as part of the agent
-   package.
+5. when publishing a schema bundle, produce a bundle manifest; and
+6. sign or otherwise integrity-protect any published schema bundle.
 
-The pipeline does not need access to a customer registry.
+Producing a schema bundle is optional. For example, an implementation using
+inline resolution can embed its schemas in the agent artifact without
+publishing a separate bundle. The pipeline does not need access to a customer
+registry.
 
 ## Agent initialization
 
@@ -738,11 +740,12 @@ NOT silently fall back to an opaque unconstrained payload.
 
 ## Customer onboarding
 
-At onboarding time, a customer deployment MAY:
+At onboarding time, a customer deployment MAY use one or more of the following
+mechanisms:
 
-- register the bundle in a customer-operated registry;
-- install the bundle in a platform-controlled local store;
-- allow the agent to serve the bundled schemas; or
+- register the schemas or an optional bundle in a customer-operated registry;
+- install an optional bundle in a platform-controlled local store;
+- allow the agent to serve its packaged schemas; or
 - permit inline schemas in `describe_skill`.
 
 If a customer registry is present, onboarding registers the schemas and
@@ -772,7 +775,7 @@ payload.
 
 ## Agent-hosted schemas
 
-An agent MAY expose bundled schemas beneath a well-known path associated with
+An agent MAY expose packaged schemas beneath a well-known path associated with
 the already identified and authenticated agent endpoint. A Schema Reference
 using this mechanism contains a relative path and digest. It does not redirect
 the client agent to an arbitrary host.
