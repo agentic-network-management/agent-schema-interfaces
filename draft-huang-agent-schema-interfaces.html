@@ -1781,55 +1781,25 @@ produce a Skill Interface Document; it does not redefine the common structure.<a
         <h3 id="name-distinguish-envelope-confor">
 <a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-distinguish-envelope-confor" class="section-name selfRef">Distinguish envelope conformance from semantic conformance</a>
         </h3>
-<p id="section-6.3-1">Validation of an envelope containing a text field establishes the structure
-of the envelope and the type of that field. It does not establish the syntax
-or operational meaning of commands contained in the text. For example, a
-schema that declares a CLI configuration as a JSON string can require that the
-string is present and non-empty, but cannot by itself identify the affected
-resources, validate command dependencies, or establish that the commands
-implement the requested intent.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
-<p id="section-6.3-2">When a skill expects a receiving agent to inspect, validate, transform,
-simulate, or apply configuration, an opaque text string <span class="bcp14">MUST NOT</span> be the sole
-normative representation of the intended configuration change. The
-skill-specific schema <span class="bcp14">MUST</span> define at least one of the following:<a href="#section-6.3-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.3-3.1">
-            <p id="section-6.3-3.1.1">a normalized structured representation of the intended change; or<a href="#section-6.3-3.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-6.3-3.2">
-            <p id="section-6.3-3.2.1">a precisely identified configuration language and version together with a
-deterministic validation mechanism supported by the receiving agent.<a href="#section-6.3-3.2.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-6.3-4">Device-specific rendering is a local implementation responsibility of the
-agent that requires it. It is not part of the common representation exchanged
-between agents, and communicating agents are not required to agree on a
-rendered syntax or platform-specific command language.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
-<p id="section-6.3-5">Opaque text remains appropriate when a recipient only displays, stores, or
-forwards it without interpreting its operational meaning. In that case, the
-skill-specific schema <span class="bcp14">MUST</span> identify the media type and syntax or platform
-profile when known, and the Skill Interface <span class="bcp14">MUST NOT</span> imply that structural
-schema validation establishes the safety, correctness, or intended effect of
-the text.<a href="#section-6.3-5" class="pilcrow">¶</a></p>
-<p id="section-6.3-6">For example, a configuration outcome can carry a normalized representation:<a href="#section-6.3-6" class="pilcrow">¶</a></p>
-<p id="section-6.3-7"><code>json
-{
-  "device": "A",
-  "configuration_change": {
-    "resource_type": "explicit_path",
-    "name": "VIA-C1",
-    "enabled": true,
-    "segments": [
-      { "index": 1, "next_label": 16002 },
-      { "index": 2, "next_label": 16003 },
-      { "index": 3, "next_label": 16040 }
-    ]
-  }
-}
-</code><a href="#section-6.3-7" class="pilcrow">¶</a></p>
-<p id="section-6.3-8">The applicable input, outcome, or supporting-record schema defines the
+<p id="section-6.3-1">Matching Schema References establishes that communicating agents use the same
+schema; it does not establish that the schema exposes sufficient semantics for
+the intended operation. A schema that defines configuration only as a string
+can validate the presence and type of that string but cannot by itself identify
+affected resources, validate command dependencies, or establish that the
+commands implement the requested intent.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.3-2">When a receiving agent is expected to inspect, validate, transform, simulate,
+or apply a configuration change, the shared domain schema <span class="bcp14">MUST</span> define a
+normalized structured representation of that change. The receiving agent <span class="bcp14">MUST</span>
+validate the representation and use a domain-specific implementation for
+semantic validation, policy evaluation, simulation, or application, as
+applicable.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
+<p id="section-6.3-3">Device-specific rendering is a local implementation responsibility of the
+agent that requires it. Rendered CLI is not part of the common operational
+representation exchanged between agents, and communicating agents are not
+required to agree on a rendered syntax or platform-specific command language.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+<p id="section-6.3-4">The applicable input, outcome, or supporting-record schema defines the
 normalized structure for a particular skill. The <code>describe_skill</code> operation
-makes those requirements available before a client agent delegates work.<a href="#section-6.3-8" class="pilcrow">¶</a></p>
+makes those requirements available before a client agent delegates work.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="treat-schema-resolution-as-deployment-specific">
