@@ -1984,7 +1984,9 @@ service supplies the common envelope reference and assembles the complete
 document. Interaction declarations reflect the agent implementation.
 Authority declarations may additionally reflect deployment policy. Assembly
 <span class="bcp14">MUST NOT</span> modify the standardized Skill Interface Schema.<a href="#section-8-2" class="pilcrow">¶</a></p>
-<p id="section-8-3"><code>json
+<p id="section-8-3">The following non-normative example illustrates a conforming Skill Interface
+Document using inline schema resolution:<a href="#section-8-3" class="pilcrow">¶</a></p>
+<p id="section-8-4"><code>json
 {
   "interface_version": "1.0",
   "skill_id": "example_skill",
@@ -1993,7 +1995,7 @@ Authority declarations may additionally reflect deployment policy. Assembly
     "schema_uri": "urn:example:agent:skill-request-envelope:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:...",
+    "digest": "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
     "resolution": {
       "type": "inline",
       "schema": {
@@ -2005,7 +2007,7 @@ Authority declarations may additionally reflect deployment policy. Assembly
     "schema_uri": "urn:example:network-management:example-skill-input:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:...",
+    "digest": "sha256:8d076361c4dcc79f0dbf1afa4dbe864e6318a88e4a8e6d9441c7cc99a5837aeb",
     "resolution": {
       "type": "inline",
       "schema": {
@@ -2025,7 +2027,7 @@ Authority declarations may additionally reflect deployment policy. Assembly
     "schema_uri": "urn:example:network-management:example-skill-output:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:...",
+    "digest": "sha256:9a16baf78ac2b47ca47423709257463d3d315b3e35be9b5d72b9fb0b1a9910ed",
     "resolution": {
       "type": "inline",
       "schema": {
@@ -2047,7 +2049,7 @@ Authority declarations may additionally reflect deployment policy. Assembly
       "schema_uri": "urn:example:network-management:observation-record:1.0",
       "version": "1.0",
       "dialect": "https://json-schema.org/draft/2020-12/schema",
-      "digest": "sha256:...",
+      "digest": "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
       "resolution": {
         "type": "inline",
         "schema": {
@@ -2069,20 +2071,20 @@ Authority declarations may additionally reflect deployment policy. Assembly
     "approval_may_be_required": true
   }
 }
-</code><a href="#section-8-3" class="pilcrow">¶</a></p>
-<p id="section-8-4">The inline schemas above are domain content populated into the standardized
+</code><a href="#section-8-4" class="pilcrow">¶</a></p>
+<p id="section-8-5">The inline schemas above are domain content populated into the standardized
 document. They are not additions to or replacements for the Skill Interface
 Schema. A deployment may instead populate the same Schema References with an
 agent-hosted, bundle, or registry resolution mechanism supported by the
-selected interface version.<a href="#section-8-4" class="pilcrow">¶</a></p>
-<p id="section-8-5">Request validation is logically performed in two stages: the complete request
+selected interface version.<a href="#section-8-5" class="pilcrow">¶</a></p>
+<p id="section-8-6">Request validation is logically performed in two stages: the complete request
 is validated against the common Skill Request Envelope, and the envelope's
 typed input is validated against the domain <code>input_schema</code>. Outcome and
 supporting-record validation follow the same composition model. An
-implementation <span class="bcp14">MAY</span> compile these stages into an equivalent composed validator.<a href="#section-8-5" class="pilcrow">¶</a></p>
-<p id="section-8-6">Successful schema validation does not authorize execution. The receiving
+implementation <span class="bcp14">MAY</span> compile these stages into an equivalent composed validator.<a href="#section-8-6" class="pilcrow">¶</a></p>
+<p id="section-8-7">Successful schema validation does not authorize execution. The receiving
 agent and hosting platform <span class="bcp14">MUST</span> independently authenticate the caller and
-authorize the requested skill, resources, and operation.<a href="#section-8-6" class="pilcrow">¶</a></p>
+authorize the requested skill, resources, and operation.<a href="#section-8-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="skill-interface-advertisement-and-retrieval-1">

@@ -580,29 +580,37 @@ Table of Contents
    reflect deployment policy.  Assembly MUST NOT modify the standardized
    Skill Interface Schema.
 
+   The following non-normative example illustrates a conforming Skill
+   Interface Document using inline schema resolution:
+
    json { "interface_version": "1.0", "skill_id": "example_skill",
    "skill_version": "1.0", "request_envelope": { "schema_uri":
    "urn:example:agent:skill-request-envelope:1.0", "version": "1.0",
    "dialect": "https://json-schema.org/draft/2020-12/schema", "digest":
-   "sha256:...", "resolution": { "type": "inline", "schema": { "type":
-   "object" } } }, "input_schema": { "schema_uri": "urn:example:network-
+   "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
+   "resolution": { "type": "inline", "schema": { "type": "object" } } },
+   "input_schema": { "schema_uri": "urn:example:network-
    management:example-skill-input:1.0", "version": "1.0", "dialect":
    "https://json-schema.org/draft/2020-12/schema", "digest":
-   "sha256:...", "resolution": { "type": "inline", "schema": { "type":
-   "object", "properties": { "objective": { "type": "string" } },
-   "required": [ "objective" ] } } }, "output_schema": { "schema_uri":
+   "sha256:8d076361c4dcc79f0dbf1afa4dbe864e6318a88e4a8e6d9441c7cc99a5837aeb",
+   "resolution": { "type": "inline", "schema": { "type": "object",
+   "properties": { "objective": { "type": "string" } }, "required": [
+   "objective" ] } } }, "output_schema": { "schema_uri":
    "urn:example:network-management:example-skill-output:1.0", "version":
    "1.0", "dialect": "https://json-schema.org/draft/2020-12/schema",
-   "digest": "sha256:...", "resolution": { "type": "inline", "schema": {
-   "type": "object", "properties": { "status": { "type": "string" } },
-   "required": [ "status" ] } } }, "supporting_record_schemas": [ {
-   "kind": "observation-record", "schema_uri": "urn:example:network-
+   "digest":
+   "sha256:9a16baf78ac2b47ca47423709257463d3d315b3e35be9b5d72b9fb0b1a9910ed",
+   "resolution": { "type": "inline", "schema": { "type": "object",
+   "properties": { "status": { "type": "string" } }, "required": [
+   "status" ] } } }, "supporting_record_schemas": [ { "kind":
+   "observation-record", "schema_uri": "urn:example:network-
    management:observation-record:1.0", "version": "1.0", "dialect":
    "https://json-schema.org/draft/2020-12/schema", "digest":
-   "sha256:...", "resolution": { "type": "inline", "schema": { "type":
-   "object" } } } ], "interaction": { "supported_response_modes": [
-   "sync", "stream", "poll" ], "cancellable": true }, "authority": {
-   "default_mode": "read-only", "approval_may_be_required": true } }
+   "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
+   "resolution": { "type": "inline", "schema": { "type": "object" } } }
+   ], "interaction": { "supported_response_modes": [ "sync", "stream",
+   "poll" ], "cancellable": true }, "authority": { "default_mode":
+   "read-only", "approval_may_be_required": true } }
 
    The inline schemas above are domain content populated into the
    standardized document.  They are not additions to or replacements for
