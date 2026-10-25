@@ -1296,9 +1296,6 @@ dependency for every task.<a href="#section-abstract-3" class="pilcrow">¶</a></
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
                 <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-agent-initialization" class="internal xref">Agent initialization</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3">
-                <p id="section-toc.1-1.10.2.3.1"><a href="#section-10.3" class="auto internal xref">10.3</a>.  <a href="#name-customer-onboarding" class="internal xref">Customer onboarding</a></p>
-</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
@@ -1320,7 +1317,7 @@ dependency for every task.<a href="#section-abstract-3" class="pilcrow">¶</a></
                 <p id="section-toc.1-1.11.2.5.1"><a href="#section-11.5" class="auto internal xref">11.5</a>.  <a href="#name-offline-bundle" class="internal xref">Offline bundle</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.6">
-                <p id="section-toc.1-1.11.2.6.1"><a href="#section-11.6" class="auto internal xref">11.6</a>.  <a href="#name-resolution-order" class="internal xref">Resolution order</a></p>
+                <p id="section-toc.1-1.11.2.6.1"><a href="#section-11.6" class="auto internal xref">11.6</a>.  <a href="#name-resolution-policy" class="internal xref">Resolution policy</a></p>
 </li>
             </ul>
 </li>
@@ -1830,7 +1827,8 @@ trusted copy of the standardized Skill Interface Schema and applicable
 interaction and authority declarations. The resulting Skill Interface
 Document <span class="bcp14">MUST</span> be validated before it is advertised or returned.<a href="#section-6.7-1" class="pilcrow">¶</a></p>
 <p id="section-6.7-2">An implementation <span class="bcp14">SHOULD</span> perform this assembly during agent initialization or
-onboarding and retain an immutable validated document for each skill version.
+deployment configuration and retain an immutable validated document for each
+skill version.
 The <code>describe_skill</code> operation retrieves that document. It does not ask the
 agent's domain logic to construct or alter an interface while processing the
 interface request.<a href="#section-6.7-2" class="pilcrow">¶</a></p>
@@ -2314,33 +2312,6 @@ registry.<a href="#section-10.1-3" class="pilcrow">¶</a></p>
 version from being advertised through this framework. An implementation <span class="bcp14">MUST NOT</span> silently fall back to an opaque unconstrained payload.<a href="#section-10.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="customer-onboarding">
-<section id="section-10.3">
-        <h3 id="name-customer-onboarding">
-<a href="#section-10.3" class="section-number selfRef">10.3. </a><a href="#name-customer-onboarding" class="section-name selfRef">Customer onboarding</a>
-        </h3>
-<p id="section-10.3-1">At onboarding time, a customer deployment <span class="bcp14">MAY</span> use one or more of the following
-mechanisms:<a href="#section-10.3-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-10.3-2.1">
-            <p id="section-10.3-2.1.1">register the schemas or an optional bundle in a customer-operated registry;<a href="#section-10.3-2.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-10.3-2.2">
-            <p id="section-10.3-2.2.1">install an optional bundle in a platform-controlled local store;<a href="#section-10.3-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-10.3-2.3">
-            <p id="section-10.3-2.3.1">allow the agent to serve its packaged schemas; or<a href="#section-10.3-2.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-10.3-2.4">
-            <p id="section-10.3-2.4.1">permit inline schemas in <code>describe_skill</code>.<a href="#section-10.3-2.4.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-10.3-3">If a customer registry is present, onboarding registers the schemas and
-creates a deployment-local mapping from stable schema URI and digest to
-registry subject, version, and identifier. That mapping is supplied to the
-agent or made available to the client agent.<a href="#section-10.3-3" class="pilcrow">¶</a></p>
-</section>
-</div>
 </section>
 </div>
 <div id="schema-resolution">
@@ -2367,10 +2338,13 @@ temporarily unavailable.<a href="#section-11.1-1" class="pilcrow">¶</a></p>
 compatibility checks, publisher metadata, and governance.  <span>[<a href="#CONFLUENT" class="cite xref">CONFLUENT</a>]</span> is one
 non-normative example of this class of service. The standard does
 not require a particular registry implementation or REST API.<a href="#section-11.2-1" class="pilcrow">¶</a></p>
-<p id="section-11.2-2">An agent identifies a registry by a logical deployment name. The client agent maps
-that name to an administrator-configured trusted endpoint. A client agent <span class="bcp14">MUST NOT</span>
-retrieve schemas from an arbitrary registry URL supplied in an untrusted task
-payload.<a href="#section-11.2-2" class="pilcrow">¶</a></p>
+<p id="section-11.2-2">When a registry is used, the deployment creates a local mapping from stable
+schema URI and digest to registry subject, version, and identifier. That
+mapping is supplied to the agent or made available to the client agent.<a href="#section-11.2-2" class="pilcrow">¶</a></p>
+<p id="section-11.2-3">An agent identifies a registry by a logical deployment name. The client agent
+maps that name to an administrator-configured trusted endpoint. A client agent
+<span class="bcp14">MUST NOT</span> retrieve schemas from an arbitrary registry URL supplied in an
+untrusted task payload.<a href="#section-11.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="agent-hosted-schemas">
@@ -2405,30 +2379,16 @@ client agent. The client agent resolves stable schema URIs from that bundle with
 network access.<a href="#section-11.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="resolution-order">
+<div id="resolution-policy">
 <section id="section-11.6">
-        <h3 id="name-resolution-order">
-<a href="#section-11.6" class="section-number selfRef">11.6. </a><a href="#name-resolution-order" class="section-name selfRef">Resolution order</a>
+        <h3 id="name-resolution-policy">
+<a href="#section-11.6" class="section-number selfRef">11.6. </a><a href="#name-resolution-policy" class="section-name selfRef">Resolution policy</a>
         </h3>
-<p id="section-11.6-1">A deployment may use the following resolution order:<a href="#section-11.6-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-11.6-2">
-<li id="section-11.6-2.1">
-            <p id="section-11.6-2.1.1">trusted cache;<a href="#section-11.6-2.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-11.6-2.2">
-            <p id="section-11.6-2.2.1">configured customer registry;<a href="#section-11.6-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-11.6-2.3">
-            <p id="section-11.6-2.3.1">platform-installed bundle;<a href="#section-11.6-2.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-11.6-2.4">
-            <p id="section-11.6-2.4.1">authenticated agent-hosted schema endpoint; and<a href="#section-11.6-2.4.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-11.6-2.5">
-            <p id="section-11.6-2.5.1">inline schema.<a href="#section-11.6-2.5.1" class="pilcrow">¶</a></p>
-</li>
-        </ol>
-<p id="section-11.6-3">Local policy determines which mechanisms are permitted.<a href="#section-11.6-3" class="pilcrow">¶</a></p>
+<p id="section-11.6-1">A deployment determines which schema-resolution mechanisms are permitted and
+how an available mechanism is selected. This document does not define a
+priority or fallback order among resolution mechanisms. Regardless of the
+mechanism used, the client agent verifies that the resolved schema matches the
+identity and digest in the Schema Reference.<a href="#section-11.6-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
