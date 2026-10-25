@@ -446,6 +446,9 @@ document. Interaction declarations reflect the agent implementation.
 Authority declarations may additionally reflect deployment policy. Assembly
 MUST NOT modify the standardized Skill Interface Schema.
 
+The following non-normative example illustrates a conforming Skill Interface
+Document using inline schema resolution:
+
 ```json
 {
   "interface_version": "1.0",
@@ -455,7 +458,7 @@ MUST NOT modify the standardized Skill Interface Schema.
     "schema_uri": "urn:example:agent:skill-request-envelope:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:...",
+    "digest": "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
     "resolution": {
       "type": "inline",
       "schema": {
@@ -467,7 +470,7 @@ MUST NOT modify the standardized Skill Interface Schema.
     "schema_uri": "urn:example:network-management:example-skill-input:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:...",
+    "digest": "sha256:8d076361c4dcc79f0dbf1afa4dbe864e6318a88e4a8e6d9441c7cc99a5837aeb",
     "resolution": {
       "type": "inline",
       "schema": {
@@ -487,7 +490,7 @@ MUST NOT modify the standardized Skill Interface Schema.
     "schema_uri": "urn:example:network-management:example-skill-output:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:...",
+    "digest": "sha256:9a16baf78ac2b47ca47423709257463d3d315b3e35be9b5d72b9fb0b1a9910ed",
     "resolution": {
       "type": "inline",
       "schema": {
@@ -509,7 +512,7 @@ MUST NOT modify the standardized Skill Interface Schema.
       "schema_uri": "urn:example:network-management:observation-record:1.0",
       "version": "1.0",
       "dialect": "https://json-schema.org/draft/2020-12/schema",
-      "digest": "sha256:...",
+      "digest": "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
       "resolution": {
         "type": "inline",
         "schema": {
