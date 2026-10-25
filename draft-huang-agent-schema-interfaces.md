@@ -339,63 +339,54 @@ The `describe_skill` operation retrieves that document. It does not ask the
 agent's domain logic to construct or alter an interface while processing the
 interface request.
 
-## Participants and schema-interface flow
+## Inline schema-interface flow
 
-The following figure shows the relationship among a client agent, remote
-network management agents, and the schema-resolution facilities of a
-customer deployment.
+The following figure shows the initial inline flow between a client agent and
+a remote network management agent.  Inline delivery does not replace Schema
+References.  Each reference retains its stable identity, version, dialect,
+and digest while carrying the schema content in its `resolution` field.
 
-```text
-                         +------------------------+
-                         | Client Agent           |
-                         +-----------+------------+
-                                     |
-                    Identify agent and retrieve Agent Card
-                                  |
-                            describe_skill
-                                     |
-                 +-------------------+-------------------+
-                 |                                       |
-       +---------v----------+                  +---------v----------+
-       | Network Management |                  | Network Management |
-       | Agent A             |                  | Agent B             |
-       | Schema bundle       |                  | Schema bundle       |
-       +---------+----------+                  +----------+---------+
-                 |                                        |
-                 +--------------+  +----------------------+
-                                |  |
-                      Skill Interface Documents and
-                          Schema References
-                                |  |
-                 +--------------+--+----------------------+
-                 |                 |                       |
-       +---------v--------+ +------v---------+ +-----------v-------+
-       | Customer Schema  | | Trusted Cache | | Agent-hosted,     |
-       | Registry         | | or Installed  | | Inline, or Offline|
-       | (Optional)       | | Schema Bundle | | Schemas            |
-       +------------------+ +----------------+ +--------------------+
-
-       After interface resolution and validation:
-
-       Client Agent
-          <==== Direct A2A tasks, skill outcomes, and supporting records ====>
-       Selected Network Management Agent
-```
+~~~ ascii-art
+       Client Agent                         Remote Agent
+            |                                    |
+            |------ Retrieve Agent Card -------->|
+            |<----- Skills and A2A endpoint -----|
+            |                                    |
+            |--- describe_skill(skill_id) ------>|
+            |<-- Skill Interface Document -------|
+            |       Schema References:           |
+            |       - input schema               |
+            |       - outcome schema             |
+            |       - supporting records         |
+            |       resolution.type = inline     |
+            |       embedded schema content      |
+            |                                    |
+            | Validate interface structure,      |
+            | references, digests, and schemas   |
+            |                                    |
+            |--- Delegate validated request ---->|
+            |<-- Status, outcome, and records ---|
+            | Validate response using cached     |
+            | Schema References                  |
+~~~
 
 After identifying a remote agent and retrieving its Agent Card, the client
 agent obtains the selected skill's validated Skill Interface Document through
-`describe_skill`. The document contains stable Schema References rather than
-assuming one deployment-specific registry. The client agent validates the
-document against its trusted copy of the Skill Interface Schema, resolves and
-verifies the domain schema references using an allowed mechanism, validates
-the skill request, and exchanges the task directly with the target through the
-Agent-to-Agent protocol. The registry does not carry the task or its result.
-When no registry is deployed, trusted cache, agent-hosted schemas, inline
-schemas, or an offline bundle provide equivalent resolution paths.
+`describe_skill`.  For the inline flow, the client validates the document
+against its trusted copy of the Skill Interface Schema, verifies each Schema
+Reference and embedded schema against the declared digest, validates the skill
+request, and exchanges the task directly with the target through the
+Agent-to-Agent protocol.
 
-Agents A and B represent arbitrary independently developed network management
-agents. The examples later in this document are illustrative use cases, not
-named participants in the common architecture.
+Other deployments may resolve the same stable Schema References through:
+
+- a trusted cache;
+- a customer-operated schema registry;
+- a platform-installed or offline schema bundle; or
+- an authenticated agent-hosted schema endpoint.
+
+These mechanisms change how schema content is obtained; they do not change
+the Skill Interface Document or carry the delegated task or its result.
 
 # Schema Reference
 
@@ -647,6 +638,44 @@ initiating the downstream delegation is the client agent for that interaction.
 That component may be a centralized orchestrator or the upstream agent itself
 communicating directly with the downstream agent. The same composition rules
 apply in either topology.
+
+The following figure shows the reference comparison and validation decisions
+performed by that delegating component.
+
+~~~ ascii-art
+ Upstream Agent                 Delegating Component
+       |                                  |
+       |-- Outcome payload -------------->|
+       |   outcome_schema reference       |
+       |                                  |
+       |                         Retrieve downstream
+       |                         Skill Interface
+       |                                  |
+       |                                  v
+       |                         Downstream input_schema
+       |                              reference
+       |                                  |
+       |                    Compare URI, version,
+       |                    dialect, and digest
+       |                                  |
+       |                +-----------------+----------------+
+       |                |                                  |
+       |              Match                         No exact match
+       |                |                                  |
+       |      Validate outcome against        Trusted transformation
+       |      downstream input schema          available?
+       |                |                       |         |
+       |                |                      Yes        No
+       |                |                       |         |
+       |                +----------+------------+       Reject
+       |                           |
+       |                           v
+       |                Delegate validated input
+       |                           |
+       |                           v
+       |                   Downstream Agent
+       |                validates and processes
+~~~
 
 The standardized Schema Reference allows an orchestrating system or delegating
 agent to determine structural compatibility without interpreting a
