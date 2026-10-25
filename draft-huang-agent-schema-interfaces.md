@@ -365,7 +365,7 @@ and digest while carrying the schema content in its `resolution` field.
             | references, digests, and schemas   |
             |                                    |
             |--- Delegate validated request ---->|
-            |<-- Status, outcome, and records ---|
+            |<--- Status, output, and records ---|
             | Validate response using cached     |
             | Schema References                  |
 ~~~
