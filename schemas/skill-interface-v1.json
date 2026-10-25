@@ -9,7 +9,6 @@
     "interface_version",
     "skill_id",
     "skill_version",
-    "request_envelope",
     "input_schema",
     "output_schema",
     "supporting_record_schemas",
@@ -26,9 +25,6 @@
     },
     "skill_version": {
       "$ref": "#/$defs/version"
-    },
-    "request_envelope": {
-      "$ref": "#/$defs/schemaReference"
     },
     "input_schema": {
       "$ref": "#/$defs/schemaReference"

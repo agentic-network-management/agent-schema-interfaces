@@ -2,30 +2,6 @@
   "interface_version": "1.0",
   "skill_id": "analyze_network",
   "skill_version": "1.0",
-  "request_envelope": {
-    "schema_uri": "urn:example:network-management-agent:skill-request:1.0",
-    "version": "1.0",
-    "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:7f8e312aa614cbbb9667ababfe3a202727ce88e6d1a5f9c90cb223f0436015cc",
-    "resolution": {
-      "type": "inline",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "goal": {
-            "type": "string"
-          },
-          "input": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "goal",
-          "input"
-        ]
-      }
-    }
-  },
   "input_schema": {
     "schema_uri": "urn:example:network-management-agent:analyze-network:input:1.0",
     "version": "1.0",

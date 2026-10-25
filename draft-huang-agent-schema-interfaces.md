@@ -53,9 +53,9 @@ interfaces of network management agent skills: a Schema Reference structure
 for identifying, verifying, and resolving schemas; a Skill Interface Schema
 and conforming per-skill Skill Interface Document; and a Skill Interface
 advertisement and retrieval procedure using `describe_skill`. The Skill
-Interface combines common Skill Request and Supporting Record Envelopes with
-the input, output, and supporting-record schemas defined by the agent's vendor
-or domain owner.
+Interface combines the input, output, and supporting-record schemas defined by
+the agent's vendor or domain owner with common interaction and authority
+declarations.
 
 Schema identity is portable, while schema resolution is deployment-specific.
 Schemas may be returned inline, served by the agent, installed as an offline
@@ -97,8 +97,8 @@ operational decisions or generate network changes.
 
 The three standardized components define a framework in which:
 
-- common Skill Request, Supporting Record, and Skill Interface structures are
-  standardized without standardizing every domain payload;
+- common Supporting Record and Skill Interface structures are standardized
+  without standardizing every domain payload;
 - each skill declares versioned input, output, and supporting-record schemas;
 - vendors and domain owners define the schemas specific to their agents;
 - an agent assembles and validates a Skill Interface Document from the common
@@ -130,8 +130,7 @@ This document standardizes:
 
 In support of those three components, this document also defines:
 
-- the relationship among skill requests, skill outputs, and supporting
-  records;
+- the relationship among skill inputs, skill outputs, and supporting records;
 - schema identity, integrity, versioning, and resolution behavior;
 - the relationship between these interfaces and Agent-to-Agent task state; and
 - requirements for validation, caching, trust, and failure handling.
@@ -153,7 +152,7 @@ This document does not define:
 The Schema Reference is a common structure for identifying a schema by stable
 URI and version, declaring its schema dialect, verifying its content by
 digest, and providing deployment-specific resolution information. The same
-structure is used for request, input, output, and supporting-record schemas.
+structure is used for input, output, and supporting-record schemas.
 The structure is standardized so that a client can identify, retrieve, and
 verify every schema in a Skill Interface without agent-specific or
 registry-specific interpretation. The referenced domain schemas and the
@@ -171,9 +170,8 @@ deterministic basis for deciding whether direct composition is permitted.
 
 The Skill Interface Schema defines the common structure of a Skill Interface
 Document. A conforming document describes one version of one skill and binds
-the common request and supporting-record envelope schemas to the
-domain-specific input, output, and supporting-record schemas used by that
-skill.
+the domain-specific input, output, and supporting-record schemas used by that
+skill to common interaction and authority declarations.
 
 ## Skill Interface Advertisement and Retrieval
 
@@ -241,12 +239,6 @@ It is an instance of the Skill Interface Schema. It contains domain-specific
 Schema References supplied by the agent without modifying the standardized
 Skill Interface Schema.
 
-## Skill Request Envelope
-
-The application-level request for invoking a skill, including its goal, typed
-input, constraints, and workflow correlation. The Agent-to-Agent protocol
-remains authoritative for protocol task identity and lifecycle state.
-
 ## Supporting Record Envelope
 
 A provenance-bearing observation or artifact used to derive, validate, or
@@ -268,12 +260,12 @@ correlation.
 
 ## Standardize reusable structures, not all domain semantics
 
-The common standard defines the Skill Request Envelope, Supporting Record
-Envelope, Skill Interface Schema, and Schema Reference. A vendor or domain
-owner defines the input, output, and supporting-record payload schemas used by
-a particular skill. A conforming implementation combines those domain schemas
-with the common structure to produce a Skill Interface Document; it does not
-redefine the common structure.
+The common standard defines the Supporting Record Envelope, Skill Interface
+Schema, and Schema Reference. A vendor or domain owner defines the input,
+output, and supporting-record payload schemas used by a particular skill. A
+conforming implementation combines those domain schemas with the common
+structure to produce a Skill Interface Document; it does not redefine the
+common structure.
 
 ## Distinguish envelope conformance from semantic conformance
 
@@ -382,14 +374,13 @@ therefore includes the stable schema URI and digest.
 
 The Skill Interface Schema standardizes the structure shown in this section.
 A Skill Interface Document is a conforming instance for one skill version. It
-binds common envelopes to the domain schemas used by that skill and identifies
-the request, input, output, supporting-record, interaction, and authority
-characteristics.
+binds the domain schemas used by that skill to its input, output,
+supporting-record, interaction, and authority characteristics.
 
 The agent or domain owner supplies the skill identifier, skill version, and
 domain input, output, and supporting-record schemas. The agent protocol
-service supplies the common envelope reference and assembles the complete
-document. Interaction declarations reflect the agent implementation.
+service assembles the complete document. Interaction declarations reflect the
+agent implementation.
 Authority declarations may additionally reflect deployment policy. Assembly
 MUST NOT modify the standardized Skill Interface Schema.
 
@@ -401,18 +392,6 @@ Document using inline schema resolution:
   "interface_version": "1.0",
   "skill_id": "example_skill",
   "skill_version": "1.0",
-  "request_envelope": {
-    "schema_uri": "urn:example:agent:skill-request-envelope:1.0",
-    "version": "1.0",
-    "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
-    "resolution": {
-      "type": "inline",
-      "schema": {
-        "type": "object"
-      }
-    }
-  },
   "input_schema": {
     "schema_uri": "urn:example:network-management:example-skill-input:1.0",
     "version": "1.0",
@@ -489,11 +468,9 @@ Schema. A deployment may instead populate the same Schema References with an
 agent-hosted, bundle, or registry resolution mechanism supported by the
 selected interface version.
 
-Request validation is logically performed in two stages: the complete request
-is validated against the common Skill Request Envelope, and the envelope's
-typed input is validated against the domain `input_schema`. Output and
-supporting-record validation follow the same composition model. An
-implementation MAY compile these stages into an equivalent composed validator.
+The Agent-to-Agent binding identifies the message part or data member that
+contains the skill input. That input is validated against the domain
+`input_schema`. Output and supporting-record validation follow the same model.
 
 Successful schema validation does not authorize execution. The receiving
 agent and hosting platform MUST independently authenticate the caller and
@@ -608,7 +585,7 @@ A client agent performs the following sequence:
 4. validate the returned Skill Interface Document against a trusted local
    copy of the selected Skill Interface Schema;
 5. verify and, when necessary, resolve the referenced domain schemas;
-6. validate the outgoing Skill Request;
+6. validate the outgoing skill input against `input_schema`;
 7. delegate the task through the Agent-to-Agent protocol;
 8. receive task status, typed skill output, and supporting records;
 9. validate the skill output against `output_schema` and validate the
@@ -814,49 +791,18 @@ The Skill Interface Document MUST identify the exact schema versions currently
 used by the skill. A caller MUST NOT substitute a registry's mutable `latest`
 version after accepting a document.
 
-# Skill Requests, Outputs, and Supporting Records
+# Skill Inputs, Outputs, and Supporting Records
 
-## Skill Request Envelope
+## Skill Input
 
-The Skill Request Envelope carries the application request associated with an
-Agent-to-Agent task. It includes common correlation and constraint fields and
-a typed input payload.
+The skill input is the domain-specific application data submitted to a skill
+invocation. It MUST validate against the `input_schema` in the selected Skill
+Interface Document. This document does not define an additional common request
+envelope around that data.
 
-An illustrative Skill Request Envelope is:
-
-```json
-{
-  "schema": {
-    "schema_uri": "urn:example:agent:skill-request-envelope:1.0",
-    "version": "1.0",
-    "digest": "sha256:..."
-  },
-  "workflow_id": "workflow-123",
-  "step_id": "investigate-incident",
-  "attempt_id": "attempt-1",
-  "skill_id": "investigate_incident",
-  "goal": "Identify the root cause of the incident",
-  "constraints": {
-    "deadline": "2026-10-19T22:00:00Z",
-    "authority": "read-only",
-    "approval_required": false
-  },
-  "input": {
-    "schema": {
-      "schema_uri": "urn:example:incident-analysis:investigate-incident-input:1.0",
-      "version": "1.0",
-      "digest": "sha256:..."
-    },
-    "data": {
-      "incident_id": "incident-000001"
-    }
-  }
-}
-```
-
-The `workflow_id`, `step_id`, and `attempt_id` are application-level
-correlation identifiers. They do not replace the protocol task and context
-identifiers.
+The Agent-to-Agent binding identifies the message part or data member that
+contains the skill input. The Agent-to-Agent protocol remains authoritative
+for protocol task identity, context, lifecycle state, and transport.
 
 ## Skill Output
 
@@ -884,44 +830,38 @@ classification.
     "version": "1.0",
     "digest": "sha256:..."
   },
-  "record_id": "causal-path-1",
+  "record_id": "observation-record-1",
   "workflow_id": "workflow-123",
-  "step_id": "investigate-incident",
+  "step_id": "evaluate-objective",
   "attempt_id": "attempt-1",
-  "kind": "validated-causal-path",
+  "kind": "validated-observation",
   "classification": "authoritative",
   "producer": {
-    "agent": "event-analyzer",
-    "component": "incident-correlator",
+    "agent": "example-agent",
+    "component": "analysis-component",
     "version": "1.0"
   },
   "source": {
-    "system": "incident-graph",
-    "resource": "incident-000001"
+    "system": "network-monitor",
+    "resource": "network-resource-123"
   },
   "observed_at": "2026-08-11T12:00:01Z",
   "produced_at": "2026-10-19T18:00:00Z",
   "derived_from": [
-    "event-record-1"
+    "source-record-1"
   ],
   "payload": {
-    "schema": {
-      "schema_uri": "urn:example:incident-analysis:causal-path-record:1.0",
-      "version": "1.0",
-      "digest": "sha256:..."
-    },
-    "data": {
-      "from_event_id": "1",
-      "to_event_id": "2",
-      "entity_path": [
-        "node-pe-15",
-        "node-pe-15/et-1-1-4"
-      ],
-      "topology_version": "standalone-fixture-v1"
-    }
+    "resource_id": "network-resource-123",
+    "metric": "utilization",
+    "value": 42,
+    "unit": "percent"
   }
 }
 ```
+
+The `kind` value selects the corresponding entry in
+`supporting_record_schemas`. The `payload` value is validated against that
+entry's schema; the record does not repeat its Schema Reference.
 
 Supporting records SHOULD be append-only once published. Corrections SHOULD be
 expressed as new records that identify the record they supersede rather than
@@ -972,9 +912,10 @@ The Agent-to-Agent protocol remains authoritative for:
 - task retrieval and polling; and
 - cancellation delivery.
 
-The Skill Request Envelope adds an application-level goal, workflow
-correlation, typed input, and constraints. The domain-specific skill output is
-validated against the `output_schema` in the selected Skill Interface.
+The Agent-to-Agent binding identifies the skill input and output carried by
+protocol messages or artifacts. The domain-specific input and output are
+validated against the `input_schema` and `output_schema` in the selected Skill
+Interface.
 
 Task progress is not automatically a supporting record. A progress update
 becomes one only when published as a Supporting Record Envelope with the
@@ -1121,8 +1062,7 @@ namespaces after the representation and protocol mapping stabilize.
 
 The following issues require further review:
 
-1. the exact JSON Schema definitions for the common Skill Request and
-   Supporting Record Envelopes;
+1. the exact JSON Schema definition for the common Supporting Record Envelope;
 2. version-negotiation behavior when multiple interface versions are
    supported;
 3. representation of confidential supporting records and access-controlled
@@ -1152,7 +1092,6 @@ the source repository as `schemas/skill-interface-v1.json`.
     "interface_version",
     "skill_id",
     "skill_version",
-    "request_envelope",
     "input_schema",
     "output_schema",
     "supporting_record_schemas",
@@ -1169,9 +1108,6 @@ the source repository as `schemas/skill-interface-v1.json`.
     },
     "skill_version": {
       "$ref": "#/$defs/version"
-    },
-    "request_envelope": {
-      "$ref": "#/$defs/schemaReference"
     },
     "input_schema": {
       "$ref": "#/$defs/schemaReference"
