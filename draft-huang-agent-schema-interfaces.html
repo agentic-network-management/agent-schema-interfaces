@@ -2210,24 +2210,20 @@ performed by that delegating component.<a href="#section-9.5-2" class="pilcrow">
        |                |                                  |
        |              Match                         No exact match
        |                |                                  |
-       |      Validate output against         Trusted transformation
-       |      downstream input schema          available?
-       |                |                       |         |
-       |                |                      Yes        No
-       |                |                       |         |
-       |                +----------+------------+       Reject
-       |                           |
-       |                           v
-       |                Delegate validated input
-       |                           |
-       |                           v
-       |                   Downstream Agent
-       |                validates and processes
+       |      Validate output against              Reject direct
+       |      downstream input schema               composition
+       |                |
+       |                v
+       |      Delegate validated input
+       |                |
+       |                v
+       |        Downstream Agent
+       |      validates and processes
 </pre><a href="#section-9.5-3" class="pilcrow">¶</a>
 </div>
 <p id="section-9.5-4">The standardized Schema Reference allows an orchestrating system or delegating
 agent to determine structural compatibility without interpreting a
-domain-specific schema. Direct composition <span class="bcp14">SHOULD</span> require the Schema Reference
+domain-specific schema. Direct composition <span class="bcp14">MUST</span> require the Schema Reference
 for the transferred upstream output payload and the Schema Reference accepted
 for the corresponding downstream input to have the same <code>schema_uri</code>,
 <code>version</code>, <code>dialect</code>, and <code>digest</code>. Their deployment-specific resolution
@@ -2237,15 +2233,16 @@ instance mechanically against the downstream input schema before delegation,
 and the receiving agent <span class="bcp14">MUST</span> validate the received instance before processing
 it. Neither operation requires the orchestrating system or delegating agent to
 understand the schema's domain semantics.<a href="#section-9.5-5" class="pilcrow">¶</a></p>
-<p id="section-9.5-6">If those Schema Reference fields do not match, composition requires an
-explicitly identified and trusted transformation. The transformed instance
-<span class="bcp14">MUST</span> validate against the downstream input schema. In the absence of either an
-exact match or such a transformation, the delegating component <span class="bcp14">SHOULD</span> reject
-the composition rather than infer a mapping from opaque JSON or text.<a href="#section-9.5-6" class="pilcrow">¶</a></p>
-<p id="section-9.5-7">Matching Schema References and successful instance validation establish
+<p id="section-9.5-6">If those Schema Reference fields do not match, the delegating component <span class="bcp14">MUST NOT</span> perform direct composition under this specification.<a href="#section-9.5-6" class="pilcrow">¶</a></p>
+<p id="section-9.5-7">An implementation can use an out-of-band transformation mechanism before
+delegation. Transformation discovery, trust, execution, and provenance are
+outside the scope of this document. Any resulting payload enters this
+procedure as a new input and is subject to ordinary input validation against
+the downstream <code>input_schema</code>.<a href="#section-9.5-7" class="pilcrow">¶</a></p>
+<p id="section-9.5-8">Matching Schema References and successful instance validation establish
 structural compatibility, not operational correctness. The receiving agent
 remains responsible for domain-semantic validation, authorization, policy
-evaluation, and operational safety before acting on the input.<a href="#section-9.5-7" class="pilcrow">¶</a></p>
+evaluation, and operational safety before acting on the input.<a href="#section-9.5-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

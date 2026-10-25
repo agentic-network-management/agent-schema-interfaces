@@ -745,23 +745,19 @@ Table of Contents
           |                |                                  |
           |              Match                         No exact match
           |                |                                  |
-          |      Validate output against         Trusted transformation
-          |      downstream input schema          available?
-          |                |                       |         |
-          |                |                      Yes        No
-          |                |                       |         |
-          |                +----------+------------+       Reject
-          |                           |
-          |                           v
-          |                Delegate validated input
-          |                           |
-          |                           v
-          |                   Downstream Agent
-          |                validates and processes
+          |      Validate output against              Reject direct
+          |      downstream input schema               composition
+          |                |
+          |                v
+          |      Delegate validated input
+          |                |
+          |                v
+          |        Downstream Agent
+          |      validates and processes
 
    The standardized Schema Reference allows an orchestrating system or
    delegating agent to determine structural compatibility without
-   interpreting a domain-specific schema.  Direct composition SHOULD
+   interpreting a domain-specific schema.  Direct composition MUST
    require the Schema Reference for the transferred upstream output
    payload and the Schema Reference accepted for the corresponding
    downstream input to have the same schema_uri, version, dialect, and
@@ -775,12 +771,15 @@ Table of Contents
    orchestrating system or delegating agent to understand the schema's
    domain semantics.
 
-   If those Schema Reference fields do not match, composition requires
-   an explicitly identified and trusted transformation.  The transformed
-   instance MUST validate against the downstream input schema.  In the
-   absence of either an exact match or such a transformation, the
-   delegating component SHOULD reject the composition rather than infer
-   a mapping from opaque JSON or text.
+   If those Schema Reference fields do not match, the delegating
+   component MUST NOT perform direct composition under this
+   specification.
+
+   An implementation can use an out-of-band transformation mechanism
+   before delegation.  Transformation discovery, trust, execution, and
+   provenance are outside the scope of this document.  Any resulting
+   payload enters this procedure as a new input and is subject to
+   ordinary input validation against the downstream input_schema.
 
    Matching Schema References and successful instance validation
    establish structural compatibility, not operational correctness.  The
