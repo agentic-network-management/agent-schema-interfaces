@@ -46,8 +46,8 @@
       }
     }
   },
-  "outcome_schema": {
-    "schema_uri": "urn:example:network-management-agent:analyze-network:outcome:1.0",
+  "output_schema": {
+    "schema_uri": "urn:example:network-management-agent:analyze-network:output:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
     "digest": "sha256:e9cbc4ac8bb4814dfe55897af5360f7bc4c92a2e0c8301e14c942213c11e4740",

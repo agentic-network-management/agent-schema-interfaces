@@ -11,7 +11,7 @@
     "skill_version",
     "request_envelope",
     "input_schema",
-    "outcome_schema",
+    "output_schema",
     "supporting_record_schemas",
     "interaction",
     "authority"
@@ -33,7 +33,7 @@
     "input_schema": {
       "$ref": "#/$defs/schemaReference"
     },
-    "outcome_schema": {
+    "output_schema": {
       "$ref": "#/$defs/schemaReference"
     },
     "supporting_record_schemas": {
