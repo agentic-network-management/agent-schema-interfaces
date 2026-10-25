@@ -282,52 +282,24 @@ produce a Skill Interface Document; it does not redefine the common structure.
 
 ## Distinguish envelope conformance from semantic conformance
 
-Validation of an envelope containing a text field establishes the structure
-of the envelope and the type of that field. It does not establish the syntax
-or operational meaning of commands contained in the text. For example, a
-schema that declares a CLI configuration as a JSON string can require that the
-string is present and non-empty, but cannot by itself identify the affected
-resources, validate command dependencies, or establish that the commands
-implement the requested intent.
+Matching Schema References establishes that communicating agents use the same
+schema; it does not establish that the schema exposes sufficient semantics for
+the intended operation. A schema that defines configuration only as a string
+can validate the presence and type of that string but cannot by itself identify
+affected resources, validate command dependencies, or establish that the
+commands implement the requested intent.
 
-When a skill expects a receiving agent to inspect, validate, transform,
-simulate, or apply configuration, an opaque text string MUST NOT be the sole
-normative representation of the intended configuration change. The
-skill-specific schema MUST define at least one of the following:
-
-- a normalized structured representation of the intended change; or
-- a precisely identified configuration language and version together with a
-  deterministic validation mechanism supported by the receiving agent.
+When a receiving agent is expected to inspect, validate, transform, simulate,
+or apply a configuration change, the shared domain schema MUST define a
+normalized structured representation of that change. The receiving agent MUST
+validate the representation and use a domain-specific implementation for
+semantic validation, policy evaluation, simulation, or application, as
+applicable.
 
 Device-specific rendering is a local implementation responsibility of the
-agent that requires it. It is not part of the common representation exchanged
-between agents, and communicating agents are not required to agree on a
-rendered syntax or platform-specific command language.
-
-Opaque text remains appropriate when a recipient only displays, stores, or
-forwards it without interpreting its operational meaning. In that case, the
-skill-specific schema MUST identify the media type and syntax or platform
-profile when known, and the Skill Interface MUST NOT imply that structural
-schema validation establishes the safety, correctness, or intended effect of
-the text.
-
-For example, a configuration outcome can carry a normalized representation:
-
-```json
-{
-  "device": "A",
-  "configuration_change": {
-    "resource_type": "explicit_path",
-    "name": "VIA-C1",
-    "enabled": true,
-    "segments": [
-      { "index": 1, "next_label": 16002 },
-      { "index": 2, "next_label": 16003 },
-      { "index": 3, "next_label": 16040 }
-    ]
-  }
-}
-```
+agent that requires it. Rendered CLI is not part of the common operational
+representation exchanged between agents, and communicating agents are not
+required to agree on a rendered syntax or platform-specific command language.
 
 The applicable input, outcome, or supporting-record schema defines the
 normalized structure for a particular skill. The `describe_skill` operation
