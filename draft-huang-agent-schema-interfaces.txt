@@ -287,6 +287,15 @@ Table of Contents
    resolution mechanism are not standardized by the Schema Reference
    structure.
 
+   A standardized Schema Reference also enables composition across
+   independently developed agents.  An orchestrating system or
+   delegating agent can compare the Schema Reference of an upstream
+   outcome payload with the Schema Reference accepted for a downstream
+   input without interpreting either schema's domain semantics.
+   Matching schema identity, version, dialect, and digest provides a
+   deterministic basis for deciding whether direct composition is
+   permitted.
+
 4.2.  Skill Interface
 
    The Skill Interface Schema defines the common structure of a Skill
@@ -734,14 +743,21 @@ Table of Contents
    the downstream agent.  The same composition rules apply in either
    topology.
 
-   An orchestrator or delegating agent is not required to infer semantic
-   compatibility between arbitrary schemas.  Direct composition SHOULD
-   require the upstream outcome Schema Reference and the downstream
-   input Schema Reference to have the same schema_uri, version, dialect,
-   and digest.  The delegating component MUST validate the transferred
-   instance against the downstream input schema before delegation, and
-   the receiving agent MUST validate the received instance before
-   processing it.
+   The standardized Schema Reference allows an orchestrating system or
+   delegating agent to determine structural compatibility without
+   interpreting a domain-specific schema.  Direct composition SHOULD
+   require the Schema Reference for the transferred upstream outcome
+   payload and the Schema Reference accepted for the corresponding
+   downstream input to have the same schema_uri, version, dialect, and
+   digest.  Their deployment-specific resolution information need not
+   match.
+
+   The orchestrating system or delegating agent MUST validate the
+   transferred instance mechanically against the downstream input schema
+   before delegation, and the receiving agent MUST validate the received
+   instance before processing it.  Neither operation requires the
+   orchestrating system or delegating agent to understand the schema's
+   domain semantics.
 
    If those Schema Reference fields do not match, composition requires
    an explicitly identified and trusted transformation.  The transformed

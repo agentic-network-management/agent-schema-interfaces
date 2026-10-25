@@ -1582,6 +1582,12 @@ verify every schema in a Skill Interface without agent-specific or
 registry-specific interpretation. The referenced domain schemas and the
 deployment's choice of resolution mechanism are not standardized by the
 Schema Reference structure.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">A standardized Schema Reference also enables composition across independently
+developed agents. An orchestrating system or delegating agent can compare the
+Schema Reference of an upstream outcome payload with the Schema Reference
+accepted for a downstream input without interpreting either schema's domain
+semantics. Matching schema identity, version, dialect, and digest provides a
+deterministic basis for deciding whether direct composition is permitted.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="skill-interface">
@@ -2233,22 +2239,27 @@ initiating the downstream delegation is the client agent for that interaction.
 That component may be a centralized orchestrator or the upstream agent itself
 communicating directly with the downstream agent. The same composition rules
 apply in either topology.<a href="#section-9.5-1" class="pilcrow">¶</a></p>
-<p id="section-9.5-2">An orchestrator or delegating agent is not required to infer semantic
-compatibility between arbitrary schemas. Direct composition <span class="bcp14">SHOULD</span> require the
-upstream outcome Schema Reference and the downstream input Schema Reference to
-have the same <code>schema_uri</code>, <code>version</code>, <code>dialect</code>, and <code>digest</code>. The delegating
-component <span class="bcp14">MUST</span> validate the transferred instance against the downstream input
-schema before delegation, and the receiving agent <span class="bcp14">MUST</span> validate the received
-instance before processing it.<a href="#section-9.5-2" class="pilcrow">¶</a></p>
-<p id="section-9.5-3">If those Schema Reference fields do not match, composition requires an
+<p id="section-9.5-2">The standardized Schema Reference allows an orchestrating system or delegating
+agent to determine structural compatibility without interpreting a
+domain-specific schema. Direct composition <span class="bcp14">SHOULD</span> require the Schema Reference
+for the transferred upstream outcome payload and the Schema Reference accepted
+for the corresponding downstream input to have the same <code>schema_uri</code>,
+<code>version</code>, <code>dialect</code>, and <code>digest</code>. Their deployment-specific resolution
+information need not match.<a href="#section-9.5-2" class="pilcrow">¶</a></p>
+<p id="section-9.5-3">The orchestrating system or delegating agent <span class="bcp14">MUST</span> validate the transferred
+instance mechanically against the downstream input schema before delegation,
+and the receiving agent <span class="bcp14">MUST</span> validate the received instance before processing
+it. Neither operation requires the orchestrating system or delegating agent to
+understand the schema's domain semantics.<a href="#section-9.5-3" class="pilcrow">¶</a></p>
+<p id="section-9.5-4">If those Schema Reference fields do not match, composition requires an
 explicitly identified and trusted transformation. The transformed instance
 <span class="bcp14">MUST</span> validate against the downstream input schema. In the absence of either an
 exact match or such a transformation, the delegating component <span class="bcp14">SHOULD</span> reject
-the composition rather than infer a mapping from opaque JSON or text.<a href="#section-9.5-3" class="pilcrow">¶</a></p>
-<p id="section-9.5-4">Matching Schema References and successful instance validation establish
+the composition rather than infer a mapping from opaque JSON or text.<a href="#section-9.5-4" class="pilcrow">¶</a></p>
+<p id="section-9.5-5">Matching Schema References and successful instance validation establish
 structural compatibility, not operational correctness. The receiving agent
 remains responsible for domain-semantic validation, authorization, policy
-evaluation, and operational safety before acting on the input.<a href="#section-9.5-4" class="pilcrow">¶</a></p>
+evaluation, and operational safety before acting on the input.<a href="#section-9.5-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
