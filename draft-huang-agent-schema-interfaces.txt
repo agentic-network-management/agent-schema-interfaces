@@ -339,8 +339,8 @@ Table of Contents
 
 5.5.  Schema Bundle
 
-   A signed or otherwise integrity-protected collection of schemas and a
-   manifest distributed with an agent release.
+   An optional, signed or otherwise integrity-protected collection of
+   schemas and a manifest distributed with an agent release.
 
 5.6.  Schema Registry
 
@@ -805,12 +805,14 @@ Table of Contents
 
    4.  compute schema digests;
 
-   5.  produce a schema-bundle manifest; and
+   5.  when publishing a schema bundle, produce a bundle manifest; and
 
-   6.  sign or otherwise integrity-protect the bundle as part of the
-       agent package.
+   6.  sign or otherwise integrity-protect any published schema bundle.
 
-   The pipeline does not need access to a customer registry.
+   Producing a schema bundle is optional.  For example, an
+   implementation using inline resolution can embed its schemas in the
+   agent artifact without publishing a separate bundle.  The pipeline
+   does not need access to a customer registry.
 
 10.2.  Agent initialization
 
@@ -834,13 +836,15 @@ Table of Contents
 
 10.3.  Customer onboarding
 
-   At onboarding time, a customer deployment MAY:
+   At onboarding time, a customer deployment MAY use one or more of the
+   following mechanisms:
 
-   *  register the bundle in a customer-operated registry;
+   *  register the schemas or an optional bundle in a customer-operated
+      registry;
 
-   *  install the bundle in a platform-controlled local store;
+   *  install an optional bundle in a platform-controlled local store;
 
-   *  allow the agent to serve the bundled schemas; or
+   *  allow the agent to serve its packaged schemas; or
 
    *  permit inline schemas in describe_skill.
 
@@ -872,7 +876,7 @@ Table of Contents
 
 11.3.  Agent-hosted schemas
 
-   An agent MAY expose bundled schemas beneath a well-known path
+   An agent MAY expose packaged schemas beneath a well-known path
    associated with the already identified and authenticated agent
    endpoint.  A Schema Reference using this mechanism contains a
    relative path and digest.  It does not redirect the client agent to
