@@ -6,7 +6,7 @@
     "schema_uri": "urn:example:network-management-agent:analyze-network:input:1.0",
     "version": "1.0",
     "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:8d076361c4dcc79f0dbf1afa4dbe864e6318a88e4a8e6d9441c7cc99a5837aeb",
+    "digest": "sha256:04f6775d30ad5d0f6661a7741f2da3a8dd3918938219d0f815c6a9e6009cb606",
     "resolution": {
       "type": "inline",
       "schema": {
@@ -14,11 +14,16 @@
         "properties": {
           "objective": {
             "type": "string"
+          },
+          "constraints": {
+            "type": "object",
+            "description": "Skill-specific constraints defined by the domain schema."
           }
         },
         "required": [
           "objective"
-        ]
+        ],
+        "additionalProperties": false
       }
     }
   },
