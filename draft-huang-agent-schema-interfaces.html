@@ -1263,7 +1263,7 @@ dependency for every task.<a href="#section-abstract-3" class="pilcrow">¶</a></
                 <p id="section-toc.1-1.6.2.7.1"><a href="#section-6.7" class="auto internal xref">6.7</a>.  <a href="#name-assemble-and-validate-befor" class="internal xref">Assemble and validate before advertisement</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.8">
-                <p id="section-toc.1-1.6.2.8.1"><a href="#section-6.8" class="auto internal xref">6.8</a>.  <a href="#name-participants-and-schema-int" class="internal xref">Participants and schema-interface flow</a></p>
+                <p id="section-toc.1-1.6.2.8.1"><a href="#section-6.8" class="auto internal xref">6.8</a>.  <a href="#name-inline-schema-interface-flo" class="internal xref">Inline schema-interface flow</a></p>
 </li>
             </ul>
 </li>
@@ -1851,65 +1851,64 @@ agent's domain logic to construct or alter an interface while processing the
 interface request.<a href="#section-6.7-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="participants-and-schema-interface-flow">
+<div id="inline-schema-interface-flow">
 <section id="section-6.8">
-        <h3 id="name-participants-and-schema-int">
-<a href="#section-6.8" class="section-number selfRef">6.8. </a><a href="#name-participants-and-schema-int" class="section-name selfRef">Participants and schema-interface flow</a>
+        <h3 id="name-inline-schema-interface-flo">
+<a href="#section-6.8" class="section-number selfRef">6.8. </a><a href="#name-inline-schema-interface-flo" class="section-name selfRef">Inline schema-interface flow</a>
         </h3>
-<p id="section-6.8-1">The following figure shows the relationship among a client agent, remote
-network management agents, and the schema-resolution facilities of a
-customer deployment.<a href="#section-6.8-1" class="pilcrow">¶</a></p>
-<p id="section-6.8-2">```text
-                         +------------------------+
-                         | Client Agent           |
-                         +-----------+------------+
-                                     |
-                    Identify agent and retrieve Agent Card
-                                  |
-                            describe_skill
-                                     |
-                 +-------------------+-------------------+
-                 |                                       |
-       +---------v----------+                  +---------v----------+
-       | Network Management |                  | Network Management |
-       | Agent A             |                  | Agent B             |
-       | Schema bundle       |                  | Schema bundle       |
-       +---------+----------+                  +----------+---------+
-                 |                                        |
-                 +--------------+  +----------------------+
-                                |  |
-                      Skill Interface Documents and
-                          Schema References
-                                |  |
-                 +--------------+--+----------------------+
-                 |                 |                       |
-       +---------v--------+ +------v---------+ +-----------v-------+
-       | Customer Schema  | | Trusted Cache | | Agent-hosted,     |
-       | Registry         | | or Installed  | | Inline, or Offline|
-       | (Optional)       | | Schema Bundle | | Schemas            |
-       +------------------+ +----------------+ +--------------------+<a href="#section-6.8-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-6.8-3">
+<p id="section-6.8-1">The following figure shows the initial inline flow between a client agent and
+a remote network management agent.  Inline delivery does not replace Schema
+References.  Each reference retains its stable identity, version, dialect,
+and digest while carrying the schema content in its <code>resolution</code> field.<a href="#section-6.8-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-ascii-art art-text artwork" id="section-6.8-2">
 <pre>
-   After interface resolution and validation:
-
-   Client Agent
-      &lt;==== Direct A2A tasks, skill outcomes, and supporting records ====&gt;
-   Selected Network Management Agent ```
-</pre><a href="#section-6.8-3" class="pilcrow">¶</a>
+       Client Agent                         Remote Agent
+            |                                    |
+            |------ Retrieve Agent Card --------&gt;|
+            |&lt;----- Skills and A2A endpoint -----|
+            |                                    |
+            |--- describe_skill(skill_id) ------&gt;|
+            |&lt;-- Skill Interface Document -------|
+            |       Schema References:           |
+            |       - input schema               |
+            |       - outcome schema             |
+            |       - supporting records         |
+            |       resolution.type = inline     |
+            |       embedded schema content      |
+            |                                    |
+            | Validate interface structure,      |
+            | references, digests, and schemas   |
+            |                                    |
+            |--- Delegate validated request ----&gt;|
+            |&lt;-- Status, outcome, and records ---|
+            | Validate response using cached     |
+            | Schema References                  |
+</pre><a href="#section-6.8-2" class="pilcrow">¶</a>
 </div>
-<p id="section-6.8-4">After identifying a remote agent and retrieving its Agent Card, the client
+<p id="section-6.8-3">After identifying a remote agent and retrieving its Agent Card, the client
 agent obtains the selected skill's validated Skill Interface Document through
-<code>describe_skill</code>. The document contains stable Schema References rather than
-assuming one deployment-specific registry. The client agent validates the
-document against its trusted copy of the Skill Interface Schema, resolves and
-verifies the domain schema references using an allowed mechanism, validates
-the skill request, and exchanges the task directly with the target through the
-Agent-to-Agent protocol. The registry does not carry the task or its result.
-When no registry is deployed, trusted cache, agent-hosted schemas, inline
-schemas, or an offline bundle provide equivalent resolution paths.<a href="#section-6.8-4" class="pilcrow">¶</a></p>
-<p id="section-6.8-5">Agents A and B represent arbitrary independently developed network management
-agents. The examples later in this document are illustrative use cases, not
-named participants in the common architecture.<a href="#section-6.8-5" class="pilcrow">¶</a></p>
+<code>describe_skill</code>.  For the inline flow, the client validates the document
+against its trusted copy of the Skill Interface Schema, verifies each Schema
+Reference and embedded schema against the declared digest, validates the skill
+request, and exchanges the task directly with the target through the
+Agent-to-Agent protocol.<a href="#section-6.8-3" class="pilcrow">¶</a></p>
+<p id="section-6.8-4">Other deployments may resolve the same stable Schema References through:<a href="#section-6.8-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.8-5.1">
+            <p id="section-6.8-5.1.1">a trusted cache;<a href="#section-6.8-5.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.8-5.2">
+            <p id="section-6.8-5.2.1">a customer-operated schema registry;<a href="#section-6.8-5.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.8-5.3">
+            <p id="section-6.8-5.3.1">a platform-installed or offline schema bundle; or<a href="#section-6.8-5.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.8-5.4">
+            <p id="section-6.8-5.4.1">an authenticated agent-hosted schema endpoint.<a href="#section-6.8-5.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-6.8-6">These mechanisms change how schema content is obtained; they do not change
+the Skill Interface Document or carry the delegated task or its result.<a href="#section-6.8-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2209,27 +2208,65 @@ initiating the downstream delegation is the client agent for that interaction.
 That component may be a centralized orchestrator or the upstream agent itself
 communicating directly with the downstream agent. The same composition rules
 apply in either topology.<a href="#section-9.5-1" class="pilcrow">¶</a></p>
-<p id="section-9.5-2">The standardized Schema Reference allows an orchestrating system or delegating
+<p id="section-9.5-2">The following figure shows the reference comparison and validation decisions
+performed by that delegating component.<a href="#section-9.5-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-ascii-art art-text artwork" id="section-9.5-3">
+<pre>
+ Upstream Agent                 Delegating Component
+       |                                  |
+       |-- Outcome payload --------------&gt;|
+       |   outcome_schema reference       |
+       |                                  |
+       |                         Retrieve downstream
+       |                         Skill Interface
+       |                                  |
+       |                                  v
+       |                         Downstream input_schema
+       |                              reference
+       |                                  |
+       |                    Compare URI, version,
+       |                    dialect, and digest
+       |                                  |
+       |                +-----------------+----------------+
+       |                |                                  |
+       |              Match                         No exact match
+       |                |                                  |
+       |      Validate outcome against        Trusted transformation
+       |      downstream input schema          available?
+       |                |                       |         |
+       |                |                      Yes        No
+       |                |                       |         |
+       |                +----------+------------+       Reject
+       |                           |
+       |                           v
+       |                Delegate validated input
+       |                           |
+       |                           v
+       |                   Downstream Agent
+       |                validates and processes
+</pre><a href="#section-9.5-3" class="pilcrow">¶</a>
+</div>
+<p id="section-9.5-4">The standardized Schema Reference allows an orchestrating system or delegating
 agent to determine structural compatibility without interpreting a
 domain-specific schema. Direct composition <span class="bcp14">SHOULD</span> require the Schema Reference
 for the transferred upstream outcome payload and the Schema Reference accepted
 for the corresponding downstream input to have the same <code>schema_uri</code>,
 <code>version</code>, <code>dialect</code>, and <code>digest</code>. Their deployment-specific resolution
-information need not match.<a href="#section-9.5-2" class="pilcrow">¶</a></p>
-<p id="section-9.5-3">The orchestrating system or delegating agent <span class="bcp14">MUST</span> validate the transferred
+information need not match.<a href="#section-9.5-4" class="pilcrow">¶</a></p>
+<p id="section-9.5-5">The orchestrating system or delegating agent <span class="bcp14">MUST</span> validate the transferred
 instance mechanically against the downstream input schema before delegation,
 and the receiving agent <span class="bcp14">MUST</span> validate the received instance before processing
 it. Neither operation requires the orchestrating system or delegating agent to
-understand the schema's domain semantics.<a href="#section-9.5-3" class="pilcrow">¶</a></p>
-<p id="section-9.5-4">If those Schema Reference fields do not match, composition requires an
+understand the schema's domain semantics.<a href="#section-9.5-5" class="pilcrow">¶</a></p>
+<p id="section-9.5-6">If those Schema Reference fields do not match, composition requires an
 explicitly identified and trusted transformation. The transformed instance
 <span class="bcp14">MUST</span> validate against the downstream input schema. In the absence of either an
 exact match or such a transformation, the delegating component <span class="bcp14">SHOULD</span> reject
-the composition rather than infer a mapping from opaque JSON or text.<a href="#section-9.5-4" class="pilcrow">¶</a></p>
-<p id="section-9.5-5">Matching Schema References and successful instance validation establish
+the composition rather than infer a mapping from opaque JSON or text.<a href="#section-9.5-6" class="pilcrow">¶</a></p>
+<p id="section-9.5-7">Matching Schema References and successful instance validation establish
 structural compatibility, not operational correctness. The receiving agent
 remains responsible for domain-semantic validation, authorization, policy
-evaluation, and operational safety before acting on the input.<a href="#section-9.5-5" class="pilcrow">¶</a></p>
+evaluation, and operational safety before acting on the input.<a href="#section-9.5-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
