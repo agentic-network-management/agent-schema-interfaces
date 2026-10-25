@@ -566,9 +566,9 @@ can be selected in a `describe_skill` request. The `describe_skill` skill MUST
 accept structured input identifying the selected `skill_id` and MUST produce
 structured output containing the corresponding Skill Interface Document.
 
-The advertisement identifies the supported profile version and advertised
-skill versions. It SHOULD also provide an interface-document digest when the
-Agent Card representation permits that binding.
+The advertisement identifies the supported Skill Interface version and
+advertised skill versions. It SHOULD also provide an interface-document digest
+when the Agent Card representation permits that binding.
 
 A caller MUST NOT assume that every Agent-to-Agent implementation conforms to
 this framework. Absence of the `describe_skill` skill from the Agent Card means
@@ -627,8 +627,8 @@ Before delegating a domain skill under this framework, the client agent MUST
 possess a successfully validated Skill Interface Document obtained from that
 target's `describe_skill` skill. If `describe_skill` is absent, fails, returns
 a document for a different skill or version, or returns a document that cannot
-be validated, the client agent MUST NOT delegate the domain request under this
-profile.
+be validated, the client agent MUST NOT delegate the domain request using the
+procedure defined in this document.
 
 The client agent MAY reuse a cached Skill Interface Document without calling
 `describe_skill` before every task when the cache entry is bound to the same
@@ -1159,7 +1159,7 @@ both `deliverable_refs` and `supporting_record_refs` when both roles apply.
 # IANA Considerations {#iana}
 
 This early version does not request any IANA actions. A later version may
-request identifiers for the schema-interface profile, media types, or URN
+request identifiers for Skill Interface versions, media types, or URN
 namespaces after the representation and protocol mapping stabilize.
 
 # Open Issues
