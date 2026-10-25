@@ -573,6 +573,15 @@ when the Agent Card representation permits that binding.
 A caller MUST NOT assume that every Agent-to-Agent implementation conforms to
 this framework. Absence of the `describe_skill` skill from the Agent Card means
 that the agent does not provide the schema-interface procedure defined here.
+Such an agent MAY still be invoked using the base Agent-to-Agent protocol or an
+explicitly configured out-of-band interface contract. The caller MUST NOT
+infer or prescribe the remote skill's domain schemas from skill descriptions
+or media types alone, and MUST NOT claim schema-interface conformance or
+schema-governed compatibility for such an invocation. Supporting multiple
+non-conforming agents requires separately configured contracts, adapters, or
+other bilateral integration mechanisms. This is the scaling problem addressed
+by this document: replacing an expanding collection of bilateral integrations
+with one standardized interface-retrieval procedure.
 
 ## `describe_skill` request
 
