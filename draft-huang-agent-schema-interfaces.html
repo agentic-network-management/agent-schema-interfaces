@@ -17,9 +17,9 @@ interfaces of network management agent skills: a Schema Reference structure
 for identifying, verifying, and resolving schemas; a Skill Interface Schema
 and conforming per-skill Skill Interface Document; and a Skill Interface
 advertisement and retrieval procedure using  describe_skill . The Skill
-Interface combines common Skill Request and Supporting Record Envelopes with
-the input, output, and supporting-record schemas defined by the agent's vendor
-or domain owner. 
+Interface combines the input, output, and supporting-record schemas defined by
+the agent's vendor or domain owner with common interaction and authority
+declarations. 
        Schema identity is portable, while schema resolution is deployment-specific.
 Schemas may be returned inline, served by the agent, installed as an offline
 bundle, or resolved through an optional customer-operated schema registry.
@@ -1107,9 +1107,9 @@ interfaces of network management agent skills: a Schema Reference structure
 for identifying, verifying, and resolving schemas; a Skill Interface Schema
 and conforming per-skill Skill Interface Document; and a Skill Interface
 advertisement and retrieval procedure using <code>describe_skill</code>. The Skill
-Interface combines common Skill Request and Supporting Record Envelopes with
-the input, output, and supporting-record schemas defined by the agent's vendor
-or domain owner.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+Interface combines the input, output, and supporting-record schemas defined by
+the agent's vendor or domain owner with common interaction and authority
+declarations.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 <p id="section-abstract-3">Schema identity is portable, while schema resolution is deployment-specific.
 Schemas may be returned inline, served by the agent, installed as an offline
 bundle, or resolved through an optional customer-operated schema registry.
@@ -1228,10 +1228,7 @@ dependency for every task.<a href="#section-abstract-3" class="pilcrow">¶</a></
                 <p id="section-toc.1-1.5.2.9.1"><a href="#section-5.9" class="auto internal xref">5.9</a>.  <a href="#name-skill-interface-document" class="internal xref">Skill Interface Document</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.10">
-                <p id="section-toc.1-1.5.2.10.1"><a href="#section-5.10" class="auto internal xref">5.10</a>. <a href="#name-skill-request-envelope" class="internal xref">Skill Request Envelope</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.11">
-                <p id="section-toc.1-1.5.2.11.1"><a href="#section-5.11" class="auto internal xref">5.11</a>. <a href="#name-supporting-record-envelope" class="internal xref">Supporting Record Envelope</a></p>
+                <p id="section-toc.1-1.5.2.10.1"><a href="#section-5.10" class="auto internal xref">5.10</a>. <a href="#name-supporting-record-envelope" class="internal xref">Supporting Record Envelope</a></p>
 </li>
             </ul>
 </li>
@@ -1325,10 +1322,10 @@ dependency for every task.<a href="#section-abstract-3" class="pilcrow">¶</a></
             <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-schema-evolution-and-compat" class="internal xref">Schema Evolution and Compatibility</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
-            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-skill-requests-outputs-and-" class="internal xref">Skill Requests, Outputs, and Supporting Records</a></p>
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-skill-inputs-outputs-and-su" class="internal xref">Skill Inputs, Outputs, and Supporting Records</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
-                <p id="section-toc.1-1.13.2.1.1"><a href="#section-13.1" class="auto internal xref">13.1</a>.  <a href="#name-skill-request-envelope-2" class="internal xref">Skill Request Envelope</a></p>
+                <p id="section-toc.1-1.13.2.1.1"><a href="#section-13.1" class="auto internal xref">13.1</a>.  <a href="#name-skill-input" class="internal xref">Skill Input</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.2">
                 <p id="section-toc.1-1.13.2.2.1"><a href="#section-13.2" class="auto internal xref">13.2</a>.  <a href="#name-skill-output" class="internal xref">Skill Output</a></p>
@@ -1451,8 +1448,8 @@ operational decisions or generate network changes.<a href="#section-1-5" class="
 <p id="section-1-6">The three standardized components define a framework in which:<a href="#section-1-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-1-7.1">
-          <p id="section-1-7.1.1">common Skill Request, Supporting Record, and Skill Interface structures are
-standardized without standardizing every domain payload;<a href="#section-1-7.1.1" class="pilcrow">¶</a></p>
+          <p id="section-1-7.1.1">common Supporting Record and Skill Interface structures are standardized
+without standardizing every domain payload;<a href="#section-1-7.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-1-7.2">
           <p id="section-1-7.2.1">each skill declares versioned input, output, and supporting-record schemas;<a href="#section-1-7.2.1" class="pilcrow">¶</a></p>
@@ -1515,8 +1512,7 @@ Document; and<a href="#section-3-2.2.1" class="pilcrow">¶</a></p>
 <p id="section-3-3">In support of those three components, this document also defines:<a href="#section-3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3-4.1">
-          <p id="section-3-4.1.1">the relationship among skill requests, skill outputs, and supporting
-records;<a href="#section-3-4.1.1" class="pilcrow">¶</a></p>
+          <p id="section-3-4.1.1">the relationship among skill inputs, skill outputs, and supporting records;<a href="#section-3-4.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-4.2">
           <p id="section-3-4.2.1">schema identity, integrity, versioning, and resolution behavior;<a href="#section-3-4.2.1" class="pilcrow">¶</a></p>
@@ -1567,7 +1563,7 @@ records;<a href="#section-3-4.1.1" class="pilcrow">¶</a></p>
 <p id="section-4.1-1">The Schema Reference is a common structure for identifying a schema by stable
 URI and version, declaring its schema dialect, verifying its content by
 digest, and providing deployment-specific resolution information. The same
-structure is used for request, input, output, and supporting-record schemas.
+structure is used for input, output, and supporting-record schemas.
 The structure is standardized so that a client can identify, retrieve, and
 verify every schema in a Skill Interface without agent-specific or
 registry-specific interpretation. The referenced domain schemas and the
@@ -1588,9 +1584,8 @@ deterministic basis for deciding whether direct composition is permitted.<a href
         </h3>
 <p id="section-4.2-1">The Skill Interface Schema defines the common structure of a Skill Interface
 Document. A conforming document describes one version of one skill and binds
-the common request and supporting-record envelope schemas to the
-domain-specific input, output, and supporting-record schemas used by that
-skill.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+the domain-specific input, output, and supporting-record schemas used by that
+skill to common interaction and authority declarations.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="skill-interface-advertisement-and-retrieval">
@@ -1704,23 +1699,13 @@ Schema References supplied by the agent without modifying the standardized
 Skill Interface Schema.<a href="#section-5.9-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="skill-request-envelope">
-<section id="section-5.10">
-        <h3 id="name-skill-request-envelope">
-<a href="#section-5.10" class="section-number selfRef">5.10. </a><a href="#name-skill-request-envelope" class="section-name selfRef">Skill Request Envelope</a>
-        </h3>
-<p id="section-5.10-1">The application-level request for invoking a skill, including its goal, typed
-input, constraints, and workflow correlation. The Agent-to-Agent protocol
-remains authoritative for protocol task identity and lifecycle state.<a href="#section-5.10-1" class="pilcrow">¶</a></p>
-</section>
-</div>
 <div id="supporting-record-envelope">
-<section id="section-5.11">
+<section id="section-5.10">
         <h3 id="name-supporting-record-envelope">
-<a href="#section-5.11" class="section-number selfRef">5.11. </a><a href="#name-supporting-record-envelope" class="section-name selfRef">Supporting Record Envelope</a>
+<a href="#section-5.10" class="section-number selfRef">5.10. </a><a href="#name-supporting-record-envelope" class="section-name selfRef">Supporting Record Envelope</a>
         </h3>
-<p id="section-5.11-1">A provenance-bearing observation or artifact used to derive, validate, or
-audit a skill output.<a href="#section-5.11-1" class="pilcrow">¶</a></p>
+<p id="section-5.10-1">A provenance-bearing observation or artifact used to derive, validate, or
+audit a skill output.<a href="#section-5.10-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1750,12 +1735,12 @@ correlation.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
         <h3 id="name-standardize-reusable-struct">
 <a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-standardize-reusable-struct" class="section-name selfRef">Standardize reusable structures, not all domain semantics</a>
         </h3>
-<p id="section-6.2-1">The common standard defines the Skill Request Envelope, Supporting Record
-Envelope, Skill Interface Schema, and Schema Reference. A vendor or domain
-owner defines the input, output, and supporting-record payload schemas used by
-a particular skill. A conforming implementation combines those domain schemas
-with the common structure to produce a Skill Interface Document; it does not
-redefine the common structure.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-1">The common standard defines the Supporting Record Envelope, Skill Interface
+Schema, and Schema Reference. A vendor or domain owner defines the input,
+output, and supporting-record payload schemas used by a particular skill. A
+conforming implementation combines those domain schemas with the common
+structure to produce a Skill Interface Document; it does not redefine the
+common structure.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="distinguish-envelope-conformance-from-semantic-conformance">
@@ -1898,13 +1883,12 @@ therefore includes the stable schema URI and digest.<a href="#section-7-5" class
       </h2>
 <p id="section-8-1">The Skill Interface Schema standardizes the structure shown in this section.
 A Skill Interface Document is a conforming instance for one skill version. It
-binds common envelopes to the domain schemas used by that skill and identifies
-the request, input, output, supporting-record, interaction, and authority
-characteristics.<a href="#section-8-1" class="pilcrow">¶</a></p>
+binds the domain schemas used by that skill to its input, output,
+supporting-record, interaction, and authority characteristics.<a href="#section-8-1" class="pilcrow">¶</a></p>
 <p id="section-8-2">The agent or domain owner supplies the skill identifier, skill version, and
 domain input, output, and supporting-record schemas. The agent protocol
-service supplies the common envelope reference and assembles the complete
-document. Interaction declarations reflect the agent implementation.
+service assembles the complete document. Interaction declarations reflect the
+agent implementation.
 Authority declarations may additionally reflect deployment policy. Assembly
 <span class="bcp14">MUST NOT</span> modify the standardized Skill Interface Schema.<a href="#section-8-2" class="pilcrow">¶</a></p>
 <p id="section-8-3">The following non-normative example illustrates a conforming Skill Interface
@@ -1914,18 +1898,6 @@ Document using inline schema resolution:<a href="#section-8-3" class="pilcrow">�
   "interface_version": "1.0",
   "skill_id": "example_skill",
   "skill_version": "1.0",
-  "request_envelope": {
-    "schema_uri": "urn:example:agent:skill-request-envelope:1.0",
-    "version": "1.0",
-    "dialect": "https://json-schema.org/draft/2020-12/schema",
-    "digest": "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
-    "resolution": {
-      "type": "inline",
-      "schema": {
-        "type": "object"
-      }
-    }
-  },
   "input_schema": {
     "schema_uri": "urn:example:network-management:example-skill-input:1.0",
     "version": "1.0",
@@ -2000,11 +1972,9 @@ document. They are not additions to or replacements for the Skill Interface
 Schema. A deployment may instead populate the same Schema References with an
 agent-hosted, bundle, or registry resolution mechanism supported by the
 selected interface version.<a href="#section-8-5" class="pilcrow">¶</a></p>
-<p id="section-8-6">Request validation is logically performed in two stages: the complete request
-is validated against the common Skill Request Envelope, and the envelope's
-typed input is validated against the domain <code>input_schema</code>. Output and
-supporting-record validation follow the same composition model. An
-implementation <span class="bcp14">MAY</span> compile these stages into an equivalent composed validator.<a href="#section-8-6" class="pilcrow">¶</a></p>
+<p id="section-8-6">The Agent-to-Agent binding identifies the message part or data member that
+contains the skill input. That input is validated against the domain
+<code>input_schema</code>. Output and supporting-record validation follow the same model.<a href="#section-8-6" class="pilcrow">¶</a></p>
 <p id="section-8-7">Successful schema validation does not authorize execution. The receiving
 agent and hosting platform <span class="bcp14">MUST</span> independently authenticate the caller and
 authorize the requested skill, resources, and operation.<a href="#section-8-7" class="pilcrow">¶</a></p>
@@ -2141,7 +2111,7 @@ copy of the selected Skill Interface Schema;<a href="#section-9.4-5.4.1" class="
             <p id="section-9.4-5.5.1">verify and, when necessary, resolve the referenced domain schemas;<a href="#section-9.4-5.5.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-9.4-5.6">
-            <p id="section-9.4-5.6.1">validate the outgoing Skill Request;<a href="#section-9.4-5.6.1" class="pilcrow">¶</a></p>
+            <p id="section-9.4-5.6.1">validate the outgoing skill input against <code>input_schema</code>;<a href="#section-9.4-5.6.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-9.4-5.7">
             <p id="section-9.4-5.7.1">delegate the task through the Agent-to-Agent protocol;<a href="#section-9.4-5.7.1" class="pilcrow">¶</a></p>
@@ -2426,52 +2396,23 @@ used by the skill. A caller <span class="bcp14">MUST NOT</span> substitute a reg
 version after accepting a document.<a href="#section-12-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="skill-requests-outputs-and-supporting-records">
+<div id="skill-inputs-outputs-and-supporting-records">
 <section id="section-13">
-      <h2 id="name-skill-requests-outputs-and-">
-<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-skill-requests-outputs-and-" class="section-name selfRef">Skill Requests, Outputs, and Supporting Records</a>
+      <h2 id="name-skill-inputs-outputs-and-su">
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-skill-inputs-outputs-and-su" class="section-name selfRef">Skill Inputs, Outputs, and Supporting Records</a>
       </h2>
-<div id="skill-request-envelope-1">
+<div id="skill-input">
 <section id="section-13.1">
-        <h3 id="name-skill-request-envelope-2">
-<a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-skill-request-envelope-2" class="section-name selfRef">Skill Request Envelope</a>
+        <h3 id="name-skill-input">
+<a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-skill-input" class="section-name selfRef">Skill Input</a>
         </h3>
-<p id="section-13.1-1">The Skill Request Envelope carries the application request associated with an
-Agent-to-Agent task. It includes common correlation and constraint fields and
-a typed input payload.<a href="#section-13.1-1" class="pilcrow">¶</a></p>
-<p id="section-13.1-2">An illustrative Skill Request Envelope is:<a href="#section-13.1-2" class="pilcrow">¶</a></p>
-<p id="section-13.1-3"><code>json
-{
-  "schema": {
-    "schema_uri": "urn:example:agent:skill-request-envelope:1.0",
-    "version": "1.0",
-    "digest": "sha256:..."
-  },
-  "workflow_id": "workflow-123",
-  "step_id": "investigate-incident",
-  "attempt_id": "attempt-1",
-  "skill_id": "investigate_incident",
-  "goal": "Identify the root cause of the incident",
-  "constraints": {
-    "deadline": "2026-10-19T22:00:00Z",
-    "authority": "read-only",
-    "approval_required": false
-  },
-  "input": {
-    "schema": {
-      "schema_uri": "urn:example:incident-analysis:investigate-incident-input:1.0",
-      "version": "1.0",
-      "digest": "sha256:..."
-    },
-    "data": {
-      "incident_id": "incident-000001"
-    }
-  }
-}
-</code><a href="#section-13.1-3" class="pilcrow">¶</a></p>
-<p id="section-13.1-4">The <code>workflow_id</code>, <code>step_id</code>, and <code>attempt_id</code> are application-level
-correlation identifiers. They do not replace the protocol task and context
-identifiers.<a href="#section-13.1-4" class="pilcrow">¶</a></p>
+<p id="section-13.1-1">The skill input is the domain-specific application data submitted to a skill
+invocation. It <span class="bcp14">MUST</span> validate against the <code>input_schema</code> in the selected Skill
+Interface Document. This document does not define an additional common request
+envelope around that data.<a href="#section-13.1-1" class="pilcrow">¶</a></p>
+<p id="section-13.1-2">The Agent-to-Agent binding identifies the message part or data member that
+contains the skill input. The Agent-to-Agent protocol remains authoritative
+for protocol task identity, context, lifecycle state, and transport.<a href="#section-13.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="skill-output">
@@ -2505,47 +2446,40 @@ classification.<a href="#section-13.3-1" class="pilcrow">¶</a></p>
     "version": "1.0",
     "digest": "sha256:..."
   },
-  "record_id": "causal-path-1",
+  "record_id": "observation-record-1",
   "workflow_id": "workflow-123",
-  "step_id": "investigate-incident",
+  "step_id": "evaluate-objective",
   "attempt_id": "attempt-1",
-  "kind": "validated-causal-path",
+  "kind": "validated-observation",
   "classification": "authoritative",
   "producer": {
-    "agent": "event-analyzer",
-    "component": "incident-correlator",
+    "agent": "example-agent",
+    "component": "analysis-component",
     "version": "1.0"
   },
   "source": {
-    "system": "incident-graph",
-    "resource": "incident-000001"
+    "system": "network-monitor",
+    "resource": "network-resource-123"
   },
   "observed_at": "2026-08-11T12:00:01Z",
   "produced_at": "2026-10-19T18:00:00Z",
   "derived_from": [
-    "event-record-1"
+    "source-record-1"
   ],
   "payload": {
-    "schema": {
-      "schema_uri": "urn:example:incident-analysis:causal-path-record:1.0",
-      "version": "1.0",
-      "digest": "sha256:..."
-    },
-    "data": {
-      "from_event_id": "1",
-      "to_event_id": "2",
-      "entity_path": [
-        "node-pe-15",
-        "node-pe-15/et-1-1-4"
-      ],
-      "topology_version": "standalone-fixture-v1"
-    }
+    "resource_id": "network-resource-123",
+    "metric": "utilization",
+    "value": 42,
+    "unit": "percent"
   }
 }
 </code><a href="#section-13.3-2" class="pilcrow">¶</a></p>
-<p id="section-13.3-3">Supporting records <span class="bcp14">SHOULD</span> be append-only once published. Corrections <span class="bcp14">SHOULD</span> be
+<p id="section-13.3-3">The <code>kind</code> value selects the corresponding entry in
+<code>supporting_record_schemas</code>. The <code>payload</code> value is validated against that
+entry's schema; the record does not repeat its Schema Reference.<a href="#section-13.3-3" class="pilcrow">¶</a></p>
+<p id="section-13.3-4">Supporting records <span class="bcp14">SHOULD</span> be append-only once published. Corrections <span class="bcp14">SHOULD</span> be
 expressed as new records that identify the record they supersede rather than
-by silently replacing earlier content.<a href="#section-13.3-3" class="pilcrow">¶</a></p>
+by silently replacing earlier content.<a href="#section-13.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="output-and-supporting-record-relationship">
@@ -2607,9 +2541,10 @@ document does not require a common output-envelope reference field.<a href="#sec
           <p id="section-14-2.6.1">cancellation delivery.<a href="#section-14-2.6.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-14-3">The Skill Request Envelope adds an application-level goal, workflow
-correlation, typed input, and constraints. The domain-specific skill output is
-validated against the <code>output_schema</code> in the selected Skill Interface.<a href="#section-14-3" class="pilcrow">¶</a></p>
+<p id="section-14-3">The Agent-to-Agent binding identifies the skill input and output carried by
+protocol messages or artifacts. The domain-specific input and output are
+validated against the <code>input_schema</code> and <code>output_schema</code> in the selected Skill
+Interface.<a href="#section-14-3" class="pilcrow">¶</a></p>
 <p id="section-14-4">Task progress is not automatically a supporting record. A progress update
 becomes one only when published as a Supporting Record Envelope with the
 required provenance and integrity properties.<a href="#section-14-4" class="pilcrow">¶</a></p>
@@ -2818,8 +2753,7 @@ namespaces after the representation and protocol mapping stabilize.<a href="#sec
 <p id="section-19-1">The following issues require further review:<a href="#section-19-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-19-2">
 <li id="section-19-2.1">
-          <p id="section-19-2.1.1">the exact JSON Schema definitions for the common Skill Request and
-Supporting Record Envelopes;<a href="#section-19-2.1.1" class="pilcrow">¶</a></p>
+          <p id="section-19-2.1.1">the exact JSON Schema definition for the common Supporting Record Envelope;<a href="#section-19-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li id="section-19-2.2">
           <p id="section-19-2.2.1">version-negotiation behavior when multiple interface versions are
@@ -2908,7 +2842,6 @@ the source repository as <code>schemas/skill-interface-v1.json</code>.<a href="#
     "interface_version",
     "skill_id",
     "skill_version",
-    "request_envelope",
     "input_schema",
     "output_schema",
     "supporting_record_schemas",
@@ -2925,9 +2858,6 @@ the source repository as <code>schemas/skill-interface-v1.json</code>.<a href="#
     },
     "skill_version": {
       "$ref": "#/$defs/version"
-    },
-    "request_envelope": {
-      "$ref": "#/$defs/schemaReference"
     },
     "input_schema": {
       "$ref": "#/$defs/schemaReference"
