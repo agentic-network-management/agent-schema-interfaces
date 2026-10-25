@@ -2110,7 +2110,16 @@ advertised skill versions. It <span class="bcp14">SHOULD</span> also provide an 
 when the Agent Card representation permits that binding.<a href="#section-9.1-2" class="pilcrow">¶</a></p>
 <p id="section-9.1-3">A caller <span class="bcp14">MUST NOT</span> assume that every Agent-to-Agent implementation conforms to
 this framework. Absence of the <code>describe_skill</code> skill from the Agent Card means
-that the agent does not provide the schema-interface procedure defined here.<a href="#section-9.1-3" class="pilcrow">¶</a></p>
+that the agent does not provide the schema-interface procedure defined here.
+Such an agent <span class="bcp14">MAY</span> still be invoked using the base Agent-to-Agent protocol or an
+explicitly configured out-of-band interface contract. The caller <span class="bcp14">MUST NOT</span>
+infer or prescribe the remote skill's domain schemas from skill descriptions
+or media types alone, and <span class="bcp14">MUST NOT</span> claim schema-interface conformance or
+schema-governed compatibility for such an invocation. Supporting multiple
+non-conforming agents requires separately configured contracts, adapters, or
+other bilateral integration mechanisms. This is the scaling problem addressed
+by this document: replacing an expanding collection of bilateral integrations
+with one standardized interface-retrieval procedure.<a href="#section-9.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="describeskill-request">
