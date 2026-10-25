@@ -329,7 +329,8 @@ interaction and authority declarations. The resulting Skill Interface
 Document MUST be validated before it is advertised or returned.
 
 An implementation SHOULD perform this assembly during agent initialization or
-onboarding and retain an immutable validated document for each skill version.
+deployment configuration and retain an immutable validated document for each
+skill version.
 The `describe_skill` operation retrieves that document. It does not ask the
 agent's domain logic to construct or alter an interface while processing the
 interface request.
@@ -738,21 +739,6 @@ Failure to load, assemble, or validate an interface prevents that skill
 version from being advertised through this framework. An implementation MUST
 NOT silently fall back to an opaque unconstrained payload.
 
-## Customer onboarding
-
-At onboarding time, a customer deployment MAY use one or more of the following
-mechanisms:
-
-- register the schemas or an optional bundle in a customer-operated registry;
-- install an optional bundle in a platform-controlled local store;
-- allow the agent to serve its packaged schemas; or
-- permit inline schemas in `describe_skill`.
-
-If a customer registry is present, onboarding registers the schemas and
-creates a deployment-local mapping from stable schema URI and digest to
-registry subject, version, and identifier. That mapping is supplied to the
-agent or made available to the client agent.
-
 # Schema Resolution {#schema-resolution}
 
 ## Trusted cache
@@ -768,10 +754,14 @@ compatibility checks, publisher metadata, and governance.  {{CONFLUENT}} is one
 non-normative example of this class of service. The standard does
 not require a particular registry implementation or REST API.
 
-An agent identifies a registry by a logical deployment name. The client agent maps
-that name to an administrator-configured trusted endpoint. A client agent MUST NOT
-retrieve schemas from an arbitrary registry URL supplied in an untrusted task
-payload.
+When a registry is used, the deployment creates a local mapping from stable
+schema URI and digest to registry subject, version, and identifier. That
+mapping is supplied to the agent or made available to the client agent.
+
+An agent identifies a registry by a logical deployment name. The client agent
+maps that name to an administrator-configured trusted endpoint. A client agent
+MUST NOT retrieve schemas from an arbitrary registry URL supplied in an
+untrusted task payload.
 
 ## Agent-hosted schemas
 
@@ -793,17 +783,13 @@ An air-gapped deployment MAY install an approved schema bundle alongside the
 client agent. The client agent resolves stable schema URIs from that bundle without
 network access.
 
-## Resolution order
+## Resolution policy
 
-A deployment may use the following resolution order:
-
-1. trusted cache;
-2. configured customer registry;
-3. platform-installed bundle;
-4. authenticated agent-hosted schema endpoint; and
-5. inline schema.
-
-Local policy determines which mechanisms are permitted.
+A deployment determines which schema-resolution mechanisms are permitted and
+how an available mechanism is selected. This document does not define a
+priority or fallback order among resolution mechanisms. Regardless of the
+mechanism used, the client agent verifies that the resolved schema matches the
+identity and digest in the Schema Reference.
 
 # Schema Evolution and Compatibility
 
