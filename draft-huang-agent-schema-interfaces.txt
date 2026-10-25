@@ -131,25 +131,24 @@ Table of Contents
      11.5.  Offline bundle
      11.6.  Resolution policy
    12. Schema Evolution and Compatibility
-   13. Agent-to-Agent Mapping
-   14. Security Considerations
-     14.1.  Schema trust
-     14.2.  Arbitrary retrieval
-     14.3.  Resource limits
-     14.4.  Schema validation and authorization
-     14.5.  Supporting-record integrity and provenance
-     14.6.  Injection
-     14.7.  Interface integrity and substitution
-   15. Operational Considerations
-   16. Non-Normative Examples
-     16.1.  Analytical skill
-     16.2.  Diagnostic skill
-     16.3.  Artifact used as both deliverable and a supporting record
-   17. IANA Considerations
-   18. Open Issues
-   19. References
-     19.1.  Normative References
-     19.2.  Informative References
+   13. Security Considerations
+     13.1.  Schema trust
+     13.2.  Arbitrary retrieval
+     13.3.  Resource limits
+     13.4.  Schema validation and authorization
+     13.5.  Supporting-record integrity and provenance
+     13.6.  Injection
+     13.7.  Interface integrity and substitution
+   14. Operational Considerations
+   15. Non-Normative Examples
+     15.1.  Analytical skill
+     15.2.  Diagnostic skill
+     15.3.  Artifact used as both deliverable and a supporting record
+   16. IANA Considerations
+   17. Open Issues
+   18. References
+     18.1.  Normative References
+     18.2.  Informative References
    Appendix A.  Skill Interface JSON Schema
    Author's Address
 
@@ -596,7 +595,9 @@ Table of Contents
    to derive, validate, reproduce, or audit a skill output.  Each entry
    in supporting_record_schemas associates a kind with the Schema
    Reference for the complete record.  A produced record MUST validate
-   against the schema for its identified kind.
+   against the schema for its identified kind.  A protocol progress
+   update is not a supporting record unless it is published in that form
+   and passes this validation.
 
    This framework does not define an additional common record envelope.
    The domain schema defines any required record identifier, producer,
@@ -962,64 +963,34 @@ Table of Contents
    currently used by the skill.  A caller MUST NOT substitute a
    registry's mutable latest version after accepting a document.
 
-13.  Agent-to-Agent Mapping
+13.  Security Considerations
 
-   The Agent-to-Agent protocol remains authoritative for:
-
-   *  protocol task and context identifiers;
-
-   *  submitted, working, completed, failed, and canceled states;
-
-   *  synchronous task completion;
-
-   *  streaming task updates;
-
-   *  task retrieval and polling; and
-
-   *  cancellation delivery.
-
-   The Agent-to-Agent binding identifies the skill input and output
-   carried by protocol messages or artifacts.  The domain-specific input
-   and output are validated against the input_schema and output_schema
-   in the selected Skill Interface.
-
-   Task progress is not automatically a supporting record.  A progress
-   update becomes one only when it is published as a record that
-   validates against an applicable supporting_record_schemas entry.
-
-   Receiving a cancellation request does not prove that downstream
-   network work has stopped.  The final skill output and supporting
-   records must describe the effective state of relevant downstream
-   operations when that distinction matters.
-
-14.  Security Considerations
-
-14.1.  Schema trust
+13.1.  Schema trust
 
    A syntactically valid schema is not necessarily trustworthy.  A
    client agent applies policy for trusted publishers, schema
    identities, digests, versions, dialects, and resolution mechanisms.
 
-14.2.  Arbitrary retrieval
+13.2.  Arbitrary retrieval
 
    Following arbitrary schema URLs can expose a client agent to server-
    side request forgery, credential leakage, malicious redirects, and
    availability attacks.  Registry aliases and agent-relative paths are
    resolved only through trusted, administrator-configured endpoints.
 
-14.3.  Resource limits
+13.3.  Resource limits
 
    A client agent enforces limits on schema size, nesting, reference
    depth, reference cycles, compilation time, payload size, and cache
    consumption.
 
-14.4.  Schema validation and authorization
+13.4.  Schema validation and authorization
 
    Schema validation establishes structural conformance, not caller
    authority, operational safety, truth, or permission to modify a
    network.  Authorization and policy checks occur at execution time.
 
-14.5.  Supporting-record integrity and provenance
+13.5.  Supporting-record integrity and provenance
 
    Supporting records can be stale, replayed, forged, selectively
    omitted, or derived from untrusted inputs.  A supporting-record
@@ -1028,7 +999,7 @@ Table of Contents
    needed by its domain.  Deployments define freshness and retention
    policy appropriate to the operation.
 
-14.6.  Injection
+13.6.  Injection
 
    Text, CLI configuration, tool output, model output, and supporting-
    record payloads are untrusted data.  An agent does not treat
@@ -1036,7 +1007,7 @@ Table of Contents
    instructions unless the applicable schema and policy explicitly
    assign them that role.
 
-14.7.  Interface integrity and substitution
+13.7.  Interface integrity and substitution
 
    The remote agent and client agent MUST integrity-check the packaged
    Skill Interface Schema before using it.  A local implementation MUST
@@ -1049,7 +1020,7 @@ Table of Contents
    document for a different skill or version MUST NOT be accepted as a
    substitute.
 
-15.  Operational Considerations
+14.  Operational Considerations
 
    Interface retrieval and schema resolution SHOULD NOT add a
    describe_skill or registry lookup to every task.  A client agent
@@ -1077,9 +1048,9 @@ Table of Contents
    unavailability and SHOULD define cache refresh and schema-revocation
    behavior.
 
-16.  Non-Normative Examples
+15.  Non-Normative Examples
 
-16.1.  Analytical skill
+15.1.  Analytical skill
 
    An analytical skill may declare:
 
@@ -1098,7 +1069,7 @@ Table of Contents
    input-data digest, parameters, engine version, run identifier, and
    raw result from which the output was produced.
 
-16.2.  Diagnostic skill
+15.2.  Diagnostic skill
 
    An incident-investigation skill may declare:
 
@@ -1118,7 +1089,7 @@ Table of Contents
    proposal is distinguished from records validated against
    authoritative data.
 
-16.3.  Artifact used as both deliverable and a supporting record
+15.3.  Artifact used as both deliverable and a supporting record
 
    A simulation report may be the requested skill deliverable and also
    support a higher-level claim that a proposed change is safe.  The
@@ -1126,14 +1097,14 @@ Table of Contents
    output schema MAY reference that identifier, and the same artifact
    MAY also be published as a supporting record when both roles apply.
 
-17.  IANA Considerations
+16.  IANA Considerations
 
    This early version does not request any IANA actions.  A later
    version may request identifiers for Skill Interface versions, media
    types, or URN namespaces after the representation and protocol
    mapping stabilize.
 
-18.  Open Issues
+17.  Open Issues
 
    The following issues require further review:
 
@@ -1151,9 +1122,9 @@ Table of Contents
    5.  mapping to existing schema registries without making a registry
        API normative.
 
-19.  References
+18.  References
 
-19.1.  Normative References
+18.1.  Normative References
 
    [A2A]      "Agent2Agent Protocol Specification, Version 1.0.1", n.d.,
               <https://a2a-protocol.org/v1.0.1/specification/>.
@@ -1172,7 +1143,7 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-19.2.  Informative References
+18.2.  Informative References
 
    [CONFLUENT]
               "Confluent Schema Registry Documentation", n.d.,
