@@ -409,19 +409,27 @@ A Schema Reference contains:
   "dialect": "https://json-schema.org/draft/2020-12/schema",
   "digest": "sha256:abc123...",
   "resolution": {
-    "type": "registry",
-    "registry": "customer-agent-schema-registry",
-    "id": 117,
-    "subject": "example.network-management.skill-input",
-    "registry_version": 3
+    "type": "inline",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "objective": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "objective"
+      ],
+      "additionalProperties": false
+    }
   }
 }
 ```
 
-Registry-local numeric identifiers MUST NOT be treated as globally portable
-schema identities. Two registries may assign the same numeric identifier to
-different schema content. A registry reference therefore includes the stable
-schema URI and digest.
+When registry resolution is used, registry-local numeric identifiers MUST NOT
+be treated as globally portable schema identities. Two registries may assign
+the same numeric identifier to different schema content. A registry reference
+therefore includes the stable schema URI and digest.
 
 # Skill Interface Schema and Documents
 
