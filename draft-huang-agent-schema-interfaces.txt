@@ -110,7 +110,6 @@ Table of Contents
      6.5.  Keep the registry optional
      6.6.  Distinguish outcomes from supporting records
      6.7.  Assemble and validate before advertisement
-     6.8.  Inline schema-interface flow
    7.  Schema Reference
    8.  Skill Interface Schema and Documents
    9.  Skill Interface Advertisement and Retrieval
@@ -478,60 +477,6 @@ Table of Contents
    construct or alter an interface while processing the interface
    request.
 
-6.8.  Inline schema-interface flow
-
-   The following figure shows the initial inline flow between a client
-   agent and a remote network management agent.  Inline delivery does
-   not replace Schema References.  Each reference retains its stable
-   identity, version, dialect, and digest while carrying the schema
-   content in its resolution field.
-
-          Client Agent                         Remote Agent
-               |                                    |
-               |------ Retrieve Agent Card -------->|
-               |<----- Skills and A2A endpoint -----|
-               |                                    |
-               |--- describe_skill(skill_id) ------>|
-               |<-- Skill Interface Document -------|
-               |       Schema References:           |
-               |       - input schema               |
-               |       - output schema              |
-               |       - supporting records         |
-               |       resolution.type = inline     |
-               |       embedded schema content      |
-               |                                    |
-               | Validate interface structure,      |
-               | references, digests, and schemas   |
-               |                                    |
-               |--- Delegate validated request ---->|
-               |<--- Status, output, and records ---|
-               | Validate response using cached     |
-               | Schema References                  |
-
-   After identifying a remote agent and retrieving its Agent Card, the
-   client agent obtains the selected skill's validated Skill Interface
-   Document through describe_skill.  For the inline flow, the client
-   validates the document against its trusted copy of the Skill
-   Interface Schema, verifies each Schema Reference and embedded schema
-   against the declared digest, validates the skill request, and
-   exchanges the task directly with the target through the Agent-to-
-   Agent protocol.
-
-   Other deployments may resolve the same stable Schema References
-   through:
-
-   *  a trusted cache;
-
-   *  a customer-operated schema registry;
-
-   *  a platform-installed or offline schema bundle; or
-
-   *  an authenticated agent-hosted schema endpoint.
-
-   These mechanisms change how schema content is obtained; they do not
-   change the Skill Interface Document or carry the delegated task or
-   its result.
-
 7.  Schema Reference
 
    This document standardizes one Schema Reference structure for all
@@ -692,6 +637,40 @@ Table of Contents
    rather than accepting an unvalidated opaque payload.
 
 9.4.  Client-agent behavior
+
+   The following figure illustrates the initial inline flow between a
+   client agent and a remote network management agent.  Inline delivery
+   does not replace Schema References.  Each reference retains its
+   stable identity, version, dialect, and digest while carrying the
+   schema content in its resolution field.
+
+          Client Agent                         Remote Agent
+               |                                    |
+               |------ Retrieve Agent Card -------->|
+               |<----- Skills and A2A endpoint -----|
+               |                                    |
+               |--- describe_skill(skill_id) ------>|
+               |<-- Skill Interface Document -------|
+               |       Schema References:           |
+               |       - input schema               |
+               |       - output schema              |
+               |       - supporting records         |
+               |       resolution.type = inline     |
+               |       embedded schema content      |
+               |                                    |
+               | Validate interface structure,      |
+               | references, digests, and schemas   |
+               |                                    |
+               |--- Delegate validated request ---->|
+               |<--- Status, output, and records ---|
+               | Validate response using cached     |
+               | Schema References                  |
+
+   For inline resolution, the client verifies each embedded schema
+   against the digest declared by its Schema Reference before using it.
+   Other resolution mechanisms are specified in Section 11.  The
+   following steps define the client behavior for all supported
+   resolution mechanisms.
 
    A client agent performs the following sequence:
 
