@@ -4,8 +4,8 @@
 
 Network Working Group                                           S. Huang
 Internet-Draft                                       Cisco Systems, Inc.
-Intended status: Standards Track                         25 October 2026
-Expires: 28 April 2027
+Intended status: Standards Track                         26 October 2026
+Expires: 29 April 2027
 
 
          Schema Interfaces for Network Management Agent Skills
@@ -64,7 +64,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 April 2027.
+   This Internet-Draft will expire on 29 April 2027.
 
 Copyright Notice
 
@@ -523,12 +523,13 @@ Table of Contents
    "resolution": { "type": "inline", "schema": { "type": "object",
    "properties": { "status": { "type": "string" } }, "required": [
    "status" ] } } }, "supporting_record_schemas": [ { "kind":
-   "observation-record", "schema_uri": "urn:example:network-
-   management:observation-record:1.0", "version": "1.0", "dialect":
-   "https://json-schema.org/draft/2020-12/schema", "digest":
+   "observation-record", "schema_reference": { "schema_uri":
+   "urn:example:network-management:observation-record:1.0", "version":
+   "1.0", "dialect": "https://json-schema.org/draft/2020-12/schema",
+   "digest":
    "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
    "resolution": { "type": "inline", "schema": { "type": "object" } } }
-   ], "interaction": { "supported_response_modes": [ "sync", "stream",
+   } ], "interaction": { "supported_response_modes": [ "sync", "stream",
    "poll" ], "cancellable": true }, "authority": { "default_mode":
    "read-only", "approval_may_be_required": true } }
 
@@ -1210,32 +1211,15 @@ Appendix A.  Skill Interface JSON Schema
          "additionalProperties": false,
          "required": [
            "kind",
-           "schema_uri",
-           "version",
-           "dialect",
-           "digest",
-           "resolution"
+           "schema_reference"
          ],
          "properties": {
            "kind": {
              "type": "string",
              "minLength": 1
            },
-           "schema_uri": {
-             "type": "string",
-             "minLength": 1
-           },
-           "version": {
-             "$ref": "#/$defs/version"
-           },
-           "dialect": {
-             "const": "https://json-schema.org/draft/2020-12/schema"
-           },
-           "digest": {
-             "$ref": "#/$defs/digest"
-           },
-           "resolution": {
-             "$ref": "#/$defs/resolution"
+           "schema_reference": {
+             "$ref": "#/$defs/schemaReference"
            }
          }
        },
