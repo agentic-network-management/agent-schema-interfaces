@@ -82,67 +82,68 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
-   2.  Conventions and Definitions
-   3.  Scope
-   4.  Standardized Components
-     4.1.  Schema Reference Structure
-     4.2.  Skill Interface
-     4.3.  Skill Interface Advertisement and Retrieval
-   5.  Terminology
-     5.1.  Network Management Agent
-     5.2.  Client Agent
-     5.3.  Remote Agent
-     5.4.  A2A Binding Profile
-     5.5.  Schema Reference
-     5.6.  Schema Bundle
-     5.7.  Schema Registry
-     5.8.  Skill
-     5.9.  Skill Interface Schema
-     5.10. Skill Interface Document
-     5.11. Supporting Record
-   6.  Design Principles
-     6.1.  Separate transport from application semantics
-     6.2.  Standardize reusable structures, not all domain semantics
-     6.3.  Distinguish structural conformance from semantic
+   2.  Relationship to Other Work
+   3.  Conventions and Definitions
+   4.  Scope
+   5.  Standardized Components
+     5.1.  Schema Reference Structure
+     5.2.  Skill Interface
+     5.3.  Skill Interface Advertisement and Retrieval
+   6.  Terminology
+     6.1.  Network Management Agent
+     6.2.  Client Agent
+     6.3.  Remote Agent
+     6.4.  A2A Binding Profile
+     6.5.  Schema Reference
+     6.6.  Schema Bundle
+     6.7.  Schema Registry
+     6.8.  Skill
+     6.9.  Skill Interface Schema
+     6.10. Skill Interface Document
+     6.11. Supporting Record
+   7.  Design Principles
+     7.1.  Separate transport from application semantics
+     7.2.  Standardize reusable structures, not all domain semantics
+     7.3.  Distinguish structural conformance from semantic
            conformance
-     6.4.  Deliver schemas inline in version 1.0
-     6.5.  Distinguish outputs from supporting records
-     6.6.  Assemble and validate before advertisement
-   7.  Schema Reference
-   8.  Skill Interface Schema and Documents
-     8.1.  Skill input
-     8.2.  Skill output
-     8.3.  Supporting-record schemas
-   9.  Skill Interface Advertisement and Retrieval
-     9.1.  Agent advertisement
-     9.2.  describe_skill request
-     9.3.  describe_skill response
-     9.4.  Machine-readable error conditions
-     9.5.  Client-agent behavior
-     9.6.  Non-normative end-to-end example
-     9.7.  Composition of consecutive skills
-   10. Schema Publication and Packaging
-     10.1.  Vendor release artifacts
-     10.2.  Agent initialization
-   11. Deployment-local Schema Management
-     11.1.  Trusted cache
-     11.2.  Optional schema registry
-     11.3.  Offline bundle
-   12. Schema Evolution and Compatibility
-   13. Security Considerations
-     13.1.  Schema trust
-     13.2.  Arbitrary retrieval
-     13.3.  Resource limits
-     13.4.  Schema validation and authorization
-     13.5.  Supporting-record integrity and provenance
-     13.6.  Injection
-     13.7.  Interface integrity and substitution
-   14. Operational Considerations
-   15. IANA Considerations
-   16. Open Issues
-   17. References
-     17.1.  Normative References
-     17.2.  Informative References
+     7.4.  Deliver schemas inline in version 1.0
+     7.5.  Distinguish outputs from supporting records
+     7.6.  Assemble and validate before advertisement
+   8.  Schema Reference
+   9.  Skill Interface Schema and Documents
+     9.1.  Skill input
+     9.2.  Skill output
+     9.3.  Supporting-record schemas
+   10. Skill Interface Advertisement and Retrieval
+     10.1.  Agent advertisement
+     10.2.  describe_skill request
+     10.3.  describe_skill response
+     10.4.  Machine-readable error conditions
+     10.5.  Client-agent behavior
+     10.6.  Non-normative end-to-end example
+     10.7.  Composition of consecutive skills
+   11. Schema Publication and Packaging
+     11.1.  Vendor release artifacts
+     11.2.  Agent initialization
+   12. Deployment-local Schema Management
+     12.1.  Trusted cache
+     12.2.  Optional schema registry
+     12.3.  Offline bundle
+   13. Schema Evolution and Compatibility
+   14. Security Considerations
+     14.1.  Schema trust
+     14.2.  Arbitrary retrieval
+     14.3.  Resource limits
+     14.4.  Schema validation and authorization
+     14.5.  Supporting-record integrity and provenance
+     14.6.  Injection
+     14.7.  Interface integrity and substitution
+   15. Operational Considerations
+   16. IANA Considerations
+   17. Open Issues
+   18. References
+     18.1.  Normative References
+     18.2.  Informative References
    Appendix A.  Skill Interface JSON Schema
    Author's Address
 
@@ -209,7 +210,25 @@ Table of Contents
    from different network-management domains without forcing their
    domain payloads into one universal schema.
 
-2.  Conventions and Definitions
+2.  Relationship to Other Work
+
+   The "IDL: A Semantic Information Model for Agent Communication"
+   Internet-Draft [IDL] describes agent-wide identity, capabilities,
+   autonomy boundaries, context requirements, governance interfaces, and
+   intent participation.  It includes optional input-context and output-
+   schema declarations, but it does not define a normative serialization
+   or a per-skill interface-retrieval procedure.
+
+   This document has a narrower scope.  It defines a normative
+   representation for one version of one callable skill, including its
+   input, output, and supporting-record schemas, and defines the
+   describe_skill retrieval and validation procedure.  The two models
+   can be used together: an agent-wide semantic description can identify
+   a capability, while a Skill Interface Document supplies the concrete
+   application schemas used to invoke a selected skill.  A formal
+   mapping between the two models is outside the scope of this document.
+
+3.  Conventions and Definitions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
@@ -217,7 +236,7 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-3.  Scope
+4.  Scope
 
    This document standardizes:
 
@@ -273,9 +292,9 @@ Table of Contents
    conformance; it does not establish end-to-end A2A wire
    interoperability.
 
-4.  Standardized Components
+5.  Standardized Components
 
-4.1.  Schema Reference Structure
+5.1.  Schema Reference Structure
 
    The Schema Reference is a common structure for identifying a schema
    by stable URI and version, declaring its schema dialect, verifying
@@ -295,7 +314,7 @@ Table of Contents
    deterministic basis for deciding whether direct composition is
    permitted.
 
-4.2.  Skill Interface
+5.2.  Skill Interface
 
    The Skill Interface Schema defines the common structure of a Skill
    Interface Document.  A conforming document describes one version of
@@ -303,7 +322,7 @@ Table of Contents
    supporting-record schemas used by that skill to common interaction
    and authority declarations.
 
-4.3.  Skill Interface Advertisement and Retrieval
+5.3.  Skill Interface Advertisement and Retrieval
 
    An agent advertises describe_skill in its Agent Card.  A client
    invokes describe_skill to retrieve the validated Skill Interface
@@ -311,27 +330,27 @@ Table of Contents
    the interface document; each Schema Reference in that document
    includes its schema content inline.
 
-5.  Terminology
+6.  Terminology
 
-5.1.  Network Management Agent
+6.1.  Network Management Agent
 
    A software component that performs or assists with network-management
    work, including analysis, configuration, assurance, incident
    handling, validation, simulation, or remediation.
 
-5.2.  Client Agent
+6.2.  Client Agent
 
    An A2A Client that identifies and contacts a remote agent, obtains
    and validates its Skill Interface Documents, and delegates tasks on
    behalf of a user or another system.  This term describes a protocol
    role and does not imply administrative control over the remote agent.
 
-5.3.  Remote Agent
+6.3.  Remote Agent
 
    An A2A Server that publishes an Agent Card, exposes skills, receives
    delegated tasks, and returns task status and results.
 
-5.4.  A2A Binding Profile
+6.4.  A2A Binding Profile
 
    A specification that maps the abstract operations and application
    data defined by this document to concrete A2A protocol elements.  It
@@ -340,21 +359,21 @@ Table of Contents
    Parts, artifacts, metadata, or extension elements.  A deployment
    specification may define such a mapping for local use.
 
-5.5.  Schema Reference
+6.5.  Schema Reference
 
    A portable schema identity, integrity information, and inline schema
    content.  The identity and digest remain independent of any
    deployment-local mechanism used to manage the schema before the Skill
    Interface Document is assembled.
 
-5.6.  Schema Bundle
+6.6.  Schema Bundle
 
    An optional, signed or otherwise integrity-protected collection of
    schemas and a manifest distributed with an agent release.  A bundle
    may supply schemas to an agent during interface assembly, but it is
    not referenced on the v1.0 wire.
 
-5.7.  Schema Registry
+6.7.  Schema Registry
 
    An optional deployment service that stores, versions, retrieves, and
    may check compatibility among schemas.  It is a deployment-local
@@ -362,12 +381,12 @@ Table of Contents
    mechanism between agents.  Registry-local identifiers are not
    portable schema identities.
 
-5.8.  Skill
+6.8.  Skill
 
    A named capability advertised by an agent and invokable through an
    Agent-to-Agent protocol.
 
-5.9.  Skill Interface Schema
+6.9.  Skill Interface Schema
 
    The standardized, language-neutral schema that defines the permitted
    structure and interpretation of a Skill Interface Document.  An agent
@@ -375,7 +394,7 @@ Table of Contents
    documents it publishes.  A client agent uses the same schema version
    to validate retrieved documents.
 
-5.10.  Skill Interface Document
+6.10.  Skill Interface Document
 
    A machine-readable description of a skill's accepted input, produced
    output, possible supporting records, interaction behavior, and
@@ -383,16 +402,16 @@ Table of Contents
    Schema.  It contains domain-specific Schema References supplied by
    the agent without modifying the standardized Skill Interface Schema.
 
-5.11.  Supporting Record
+6.11.  Supporting Record
 
    A domain-specific observation or artifact used to derive, validate,
    reproduce, or audit a skill output.  A supporting record is validated
    against the applicable schema identified by the Skill Interface
    Document.
 
-6.  Design Principles
+7.  Design Principles
 
-6.1.  Separate transport from application semantics
+7.1.  Separate transport from application semantics
 
    The Agent-to-Agent protocol owns task submission, protocol task
    identifiers, context identifiers, lifecycle state, streaming,
@@ -419,7 +438,7 @@ Table of Contents
    are globally unique.  Cross-hop correlation MUST use separately named
    metadata rather than overloading protocol task identifiers.
 
-6.2.  Standardize reusable structures, not all domain semantics
+7.2.  Standardize reusable structures, not all domain semantics
 
    The common standard defines the Skill Interface Schema and Schema
    Reference.  A vendor or domain owner defines the input, output, and
@@ -428,7 +447,7 @@ Table of Contents
    structure to produce a Skill Interface Document; it does not redefine
    the common structure.
 
-6.3.  Distinguish structural conformance from semantic conformance
+7.3.  Distinguish structural conformance from semantic conformance
 
    Matching Schema References establishes that communicating agents use
    the same schema; it does not establish that the schema exposes
@@ -456,7 +475,7 @@ Table of Contents
    operation makes those requirements available before a client agent
    delegates work.
 
-6.4.  Deliver schemas inline in version 1.0
+7.4.  Deliver schemas inline in version 1.0
 
    Every v1.0 Schema Reference returned by describe_skill MUST carry its
    schema content inline.  A client agent validates that embedded
@@ -468,7 +487,7 @@ Table of Contents
    alter the v1.0 wire representation, and a client agent is not
    required to know which local mechanism supplied an inline schema.
 
-6.5.  Distinguish outputs from supporting records
+7.5.  Distinguish outputs from supporting records
 
    The skill output states what the agent concluded or delivered.
    Supporting records explain why that output can be trusted,
@@ -476,7 +495,7 @@ Table of Contents
    supporting record; implementations SHOULD avoid duplicating its
    content when the applicable domain schemas permit stable references.
 
-6.6.  Assemble and validate before advertisement
+7.6.  Assemble and validate before advertisement
 
    An agent implementation owns its domain-specific input, output, and
    supporting-record schemas.  Its protocol service combines those
@@ -492,7 +511,7 @@ Table of Contents
    domain logic to construct or alter an interface while processing the
    interface request.
 
-7.  Schema Reference
+8.  Schema Reference
 
    This document standardizes one Schema Reference structure for all
    schema roles.  Skill-input, skill-output, and supporting-record
@@ -534,7 +553,7 @@ Table of Contents
    before assembling the document, but registry-local identifiers are
    not included in the v1.0 Schema Reference.
 
-8.  Skill Interface Schema and Documents
+9.  Skill Interface Schema and Documents
 
    The Skill Interface Schema standardizes the structure shown in this
    section.  A Skill Interface Document is a conforming instance for one
@@ -613,7 +632,7 @@ Table of Contents
    imposed by current deployment policy.  Advertised authority metadata
    does not replace these runtime decisions.
 
-8.1.  Skill input
+9.1.  Skill input
 
    The skill input is the domain-specific application data submitted to
    a skill invocation.  A conforming A2A Binding Profile or deployment
@@ -628,7 +647,7 @@ Table of Contents
    validated by the skill's input_schema.  A receiving agent MUST
    enforce a supplied constraint or reject the invocation with the
    constraint_rejected machine-readable error condition defined in
-   Section 9.4; it MUST NOT silently ignore a valid constraint.
+   Section 10.4; it MUST NOT silently ignore a valid constraint.
    Constraints enforced solely by a delegating system need not be
    transmitted.  The names, structures, and semantics of transmitted
    constraints are defined by the domain-specific input schema rather
@@ -636,7 +655,7 @@ Table of Contents
    controls remain the responsibility of the A2A Binding Profile and
    deployment policy.
 
-8.2.  Skill output
+9.2.  Skill output
 
    The skill output is the domain-specific application data produced by
    a skill invocation.  A conforming A2A Binding Profile or deployment
@@ -651,7 +670,7 @@ Table of Contents
    operation completed successfully.  The domain output schema defines
    how the skill reports the result of that operation.
 
-8.3.  Supporting-record schemas
+9.3.  Supporting-record schemas
 
    A supporting record is a domain-specific observation or artifact used
    to derive, validate, reproduce, or audit a skill output.  Each entry
@@ -690,14 +709,14 @@ Table of Contents
    once and reference it rather than duplicate its content when the
    applicable domain schemas permit that relationship.
 
-9.  Skill Interface Advertisement and Retrieval
+10.  Skill Interface Advertisement and Retrieval
 
    This section defines the abstract procedure for advertising
    describe_skill and retrieving a Skill Interface Document for a
    selected skill.  The concrete A2A representation of this procedure is
    defined by an A2A Binding Profile or deployment specification.
 
-9.1.  Agent advertisement
+10.1.  Agent advertisement
 
    An agent conforming to this framework MUST advertise describe_skill
    as a skill in its Agent Card.  The Agent Card also advertises the
@@ -737,7 +756,7 @@ Table of Contents
    expanding collection of bilateral integrations with one standardized
    interface-retrieval procedure.
 
-9.2.  describe_skill request
+10.2.  describe_skill request
 
    After version selection, the request identifies one advertised skill
    by skill_id.  It does not carry interface_version, skill_version, a
@@ -748,7 +767,7 @@ Table of Contents
    json { "skill": "describe_skill", "arguments": { "skill_id":
    "example_skill" } }
 
-9.3.  describe_skill response
+10.3.  describe_skill response
 
    The response is a Skill Interface Document conforming to the
    advertised and previously selected version of the standardized Skill
@@ -777,7 +796,7 @@ Table of Contents
    report interface_invalid.  It MUST NOT accept or return an
    unvalidated opaque payload as a substitute.
 
-9.4.  Machine-readable error conditions
+10.4.  Machine-readable error conditions
 
    This document defines error conditions, but it does not define an
    error envelope or assign them to concrete A2A protocol elements.  The
@@ -828,7 +847,7 @@ Table of Contents
    those details MUST NOT disclose credentials, sensitive policy state,
    or information prohibited by local security policy.
 
-9.5.  Client-agent behavior
+10.5.  Client-agent behavior
 
    The following figure illustrates the conceptual inline flow between a
    client agent and a remote network management agent.  It does not
@@ -922,7 +941,7 @@ Table of Contents
    to evaluate operational thresholds, incident records, configuration
    policy, or other domain behavior.
 
-9.6.  Non-normative end-to-end example
+10.6.  Non-normative end-to-end example
 
    This example follows one invocation from interface retrieval through
    output validation.  The JSON objects are application data; an A2A
@@ -1009,7 +1028,7 @@ Table of Contents
    fails domain-schema validation.  A digest mismatch makes the
    interface invalid and prevents delegation.
 
-9.7.  Composition of consecutive skills
+10.7.  Composition of consecutive skills
 
    When the output of one skill becomes the input to another skill, the
    component initiating the downstream delegation is the client agent
@@ -1108,9 +1127,9 @@ Table of Contents
    authorization, policy evaluation, and operational safety before
    acting on the input.
 
-10.  Schema Publication and Packaging
+11.  Schema Publication and Packaging
 
-10.1.  Vendor release artifacts
+11.1.  Vendor release artifacts
 
    Agent domain schemas are deployment-independent source artifacts.
    The standardized Skill Interface Schema is a separately versioned
@@ -1136,7 +1155,7 @@ Table of Contents
    v1.0 document contains the domain schemas inline.  The release
    pipeline does not need access to a customer registry.
 
-10.2.  Agent initialization
+11.2.  Agent initialization
 
    Before advertising schema-interface support, an agent SHOULD:
 
@@ -1156,7 +1175,7 @@ Table of Contents
    implementation MUST NOT silently fall back to an opaque unconstrained
    payload.
 
-11.  Deployment-local Schema Management
+12.  Deployment-local Schema Management
 
    Version 1.0 defines inline schema delivery on the wire.  This section
    describes optional deployment-local mechanisms for storing,
@@ -1165,15 +1184,15 @@ Table of Contents
    the v1.0 Schema Reference and do not require a client agent to
    retrieve schema content from an additional endpoint.
 
-11.1.  Trusted cache
+12.1.  Trusted cache
 
    A client agent MAY cache a validated Skill Interface Document, its
    verified inline schemas, and compiled validators.  Cache reuse is
-   governed by the requirements in Section 9.5.  An agent MAY also cache
-   schemas obtained from its deployment-local management system before
-   assembling its immutable interface documents.
+   governed by the requirements in Section 10.5.  An agent MAY also
+   cache schemas obtained from its deployment-local management system
+   before assembling its immutable interface documents.
 
-11.2.  Optional schema registry
+12.2.  Optional schema registry
 
    A registry may provide centralized storage, subject versioning,
    references, compatibility checks, publisher metadata, and governance.
@@ -1187,7 +1206,7 @@ Table of Contents
    v1.0 document still carries the selected schema content inline and
    does not expose registry connection information to the client agent.
 
-11.3.  Offline bundle
+12.3.  Offline bundle
 
    An air-gapped deployment MAY install an approved schema bundle with
    the agent package.  The agent uses that bundle to assemble and
@@ -1196,7 +1215,7 @@ Table of Contents
    Interface Schema to client implementations, but it does not replace
    inline delivery of a remote skill's domain schemas.
 
-12.  Schema Evolution and Compatibility
+13.  Schema Evolution and Compatibility
 
    Schema publishers MUST treat a published schema version and digest as
    immutable.  A changed schema receives a new version and digest.
@@ -1225,15 +1244,15 @@ Table of Contents
    latest value.  A client validates and uses the schema embedded in the
    accepted document.
 
-13.  Security Considerations
+14.  Security Considerations
 
-13.1.  Schema trust
+14.1.  Schema trust
 
    A syntactically valid schema is not necessarily trustworthy.  A
    client agent applies policy for trusted publishers, schema
    identities, digests, versions, and dialects.
 
-13.2.  Arbitrary retrieval
+14.2.  Arbitrary retrieval
 
    Following arbitrary schema URLs can expose a client agent to server-
    side request forgery, credential leakage, malicious redirects, and
@@ -1243,14 +1262,14 @@ Table of Contents
    tools that contact registries or other services remain subject to
    administrator-configured trust and network policy.
 
-13.3.  Resource limits
+14.3.  Resource limits
 
    An implementation MUST enforce limits on schema size, nesting,
    reference depth, reference cycles, compilation time, payload size,
    and cache consumption.  When an operation is rejected because one of
    these limits would be exceeded, the implementation MUST report the
    resource_limit_exceeded machine-readable condition defined in
-   Section 9.4 through the applicable binding.  The error response need
+   Section 10.4 through the applicable binding.  The error response need
    not disclose the configured threshold or other sensitive
    implementation details.
 
@@ -1260,7 +1279,7 @@ Table of Contents
    for implementations that claim conformance to that profile or
    specification.
 
-13.4.  Schema validation and authorization
+14.4.  Schema validation and authorization
 
    Schema validation establishes structural conformance, not caller
    authority, operational safety, truth, or permission to modify a
@@ -1277,14 +1296,14 @@ Table of Contents
    decision MUST NOT substitute for a required current decision.  A
    denied authentication, authorization, or required approval check MUST
    reject the invocation with the authorization_failed machine-readable
-   condition defined in Section 9.4.
+   condition defined in Section 10.4.
 
    This document does not mandate an authorization model.  Deployments
    may use RBAC, ABAC, capability-based authorization, external policy
    decision points, human or automated approval workflows, or another
    model that satisfies these runtime requirements.
 
-13.5.  Supporting-record integrity and provenance
+14.5.  Supporting-record integrity and provenance
 
    Supporting records can be stale, replayed, forged, selectively
    omitted, or derived from untrusted inputs.  A supporting-record
@@ -1293,7 +1312,7 @@ Table of Contents
    needed by its domain.  Deployments define freshness and retention
    policy appropriate to the operation.
 
-13.6.  Injection
+14.6.  Injection
 
    Text, CLI configuration, tool output, model output, and supporting-
    record payloads are untrusted data.  An agent does not treat
@@ -1301,7 +1320,7 @@ Table of Contents
    instructions unless the applicable schema and policy explicitly
    assign them that role.
 
-13.7.  Interface integrity and substitution
+14.7.  Interface integrity and substitution
 
    The remote agent and client agent MUST integrity-check the packaged
    Skill Interface Schema before using it.  A local implementation MUST
@@ -1314,7 +1333,7 @@ Table of Contents
    document for a different skill or version MUST NOT be accepted as a
    substitute.
 
-14.  Operational Considerations
+15.  Operational Considerations
 
    Interface retrieval and validation SHOULD NOT add a describe_skill
    exchange to every task.  A client agent caches validated Skill
@@ -1347,14 +1366,14 @@ Table of Contents
    service unavailability.  They SHOULD also define cache refresh and
    schema-revocation behavior.
 
-15.  IANA Considerations
+16.  IANA Considerations
 
    This early version does not request any IANA actions.  A later
    version may request identifiers for Skill Interface versions, media
    types, or URN namespaces after the representation and protocol
    mapping stabilize.
 
-16.  Open Issues
+17.  Open Issues
 
    The following issues require further review:
 
@@ -1375,9 +1394,9 @@ Table of Contents
    6.  a reusable A2A Binding Profile for describe_skill, skill input,
        skill output, and supporting records.
 
-17.  References
+18.  References
 
-17.1.  Normative References
+18.1.  Normative References
 
    [A2A]      "Agent2Agent Protocol Specification, Version 1.0.1", n.d.,
               <https://a2a-protocol.org/v1.0.1/specification/>.
@@ -1396,12 +1415,16 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-17.2.  Informative References
+18.2.  Informative References
 
    [CONFLUENT]
               "Confluent Schema Registry Documentation", n.d.,
               <https://docs.confluent.io/platform/current/schema-
               registry/>.
+
+   [IDL]      "IDL: A Semantic Information Model for Agent
+              Communication", n.d., <https://datatracker.ietf.org/doc/
+              draft-feng-agentproto-idl-info-model/>.
 
 Appendix A.  Skill Interface JSON Schema
 
