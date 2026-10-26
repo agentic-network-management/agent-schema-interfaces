@@ -1515,3 +1515,12 @@ the source repository as `schemas/skill-interface-v1.json`.
   }
 }
 ~~~
+
+# Contributors
+{:numbered="false"}
+
+The following individuals made significant contributions to this document:
+
+- Dan Voyer, Cisco Systems, Inc., davoyer@cisco.com
+- Muthumayan Madhayyan, Cisco Systems, Inc., muthu@cisco.com
+- David Chuck, Cisco Systems, Inc., dachuck@cisco.com
