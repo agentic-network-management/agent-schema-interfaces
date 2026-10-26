@@ -37,6 +37,9 @@ informative:
   CONFLUENT:
     title: "Confluent Schema Registry Documentation"
     target: "https://docs.confluent.io/platform/current/schema-registry/"
+  IDL:
+    title: "IDL: A Semantic Information Model for Agent Communication"
+    target: "https://datatracker.ietf.org/doc/draft-feng-agentproto-idl-info-model/"
 
 ...
 
@@ -114,6 +117,24 @@ The three standardized components define a framework in which:
 The framework is intended to support independently developed agents from
 different network-management domains without forcing their domain payloads
 into one universal schema.
+
+# Relationship to Other Work
+
+The "IDL: A Semantic Information Model for Agent Communication"
+Internet-Draft {{IDL}} describes agent-wide identity, capabilities, autonomy
+boundaries, context requirements, governance interfaces, and intent
+participation. It includes optional input-context and output-schema
+declarations, but it does not define a normative serialization or a per-skill
+interface-retrieval procedure.
+
+This document has a narrower scope. It defines a normative representation for
+one version of one callable skill, including its input, output, and
+supporting-record schemas, and defines the `describe_skill` retrieval and
+validation procedure. The two models can be used together: an agent-wide
+semantic description can identify a capability, while a Skill Interface
+Document supplies the concrete application schemas used to invoke a selected
+skill. A formal mapping between the two models is outside the scope of this
+document.
 
 # Conventions and Definitions
 

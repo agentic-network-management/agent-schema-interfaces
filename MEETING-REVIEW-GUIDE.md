@@ -229,6 +229,26 @@ single client can:
 Product-specific examples are useful implementation evidence but remain
 outside the vendor-neutral draft.
 
+## Relationship to the IDL information model
+
+The closest related AGENTPROTO work is the IDL information model. The two
+proposals address similar interoperability concerns at different layers:
+
+| Area | IDL information model | This draft |
+| --- | --- | --- |
+| Unit described | An autonomous agent and its capabilities | One version of one callable skill |
+| Primary purpose | Identity, capabilities, autonomy, context, negotiation, and governance | Exact input, output, and supporting-record contracts |
+| Representation | Illustrative information model; a normative serialization is future work | Normative JSON Schema and validation rules |
+| Domain schemas | Optional input-context and output-schema declarations | Required input and output Schema References plus supporting-record schemas |
+| Integrity | General URI and digest integration model | SHA-256 verification of each inline schema |
+| Retrieval | Multiple possible protocol integration modes | Advertised `describe_skill` procedure |
+| Composition | Does not define exact per-skill schema matching | Exact URI, version, dialect, and digest matching for direct composition |
+
+The drafts can be complementary. IDL can provide an agent-wide semantic
+description used to identify a capability. A Skill Interface Document can
+then provide the concrete, versioned application schemas required to invoke a
+selected skill. A formal mapping between the models is not currently defined.
+
 ## Questions for reviewers
 
 The meeting should seek feedback on the following decisions:
