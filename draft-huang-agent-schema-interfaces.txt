@@ -145,6 +145,7 @@ Table of Contents
      18.1.  Normative References
      18.2.  Informative References
    Appendix A.  Skill Interface JSON Schema
+   Contributors
    Author's Address
 
 1.  Introduction
@@ -1595,6 +1596,17 @@ Appendix A.  Skill Interface JSON Schema
        }
      }
    }
+
+Contributors
+
+   The following individuals made significant contributions to this
+   document:
+
+   *  Dan Voyer, Cisco Systems, Inc., davoyer@cisco.com
+
+   *  Muthumayan Madhayyan, Cisco Systems, Inc., muthu@cisco.com
+
+   *  David Chuck, Cisco Systems, Inc., dachuck@cisco.com
 
 Author's Address
 
