@@ -54,26 +54,28 @@
   "supporting_record_schemas": [
     {
       "kind": "observation",
-      "schema_uri": "urn:example:network-management-agent:observation:1.0",
-      "version": "1.0",
-      "dialect": "https://json-schema.org/draft/2020-12/schema",
-      "digest": "sha256:37c2ba3df7afd0c86a7f31b82f093bd97fad0e217b3163440d3f200f90f73678",
-      "resolution": {
-        "type": "inline",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "record_id": {
-              "type": "string"
+      "schema_reference": {
+        "schema_uri": "urn:example:network-management-agent:observation:1.0",
+        "version": "1.0",
+        "dialect": "https://json-schema.org/draft/2020-12/schema",
+        "digest": "sha256:37c2ba3df7afd0c86a7f31b82f093bd97fad0e217b3163440d3f200f90f73678",
+        "resolution": {
+          "type": "inline",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "record_id": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              }
             },
-            "source": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "record_id",
-            "source"
-          ]
+            "required": [
+              "record_id",
+              "source"
+            ]
+          }
         }
       }
     }

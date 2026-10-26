@@ -440,14 +440,16 @@ Document using inline schema resolution:
   "supporting_record_schemas": [
     {
       "kind": "observation-record",
-      "schema_uri": "urn:example:network-management:observation-record:1.0",
-      "version": "1.0",
-      "dialect": "https://json-schema.org/draft/2020-12/schema",
-      "digest": "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
-      "resolution": {
-        "type": "inline",
-        "schema": {
-          "type": "object"
+      "schema_reference": {
+        "schema_uri": "urn:example:network-management:observation-record:1.0",
+        "version": "1.0",
+        "dialect": "https://json-schema.org/draft/2020-12/schema",
+        "digest": "sha256:a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0",
+        "resolution": {
+          "type": "inline",
+          "schema": {
+            "type": "object"
+          }
         }
       }
     }
@@ -1061,32 +1063,15 @@ the source repository as `schemas/skill-interface-v1.json`.
       "additionalProperties": false,
       "required": [
         "kind",
-        "schema_uri",
-        "version",
-        "dialect",
-        "digest",
-        "resolution"
+        "schema_reference"
       ],
       "properties": {
         "kind": {
           "type": "string",
           "minLength": 1
         },
-        "schema_uri": {
-          "type": "string",
-          "minLength": 1
-        },
-        "version": {
-          "$ref": "#/$defs/version"
-        },
-        "dialect": {
-          "const": "https://json-schema.org/draft/2020-12/schema"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest"
-        },
-        "resolution": {
-          "$ref": "#/$defs/resolution"
+        "schema_reference": {
+          "$ref": "#/$defs/schemaReference"
         }
       }
     },
