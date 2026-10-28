@@ -1,3 +1,4 @@
-# Automatically generated CODEOWNERS
-# Regenerate with `make update-codeowners`
-draft-huang-agent-schema-interfaces.md scotthuang21@gmail.com
+# Repository-wide ownership. Keep this file manually maintained so the
+# template's update-codeowners target does not replace the GitHub handle.
+* @scotthuang21
+/.github/CODEOWNERS @scotthuang21
