@@ -168,19 +168,6 @@ A portable schema identity, integrity information, and inline schema content.
 The identity and digest remain independent of any deployment-local mechanism
 used to manage the schema before the Skill Interface Document is assembled.
 
-## Schema Bundle
-
-An optional, signed or otherwise integrity-protected collection of schemas and
-a manifest distributed with an agent release. A bundle may supply schemas to
-an agent during interface assembly, but it is not referenced on the v1.0 wire.
-
-## Schema Registry
-
-An optional deployment service that stores, versions, retrieves, and may
-check compatibility among schemas. It is a deployment-local management and
-governance mechanism, not a v1.0 schema-delivery mechanism between agents.
-Registry-local identifiers are not portable schema identities.
-
 ## Skill
 
 A named capability advertised by an agent and invokable through an
@@ -1350,3 +1337,4 @@ The following individuals made significant contributions to this document:
 - Dan Voyer, Cisco Systems, Inc., davoyer@cisco.com
 - Muthumayan Madhayyan, Cisco Systems, Inc., muthu@cisco.com
 - David Chuck, Cisco Systems, Inc., dachuck@cisco.com
+- Nirali Vasoya, Cisco Systems, Inc., nvasoya@cisco.com
