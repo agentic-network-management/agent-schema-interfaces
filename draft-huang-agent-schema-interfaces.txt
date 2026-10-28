@@ -78,12 +78,10 @@ Table of Contents
      5.2.  Client Agent
      5.3.  Remote Agent
      5.4.  Schema Reference
-     5.5.  Schema Bundle
-     5.6.  Schema Registry
-     5.7.  Skill
-     5.8.  Skill Interface Schema
-     5.9.  Skill Interface Document
-     5.10. Supporting Record
+     5.5.  Skill
+     5.6.  Skill Interface Schema
+     5.7.  Skill Interface Document
+     5.8.  Supporting Record
    6.  Design Principles
      6.1.  Preserve task identity across delegation hops
      6.2.  Standardize reusable structures, not all domain semantics
@@ -263,27 +261,12 @@ Table of Contents
    deployment-local mechanism used to manage the schema before the Skill
    Interface Document is assembled.
 
-5.5.  Schema Bundle
-
-   An optional, signed or otherwise integrity-protected collection of
-   schemas and a manifest distributed with an agent release.  A bundle
-   may supply schemas to an agent during interface assembly, but it is
-   not referenced on the v1.0 wire.
-
-5.6.  Schema Registry
-
-   An optional deployment service that stores, versions, retrieves, and
-   may check compatibility among schemas.  It is a deployment-local
-   management and governance mechanism, not a v1.0 schema-delivery
-   mechanism between agents.  Registry-local identifiers are not
-   portable schema identities.
-
-5.7.  Skill
+5.5.  Skill
 
    A named capability advertised by an agent and invokable through an
    Agent-to-Agent protocol.
 
-5.8.  Skill Interface Schema
+5.6.  Skill Interface Schema
 
    The standardized, language-neutral schema that defines the permitted
    structure and interpretation of a Skill Interface Document.  An agent
@@ -291,7 +274,7 @@ Table of Contents
    documents it publishes.  A client agent uses the same schema version
    to validate retrieved documents.
 
-5.9.  Skill Interface Document
+5.7.  Skill Interface Document
 
    A machine-readable description of a skill's accepted input, produced
    output, possible supporting records, interaction behavior, and
@@ -299,7 +282,7 @@ Table of Contents
    Schema.  It contains domain-specific Schema References supplied by
    the agent without modifying the standardized Skill Interface Schema.
 
-5.10.  Supporting Record
+5.8.  Supporting Record
 
    A domain-specific observation or artifact used to derive, validate,
    reproduce, or audit a skill output.  A supporting record is validated
@@ -1451,6 +1434,8 @@ Contributors
    *  Muthumayan Madhayyan, Cisco Systems, Inc., muthu@cisco.com
 
    *  David Chuck, Cisco Systems, Inc., dachuck@cisco.com
+
+   *  Nirali Vasoya, Cisco Systems, Inc., nvasoya@cisco.com
 
 Author's Address
 
