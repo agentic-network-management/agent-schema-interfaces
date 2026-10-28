@@ -29,14 +29,33 @@ normative:
   A2A:
     title: "Agent2Agent Protocol Specification, Version 1.0.1"
     target: "https://a2a-protocol.org/v1.0.1/specification/"
+  JCS:
+    title: "JSON Canonicalization Scheme (JCS)"
+    seriesinfo:
+      RFC: 8785
   JSON-SCHEMA:
     title: "JSON Schema: A Media Type for Describing JSON Documents"
     target: "https://json-schema.org/draft/2020-12/json-schema-core.html"
+  JSON-SCHEMA-VALIDATION:
+    title: "JSON Schema Validation: A Vocabulary for Structural Validation of JSON"
+    target: "https://json-schema.org/draft/2020-12/json-schema-validation.html"
+  TIMESTAMP:
+    title: "Date and Time on the Internet: Timestamps"
+    seriesinfo:
+      RFC: 3339
 
 informative:
   IDL:
     title: "IDL: A Semantic Information Model for Agent Communication"
     target: "https://datatracker.ietf.org/doc/draft-feng-agentproto-idl-info-model/"
+  YANG-JSON:
+    title: "JSON Encoding of Data Modeled with YANG"
+    seriesinfo:
+      RFC: 7951
+  YANG-PATCH:
+    title: "YANG Patch Media Type"
+    seriesinfo:
+      RFC: 8072
 
 ...
 
@@ -48,10 +67,10 @@ independently developed network management agent skills.
 
 This document standardizes four components for schema-governed network
 management agent skills: Schema References, per-skill Skill Interface
-Documents, retrieval through `describe_skill`, and the A2A mapping for
-interface version 1.0. Together, they enable clients to retrieve and validate
-the application schemas used for skill inputs, outputs, and supporting
-records.
+Documents, advertisement and retrieval through an A2A extension and
+`describe_skill`, and the A2A mapping for interface version 1.0. Together,
+they enable clients to retrieve and validate the application schemas used for
+skill inputs, outputs, and supporting records.
 
 --- middle
 
@@ -119,8 +138,8 @@ This document standardizes:
   carrying inline schemas;
 - a Skill Interface Schema and a conforming per-skill Skill Interface
   Document;
-- a Skill Interface advertisement and retrieval procedure using
-  `describe_skill`; and
+- a Skill Interface advertisement and retrieval procedure using an A2A
+  extension and `describe_skill`; and
 - an A2A mapping for carrying domain-skill inputs, outputs, supporting
   records, and machine-readable errors for interface version 1.0.
 
@@ -168,6 +187,19 @@ A portable schema identity, integrity information, and inline schema content.
 The identity and digest remain independent of any deployment-local mechanism
 used to manage the schema before the Skill Interface Document is assembled.
 
+## Version String
+
+A canonical version identifier consisting of two dot-separated non-negative
+decimal integers, `MAJOR.MINOR`. A component has no leading zero unless its
+value is zero. Two versions are equal only when both numeric components are
+equal; the canonical representation makes this equivalent to string equality.
+A change that is not backward compatible with consumers of the prior version
+increments `MAJOR` and resets `MINOR` to zero. A backward-compatible change
+increments `MINOR`. This syntax and comparison rule apply to `skill_version`
+and to the `version` in each Schema Reference. The version of the Skill
+Interface Schema is separately identified by `interface_version`, which this
+document fixes at `1.0`.
+
 ## Skill
 
 A named capability advertised by an agent and invokable through an
@@ -188,6 +220,26 @@ possible supporting records, interaction behavior, and applicable constraints.
 It is an instance of the Skill Interface Schema. It contains domain-specific
 Schema References supplied by the agent without modifying the standardized
 Skill Interface Schema.
+
+## Skill Interface Document Digest
+
+The `interface_digest` value identifies the exact Skill Interface Document
+selected by a client.  It is the string `sha256:` followed by the lowercase
+hexadecimal representation of the SHA-256 digest of the UTF-8 encoding of the
+complete Skill Interface Document serialized using the JSON Canonicalization
+Scheme (JCS) {{JCS}}.
+
+The digest covers every member of the Skill Interface Document, including its
+inline domain schemas.  It does not cover the standardized Skill Interface
+Schema used to validate the document, the Agent Card, a `describe_skill`
+response wrapper, or a domain-skill invocation.  The `interface_digest` is
+carried outside the Skill Interface Document so that the document does not
+contain a digest of itself.
+
+The same Skill Interface Document Digest MUST be carried in the Agent Card
+extension advertisement, the `describe_skill` response, and each domain-skill
+invocation that uses the document.  All three carried values and the digest
+calculated from the returned document MUST match.
 
 ## Supporting Record
 
@@ -222,21 +274,26 @@ can validate the presence and type of that string but cannot by itself identify
 affected resources, validate command dependencies, or establish that the
 commands implement the requested intent.
 
-When a receiving agent is expected to inspect, validate, transform, simulate,
-or apply a configuration change, the shared domain schema MUST define a
-normalized structured representation of that change. The receiving agent MUST
+When a skill-specific specification requires a receiving agent to inspect,
+validate, transform, simulate, or apply a configuration change, that
+specification MUST identify a machine-readable representation with sufficient
+semantics for the required processing.  The applicable input, output, or
+supporting-record schema describes that representation, and `describe_skill`
+makes the schema available before delegation.  The receiving agent MUST
 validate the representation and use a domain-specific implementation for
 semantic validation, policy evaluation, simulation, or application, as
 applicable.
 
-Device-specific rendering is a local implementation responsibility of the
-agent that requires it. Rendered CLI is not part of the common operational
-representation exchanged between agents, and communicating agents are not
-required to agree on a rendered syntax or platform-specific command language.
+This document does not define a common configuration-change model.  A
+skill-specific specification can reuse an existing model where appropriate.
+For example, YANG-modeled data can be encoded in JSON as specified by
+{{YANG-JSON}}, and configuration edits can use YANG Patch {{YANG-PATCH}}.
 
-The applicable input, output, or supporting-record schema defines the
-normalized structure for a particular skill. The `describe_skill` operation
-makes those requirements available before a client agent delegates work.
+As non-normative guidance, device-specific rendering can remain a local
+implementation responsibility.  Rendered CLI or CLI diffs can also be
+exchanged as supporting records when useful.  Their presence does not imply
+that generic JSON Schema validation establishes command syntax, operational
+meaning, safety, or correctness.
 
 ## Deliver schemas inline in version 1.0
 
@@ -244,6 +301,32 @@ Every v1.0 Schema Reference returned by `describe_skill` MUST carry its schema
 content inline. A client agent validates that embedded content against the
 declared digest and does not contact an external service to complete the
 interface.
+
+An inline schema MAY be a compound schema document containing embedded schema
+resources as defined by JSON Schema {{JSON-SCHEMA}}.  Every `$ref` and
+`$dynamicRef` in `resolution.schema` MUST resolve to the root schema, one of
+its subschemas, or an embedded schema resource contained within that same
+`resolution.schema` value.  Each embedded schema resource used as a reference
+target MUST identify itself with an absolute URI in `$id`.  References MAY
+retain an absolute URI when that URI resolves to such an embedded resource;
+an absolute URI does not permit external retrieval.
+
+Validators MUST perform schema and instance validation with network and
+filesystem schema retrieval disabled.  The only schema content a validator
+may use from outside `resolution.schema` is a locally trusted copy of the
+meta-schema identified by the Schema Reference's `dialect`.  Embedded schema
+resources MUST use that same dialect.  A reference that cannot be resolved
+under these rules, an attempted external retrieval, or an embedded resource
+that selects another dialect makes the Skill Interface Document invalid and
+MUST result in `interface_invalid`.
+
+For interface version 1.0, a `format` value defined by JSON Schema Validation
+{{JSON-SCHEMA-VALIDATION}} MUST be evaluated as an assertion during instance
+validation. This is an additional interface version 1.0 conformance rule even
+when the referenced JSON Schema dialect would otherwise treat `format` as an
+annotation. In particular, an instance validated against `"format":
+"date-time"` MUST conform to the Internet timestamp syntax defined by
+{{TIMESTAMP}}.
 
 Registries, bundles, caches, and agent packaging MAY be used locally to store,
 govern, distribute, or prepare schemas. Their use does not alter the v1.0
@@ -254,9 +337,9 @@ mechanism supplied an inline schema.
 
 The skill output states what the agent concluded or delivered. Supporting
 records explain why that output can be trusted, reproduced, or audited. An
-artifact MAY be both output and a supporting record; implementations SHOULD
-avoid duplicating its content when the applicable domain schemas permit stable
-references.
+output and a supporting record use separate A2A Artifacts. An output that
+depends on a supporting record SHOULD reference that record's `artifactId`
+rather than duplicate its content.
 
 ## Assemble and validate before advertisement
 
@@ -288,11 +371,22 @@ A Schema Reference contains:
 - `resolution`: inline delivery information. In version 1.0 its `type` is
   `inline` and its `schema` member contains the schema content.
 
-Version 1.0 fixes the digest algorithm to SHA-256. The `digest` value MUST be
-the lowercase string `sha256:` followed by exactly 64 lowercase hexadecimal
-digits representing the SHA-256 digest of the embedded schema content.
-Version 1.0 does not define digest-algorithm negotiation, and a value using
-another algorithm identifier is invalid.
+Version 1.0 fixes the digest algorithm to SHA-256.  To calculate `digest`, an
+implementation MUST serialize the JSON value in `resolution.schema` using JCS
+{{JCS}}, encode that canonical representation as UTF-8, and calculate SHA-256
+over exactly those bytes.  The `digest` value MUST be the lowercase string
+`sha256:` followed by exactly 64 lowercase hexadecimal digits representing
+that result.  The digest covers only the `resolution.schema` value.  It does
+not cover `resolution.type` or any other member of the enclosing Schema
+Reference, including `schema_uri`, `version`, `dialect`, or `digest`.
+
+The embedded schema MUST satisfy the JCS input requirements.  Differences in
+insignificant JSON whitespace, object-member order, or a permitted alternate
+JSON string escape do not change the digest because they produce the same JCS
+representation.  A change to the JSON value represented by
+`resolution.schema` changes the digest.  Version 1.0 does not define
+digest-algorithm negotiation, and a value using another algorithm identifier
+is invalid.
 
 Version 1.0 Schema References MUST use `resolution.type` equal to `inline` and
 MUST include the schema in `resolution.schema`. They MUST NOT contain an
@@ -321,6 +415,17 @@ valid. The `authority` member is not a credential, capability, entitlement,
 access-control decision, approval record, or authorization token. A client or
 remote agent MUST NOT treat it as permission to execute a skill or cause a
 side effect.
+
+Version 1.0 defines the following `default_mode` values:
+
+- `observe_only`: the default behavior reads or analyzes information and does
+  not propose or apply an operational change;
+- `recommend_only`: the default behavior may produce a proposed action or
+  change but does not apply it; and
+- `execute`: the default behavior may cause an operational side effect.
+
+These values describe behavior, not authorization. In every mode, the agent
+MUST perform the runtime authorization and approval checks required below.
 
 The interface version 1.0 A2A mapping identifies the protocol elements
 containing skill input, skill output, and supporting records. Those values
@@ -378,6 +483,11 @@ the complete record. A produced record MUST validate against the schema for
 its identified kind. A protocol progress update is not a supporting record
 unless it is published in that form and passes this validation.
 
+Each supporting-record `kind` in a Skill Interface Document MUST be unique and
+MUST NOT equal that document's `skill_id`. This prevents a supporting-record
+Artifact from being confused with the primary result Artifact, whose `name`
+equals `skill_id`.
+
 This framework does not define an additional common record envelope. The
 domain schema defines any required record identifier, producer, source,
 observation time, production time, integrity, derivation, classification, or
@@ -393,9 +503,9 @@ name or reference structure within every domain output.
 
 The skill output is the answer, decision, or deliverable normally consumed by
 the caller. Supporting records contain the observations and artifacts that
-support that output. An artifact MAY be both output and a supporting record;
-implementations SHOULD publish it once and reference it rather than duplicate
-its content when the applicable domain schemas permit that relationship.
+support that output. They MUST be published in separate Artifacts. The output
+SHOULD reference a supporting record by its `artifactId` instead of embedding
+a duplicate copy.
 
 # A2A Mapping for Interface Version 1.0
 
@@ -406,25 +516,69 @@ these protocol elements and their semantics.
 
 ## Agent advertisement
 
-An agent conforming to this framework MUST advertise `describe_skill` as a
-skill in its Agent Card. The Agent Card also advertises the domain skills that
-can be selected in a `describe_skill` request. The `describe_skill` skill MUST
-accept structured input identifying the selected `skill_id` and MUST produce
-structured output containing the corresponding Skill Interface Document.
-Advertising `describe_skill` signals support for the procedure and mapping
-defined by this document. A conforming version 1.0 response MUST contain
-`interface_version` with value `1.0`.
+An agent conforming to this framework MUST advertise `describe_skill` and each
+schema-governed domain skill in its Agent Card.  It MUST also advertise the
+following A2A extension in `AgentCapabilities.extensions`:
 
-Version 1.0 does not define request parameters for negotiating or selecting an
-interface version or skill version within `describe_skill`. A client using
-this procedure requests the interface for one advertised `skill_id` and then
-verifies that the returned document uses `interface_version` value `1.0`. The
-returned document identifies the domain-skill version to which its schemas
-apply.
+```text
+https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1
+```
+
+The extension MAY be marked `required: false` so that extension-unaware
+clients can continue to use the agent through base A2A procedures.  A client
+using the procedure in this document MUST activate the extension for
+`describe_skill` and domain-skill requests as specified by A2A {{A2A}}.
+When the HTTP binding is used, the client requests activation by including
+the extension URI in the `A2A-Extensions` request header.  An agent that
+activates the extension SHOULD echo that URI in the `A2A-Extensions` response
+header, as specified by A2A.  The A2A Message `extensions` list MUST also
+include the URI when the Message carries a request object defined by this
+document.  The header performs extension activation; the Message field
+identifies the extension as relevant to that Message.
+
+The extension `params` MUST contain `interface_version` with value `1.0` and a
+`skills` array.  Each entry MUST contain `skill_id`, `skill_version`, and
+`interface_digest`.  The `skill_id` MUST identify an `AgentSkill` in the same
+Agent Card.  The `interface_digest` MUST be the Skill Interface Document
+Digest for the document returned by `describe_skill` for that skill.  Version
+1.0 permits exactly one advertised `skill_version` and `interface_digest`
+binding for each `skill_id` in an Agent Card.
+
+The following fragment illustrates the extension advertisement:
+
+```json
+{
+  "uri": "https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1",
+  "description": "Schema interfaces for advertised skills",
+  "required": false,
+  "params": {
+    "interface_version": "1.0",
+    "skills": [
+      {
+        "skill_id": "example_skill",
+        "skill_version": "1.0",
+        "interface_digest": "sha256:..."
+      }
+    ]
+  }
+}
+```
+
+The client selects the advertised `skill_id`, `skill_version`, and
+`interface_digest` before calling `describe_skill`.  Version 1.0 does not
+define request parameters for negotiating or selecting another interface or
+skill version within `describe_skill`.  An agent that needs to advertise
+concurrent incompatible versions in version 1.0 MUST expose them using
+distinct skill identifiers.
+
+The `describe_skill` skill MUST accept structured input identifying the
+selected `skill_id` and MUST produce structured output containing the
+corresponding Skill Interface Document and its `interface_digest`.
 
 A caller MUST NOT assume that every Agent-to-Agent implementation conforms to
-this framework. Absence of the `describe_skill` skill from the Agent Card means
-that the agent does not provide the schema-interface procedure defined here.
+this framework. Absence of either the schema-interface extension or the
+`describe_skill` skill from the Agent Card means that the agent does not
+provide the schema-interface procedure defined here.
 Such an agent MAY still be invoked using the base Agent-to-Agent protocol or an
 explicitly configured out-of-band interface contract. The caller MUST NOT
 infer or prescribe the remote skill's domain schemas from skill descriptions
@@ -465,15 +619,22 @@ Interface Document rather than a JSON string:
 ```text
 {
   "skill": "describe_skill",
-  "result": <Skill Interface Document>
+  "result": {
+    "interface_digest": "sha256:...",
+    "interface": <Skill Interface Document>
+  }
 }
 ```
 
-The `result` value is a Skill Interface Document conforming to the advertised
-and previously selected version of the standardized Skill Interface Schema.
-Its `skill_version` MUST equal the advertised domain-skill version selected
-before the request. In version 1.0, every Schema Reference in the response MUST
-contain the complete domain schema inline in `resolution.schema` and MUST set
+The `result.interface` value is a Skill Interface Document conforming to the
+advertised and previously selected version of the standardized Skill
+Interface Schema.  Its `skill_version` MUST equal the advertised
+domain-skill version selected before the request.  The
+`result.interface_digest` value MUST equal the `interface_digest` advertised
+for the selected skill.  The client MUST calculate the Skill Interface
+Document Digest of `result.interface` and verify that it equals both values.
+In version 1.0, every Schema Reference in the document MUST contain the
+complete domain schema inline in `resolution.schema` and MUST set
 `resolution.type` to `inline`.
 
 The response MUST be the previously assembled and validated document for the
@@ -482,12 +643,13 @@ standard structure or invoke domain logic to construct or modify the document
 while processing the request. The returned input, output, and
 supporting-record schemas remain specific to the selected agent and skill.
 
-The selected document MUST correspond to the skill version advertised by the
-agent. If an advertised interface cannot currently be returned, the agent MUST
-report `interface_unavailable`. If the available document is malformed,
-inconsistent with the selected skill or versions, or otherwise fails required
-validation, the agent MUST report `interface_invalid`. It MUST NOT accept or
-return an unvalidated opaque payload as a substitute.
+The selected document and its calculated digest MUST correspond to the skill
+version and digest advertised by the agent. If an advertised interface cannot
+currently be returned, the agent MUST report `interface_unavailable`. If the
+available document is malformed, inconsistent with the selected skill,
+versions, or digest, or otherwise fails required validation, the agent MUST
+report `interface_invalid`. It MUST NOT accept or return an unvalidated opaque
+payload as a substitute.
 
 ## Domain-skill invocation {#domain-skill-invocation}
 
@@ -499,15 +661,24 @@ The user-role Message MUST contain exactly one Data Part. The Data Part's
 ```json
 {
   "skill": "example_skill",
+  "skill_version": "1.0",
+  "interface_digest": "sha256:...",
   "arguments": {
     "objective": "Evaluate the selected network resource"
   }
 }
 ```
 
-The `skill` value MUST equal the selected Agent Card skill identifier. The
-`arguments` value is the complete domain input and MUST validate against the
-selected Skill Interface Document's `input_schema`.
+The `skill` value MUST equal the selected Agent Card skill identifier.  The
+`skill_version` and `interface_digest` values MUST equal the values selected
+from the Agent Card extension, returned by `describe_skill`, and validated by
+the client.  Before validating `arguments` or invoking domain logic, the
+receiving agent MUST compare both values with its currently active Skill
+Interface Document for that skill.  It MUST reject the request with
+`interface_mismatch` if either value differs.  The `arguments` value is the
+complete domain input and MUST validate against the selected Skill Interface
+Document's `input_schema`. The receiving agent MUST reject a nonconforming
+input with `input_invalid` before invoking domain logic.
 
 On success, the task MUST reach the completed state. It MUST contain one
 primary Artifact whose `name` equals the selected skill identifier and whose
@@ -529,9 +700,11 @@ Each supporting record, when present, MUST be carried in a separate Artifact.
 The Artifact `name` MUST equal the record `kind` declared in
 `supporting_record_schemas`, and its single Data Part MUST contain the complete
 record value that validates against the Schema Reference associated with that
-kind. The Artifact `artifactId` provides a stable task-scoped identifier that
-the domain output MAY reference. A record transported or retrieved outside
-the task requires a stable reference mechanism defined by its domain schema.
+kind. The record `kind`, and therefore the supporting Artifact `name`, MUST NOT
+equal the selected `skill_id`. The Artifact `artifactId` provides a stable
+task-scoped identifier that the domain output MAY reference. A record
+transported or retrieved outside the task requires a stable reference
+mechanism defined by its domain schema.
 
 The same final Task and Artifact requirements apply whether the client uses
 synchronous completion, streaming updates, or task retrieval and polling.
@@ -540,9 +713,14 @@ their application-data structure or validation requirements.
 
 ## Machine-readable error conditions {#error-conditions}
 
-When an error condition defined below is detected after an A2A task has been
-created, the task MUST reach the failed state. Its final status Message MUST
-contain exactly one Data Part whose `data` value has this form:
+An error detected locally by a client before the remote agent creates a task
+MUST NOT be represented as a state of a nonexistent remote task. The client
+MUST stop the applicable procedure and report the machine-readable condition
+locally or through the error mechanism of its enclosing system.
+
+When the remote agent reports one of the conditions below through an A2A Task,
+the Task's final status Message MUST contain exactly one Data Part whose
+`data` value has this form:
 
 ```json
 {
@@ -555,24 +733,41 @@ contain exactly one Data Part whose `data` value has this form:
 
 The `code` value MUST be one of the machine-readable conditions below or an
 additional value defined by a future profile. The human-readable `message`
-MAY be omitted. A failure detected before task creation MUST be carried using
-the error mechanism of the selected A2A protocol binding and SHOULD expose the
-same machine-readable code when that binding permits it. These conditions are
-not skill outputs and are not validated against the selected skill's
-`output_schema`.
+MAY be omitted. A server-side error detected before task creation MUST be
+carried using the error mechanism of the selected A2A protocol binding and
+SHOULD expose the same machine-readable code when that binding permits it.
+These conditions are not skill outputs and are not validated against the
+selected skill's `output_schema`.
+
+A remote Task MUST reach `TASK_STATE_REJECTED` when the request is understood
+but is not accepted for execution because of `interface_mismatch`,
+`input_invalid`, `constraint_rejected`, or `authorization_failed`. A remote
+Task MUST reach `TASK_STATE_FAILED` when an accepted operation cannot complete,
+including when `describe_skill` cannot produce a valid advertised interface or
+when domain processing cannot produce valid output. A
+`resource_limit_exceeded` condition uses `TASK_STATE_REJECTED` when the limit
+is checked before acceptance and `TASK_STATE_FAILED` when the limit is reached
+during processing.
 
 An implementation MUST distinguish at least the following conditions:
 
 - `skill_not_advertised`: the requested `skill_id` is not advertised by the
   selected agent endpoint;
-- `unsupported_interface_version`: the returned Skill Interface version is
-  not supported by the client;
+- `unsupported_interface_version`: the advertised or returned Skill Interface
+  version is not supported by the client;
 - `interface_unavailable`: the selected interface is advertised but cannot
   currently be returned;
 - `interface_invalid`: a Skill Interface Document is malformed, does not match
   the selected skill, fails validation against the version 1.0 Skill
   Interface Schema, or contains an embedded schema that fails digest or
   schema validation;
+- `interface_mismatch`: a domain-skill invocation carries a `skill_version` or
+  `interface_digest` that does not match the receiving agent's currently
+  active Skill Interface Document for that skill;
+- `input_invalid`: the domain input does not validate against the selected
+  Skill Interface Document's `input_schema`;
+- `output_invalid`: the produced domain output does not validate against the
+  selected Skill Interface Document's `output_schema`;
 - `constraint_rejected`: a structurally valid requested constraint cannot be
   honored or enforced by the receiving agent;
 - `authorization_failed`: authentication, authorization, or a required
@@ -583,16 +778,24 @@ An implementation MUST distinguish at least the following conditions:
 The `skill_not_advertised` condition can be detected by a client before it
 sends `describe_skill`. A client MUST NOT send the request when the Agent Card
 does not advertise the selected skill. A client detects
-`unsupported_interface_version` when the returned document uses an interface
-version it does not support. If a server receives a request based on stale or
-inconsistent advertisement information, it MUST report the applicable
-condition through the interface version 1.0 A2A mapping.
+`unsupported_interface_version` when the extension advertisement or returned
+document uses an interface version it does not support. Neither client-side
+condition creates a remote failed Task. If a server receives a domain-skill
+invocation based on a stale interface, it MUST report `interface_mismatch`
+through the interface version 1.0 A2A mapping using `TASK_STATE_REJECTED`.
 
 A client that detects `interface_invalid` locally MUST reject the document and
 MUST NOT delegate the domain skill under this framework. An implementation
 MAY include additional diagnostic details, but those details MUST NOT disclose
 credentials, sensitive policy state, or information prohibited by local
 security policy.
+
+The receiving agent MUST validate domain output before it reports
+`TASK_STATE_COMPLETED`; invalid output results in `output_invalid` and
+`TASK_STATE_FAILED`. A client MUST independently validate received output. If
+it detects invalid output after the remote agent reported completion, it MUST
+treat the output as unusable and report `output_invalid` locally; it cannot
+retroactively change the remote Task state.
 
 ## Client-agent behavior {#client-behavior}
 
@@ -606,13 +809,14 @@ field.
        Client Agent                         Remote Agent
             |                                    |
             |------ Retrieve Agent Card -------->|
-            |<----- Skills and A2A endpoint -----|
+            |<-- Skills, versions, and interface |
+            |    digests in A2A extension -------|
             |                                    |
             | Select advertised interface and    |
-            | skill versions                     |
+            | skill versions and digest          |
             |                                    |
             |--- describe_skill(skill_id) ------>|
-            |<-- Skill Interface Document -------|
+            |<-- Document and interface_digest --|
             |       Schema References:           |
             |       - input schema               |
             |       - output schema              |
@@ -620,10 +824,11 @@ field.
             |       resolution.type = inline     |
             |       embedded schema content      |
             |                                    |
-            | Validate interface structure,      |
+            | Validate document digest,          |
             | references, digests, and schemas   |
             |                                    |
-            |--- Delegate validated request ---->|
+            |--- Delegate request with version ->|
+            |    and interface_digest            |
             |<--- Status, output, and records ---|
             | Validate response using cached     |
             | Schema References                  |
@@ -635,24 +840,29 @@ behavior.
 
 A client agent performs the following sequence:
 
-1. retrieve the target Agent Card and obtain its A2A endpoint, agent version,
-   and advertised skill identifiers;
+1. retrieve the target Agent Card and obtain its A2A endpoint and schema-
+   interface extension advertisement;
 2. verify that both `describe_skill` and the selected domain skill are
-   advertised;
+   advertised, and select the advertised `skill_version` and
+   `interface_digest` for that domain skill;
 3. call `describe_skill` for the selected `skill_id` using the interface
    version 1.0 A2A mapping;
-4. validate the returned Skill Interface Document against a trusted local
+4. verify that the `interface_digest` returned by `describe_skill` equals the
+   advertised value, calculate the digest of the returned Skill Interface
+   Document, and verify that the calculated value also equals it;
+5. validate the returned Skill Interface Document against a trusted local
    copy of the version 1.0 Skill Interface Schema, verify that its
-   `interface_version` is `1.0`, and verify that its `skill_id` identifies the
-   selected skill;
-5. verify every embedded domain schema against its Schema Reference digest;
-6. validate the outgoing skill input against `input_schema`;
-7. delegate the task through the Agent-to-Agent protocol using that mapping;
-8. receive task status, typed skill output, and supporting records according
+   `interface_version` is `1.0`, and verify that its `skill_id` and
+   `skill_version` identify the selected skill and version;
+6. verify every embedded domain schema against its Schema Reference digest;
+7. validate the outgoing skill input against `input_schema`;
+8. delegate the task through the Agent-to-Agent protocol, carrying the
+   selected `skill_version` and `interface_digest` in the skill request;
+9. receive task status, typed skill output, and supporting records according
    to that mapping;
-9. validate the skill output against `output_schema` and validate the
+10. validate the skill output against `output_schema` and validate the
    supporting records; and
-10. preserve, forward, display, or interpret them according to local policy.
+11. preserve, forward, display, or interpret them according to local policy.
 
 Before delegating a domain skill under this framework, the client agent MUST
 possess a successfully validated Skill Interface Document obtained from that
@@ -663,8 +873,8 @@ procedure defined in this document.
 
 The client agent MAY reuse a cached Skill Interface Document without calling
 `describe_skill` before every task when the cache entry is bound to the same
-target identity, agent version, skill identifier, skill version, and, when
-advertised, interface-document digest. A change to any of those values
+target identity, skill identifier, skill version, and interface digest
+advertised by the current Agent Card. A change to any of those values
 invalidates the entry and requires a new `describe_skill` exchange before the
 next delegation.
 
@@ -769,6 +979,19 @@ structural compatibility, not operational correctness. The receiving agent
 remains responsible for domain-semantic validation, authorization, policy
 evaluation, and operational safety before acting on the input.
 
+For example, an input schema can define a network measurement with a metric,
+value, unit, observation window, observation time, and requested constraints.
+An instance reporting link capacity of 100 Gbps can be structurally valid
+while failing a request that requires available bandwidth measured over a
+particular window and no older than a specified age.  Capacity and available
+bandwidth are not interchangeable merely because their values use the same
+unit.  A generic client can validate and route the instance without
+understanding that distinction.  A domain-aware orchestrator MAY reject it
+before delegation; otherwise, the downstream agent MUST enforce the window,
+scope, unit, and freshness constraints represented by fields in its input
+schema and supplied by the invocation.  The component that detects the
+failure MUST reject the invocation with `constraint_rejected`.
+
 # Schema Publication and Packaging
 
 ## Vendor release artifacts
@@ -799,7 +1022,10 @@ Before advertising schema-interface support, an agent SHOULD:
 2. load its domain input, output, and supporting-record schemas;
 3. assemble a Skill Interface Document for each advertised skill version;
 4. validate each document and each inline schema digest; and
-5. retain an immutable validated representation for `describe_skill`.
+5. calculate and retain the Skill Interface Document Digest for each immutable
+   validated representation; and
+6. advertise each skill version and digest through the schema-interface A2A
+   extension.
 
 Failure to load, assemble, or validate an interface prevents that skill
 version from being advertised through this framework. An implementation MUST
@@ -905,11 +1131,19 @@ The remote agent and client agent MUST integrity-check the packaged Skill
 Interface Schema before using it. A local implementation MUST NOT modify the
 standardized schema while adding domain schemas.
 
-A client agent verifies that a retrieved Skill Interface Document identifies the
-requested agent skill and advertised skill version. It validates the document
-against the selected Skill Interface Schema and verifies all embedded schema
-digests. A structurally valid document for a different skill or version MUST
-NOT be accepted as a substitute.
+A client agent verifies that a retrieved Skill Interface Document identifies
+the requested agent skill and advertised skill version. It validates the
+document against the selected Skill Interface Schema, verifies all embedded
+schema digests, and verifies that the calculated Skill Interface Document
+Digest equals the value carried in the Agent Card and `describe_skill`
+response. A structurally valid document for a different skill, version, or
+digest MUST NOT be accepted as a substitute.
+
+The receiving agent verifies that the `skill_version` and `interface_digest`
+carried by every domain-skill invocation identify its currently active Skill
+Interface Document before it validates or acts on the domain input. This check
+prevents a document change between interface retrieval and invocation from
+silently changing the contract applied to a request.
 
 # Operational Considerations
 
@@ -917,12 +1151,13 @@ Interface retrieval and validation SHOULD NOT add a `describe_skill` exchange
 to every task. A client agent caches validated Skill Interface Documents,
 verified inline domain schemas, and compiled validators. A cache entry is
 bound to the agent identity, skill identifier, skill version, interface
-version, and, when advertised, interface-document digest. A changed advertised
-version or digest invalidates the corresponding entry.
+version, and interface digest. A changed advertised version or digest
+invalidates the corresponding entry.
 
 An implementation SHOULD expose diagnostics identifying:
 
-- the Skill Interface Schema version and skill version selected;
+- the Skill Interface Schema version, skill version, and interface digest
+  selected;
 - schema URIs, versions, and digests used;
 - inline-schema digest verification results;
 - validation failures;
@@ -1001,7 +1236,7 @@ the source repository as `schemas/skill-interface-v1.json`.
   "$defs": {
     "version": {
       "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$"
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
     },
     "digest": {
       "type": "string",
@@ -1062,7 +1297,8 @@ the source repository as `schemas/skill-interface-v1.json`.
       "properties": {
         "kind": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Supporting-record kind; MUST NOT equal the containing Skill Interface Document's skill_id."
         },
         "schema_reference": {
           "$ref": "#/$defs/schemaReference"
@@ -1103,8 +1339,11 @@ the source repository as `schemas/skill-interface-v1.json`.
       ],
       "properties": {
         "default_mode": {
-          "type": "string",
-          "minLength": 1
+          "enum": [
+            "observe_only",
+            "recommend_only",
+            "execute"
+          ]
         },
         "approval_may_be_required": {
           "type": "boolean"
@@ -1147,10 +1386,37 @@ A2A defines Message, Data Part, Task, and Artifact. The descriptions
 roles assigned to ordinary A2A Artifacts by this mapping; they are not
 distinct Artifact types defined by A2A.
 
-Assume an Agent Card advertises `describe_skill` and the
-`evaluate_resource_condition` skill. The client requests the interface for
-that skill using the following skill request object as the Data Part's `data`
-value:
+Assume an Agent Card advertises `describe_skill`, the
+`evaluate_resource_condition` skill, and the following schema-interface
+extension.  The digest value is repeated below to show the required binding
+among advertisement, interface retrieval, and invocation:
+
+```json
+{
+  "uri": "https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1",
+  "required": false,
+  "params": {
+    "interface_version": "1.0",
+    "skills": [
+      {
+        "skill_id": "evaluate_resource_condition",
+        "skill_version": "1.0",
+        "interface_digest": "sha256:4dedea3f7ddf19e94d9fd0b30886624f50afb5aadc1b407508a05dd3c40f380d"
+      }
+    ]
+  }
+}
+```
+
+The client activates the extension.  With the HTTP binding, the request
+includes:
+
+```http
+A2A-Extensions: https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1
+```
+
+The A2A Message also lists that URI in `extensions` and carries the following
+skill request object as the Data Part's `data` value:
 
 ```json
 {
@@ -1162,12 +1428,16 @@ value:
 ```
 
 The agent returns the complete `describe_skill` skill result object below.
-Its `result` member is the Skill Interface Document:
+Its `result.interface` member is the Skill Interface Document, and
+`result.interface_digest` carries the advertised digest outside that
+document:
 
 ```json
 {
   "skill": "describe_skill",
   "result": {
+    "interface_digest": "sha256:4dedea3f7ddf19e94d9fd0b30886624f50afb5aadc1b407508a05dd3c40f380d",
+    "interface": {
     "interface_version": "1.0",
     "skill_id": "evaluate_resource_condition",
     "skill_version": "1.0",
@@ -1321,19 +1591,24 @@ Its `result` member is the Skill Interface Document:
       "default_mode": "observe_only",
       "approval_may_be_required": false
     }
+    }
   }
 }
 ```
 
 The client validates the document against the trusted version 1.0 Skill
 Interface Schema, verifies `interface_version`, `skill_id`, and
-`skill_version`, and verifies all three inline-schema digests. It then
-validates the `arguments` value below against `input_schema` and sends this
-domain-skill request object as the Data Part's `data` value:
+`skill_version`, calculates its Skill Interface Document Digest, compares it
+with the values in the Agent Card and `describe_skill` response, and verifies
+all three inline-schema digests. It then validates the `arguments` value below
+against `input_schema` and sends this domain-skill request object as the Data
+Part's `data` value:
 
 ```json
 {
   "skill": "evaluate_resource_condition",
+  "skill_version": "1.0",
+  "interface_digest": "sha256:4dedea3f7ddf19e94d9fd0b30886624f50afb5aadc1b407508a05dd3c40f380d",
   "arguments": {
     "resource_id": "network-resource-123",
     "condition": {
@@ -1346,10 +1621,11 @@ domain-skill request object as the Data Part's `data` value:
 }
 ```
 
-The receiving agent validates the same input, performs the evaluation, and
-returns the following completed A2A Task. The first ordinary Artifact carries
-the skill result object. The second ordinary Artifact carries the supporting
-record:
+The receiving agent first verifies that `skill_version` and
+`interface_digest` identify its currently active Skill Interface Document. It
+then validates the same input, performs the evaluation, and returns the
+following completed A2A Task. The first ordinary Artifact carries the skill
+result object. The second ordinary Artifact carries the supporting record:
 
 ```json
 {

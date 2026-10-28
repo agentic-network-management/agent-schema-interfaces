@@ -89,7 +89,7 @@
     "cancellable": true
   },
   "authority": {
-    "default_mode": "read-only",
+    "default_mode": "observe_only",
     "approval_may_be_required": false
   }
 }
