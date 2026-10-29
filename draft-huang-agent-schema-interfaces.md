@@ -25,9 +25,9 @@ author:
     organization: "Cisco Systems, Inc."
     email: "scohuang@cisco.com"
   -
-    fullname: "Sun Qiong"
+    fullname: "Fu Yu"
     organization: "China Telecom"
-    email: "sunqiong@chinatelecom.cn"
+    email: "fuy44@chinatelecom.cn"
 
 normative:
   A2A:
@@ -1692,4 +1692,4 @@ The following individuals made significant contributions to this document:
 - Muthumayan Madhayyan, Cisco Systems, Inc., muthu@cisco.com
 - David Chuck, Cisco Systems, Inc., dachuck@cisco.com
 - Nirali Vasoya, Cisco Systems, Inc., nvasoya@cisco.com
-- Fu Yu, China Telecom, fuy44@chinatelecom.cn
+- Sun Qiong, China Telecom, sunqiong@chinatelecom.cn
