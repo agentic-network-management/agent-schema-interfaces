@@ -4,8 +4,9 @@
 
 Network Working Group                                           S. Huang
 Internet-Draft                                       Cisco Systems, Inc.
-Intended status: Standards Track                         28 October 2026
-Expires: 1 May 2027
+Intended status: Standards Track                                S. Qiong
+Expires: 2 May 2027                                        China Telecom
+                                                         29 October 2026
 
 
          Schema Interfaces for Network Management Agent Skills
@@ -52,7 +53,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 May 2027.
+   This Internet-Draft will expire on 2 May 2027.
 
 Copyright Notice
 
@@ -126,7 +127,7 @@ Table of Contents
    Appendix A.  Skill Interface JSON Schema
    Appendix B.  Non-Normative End-to-End Example
    Contributors
-   Author's Address
+   Authors' Addresses
 
 1.  Introduction
 
@@ -1703,8 +1704,15 @@ Contributors
 
    *  Nirali Vasoya, Cisco Systems, Inc., nvasoya@cisco.com
 
-Author's Address
+   *  Fu Yu, China Telecom, fuy44@chinatelecom.cn
+
+Authors' Addresses
 
    Scott Huang
    Cisco Systems, Inc.
    Email: scohuang@cisco.com
+
+
+   Sun Qiong
+   China Telecom
+   Email: sunqiong@chinatelecom.cn
