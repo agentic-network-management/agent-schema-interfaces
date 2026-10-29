@@ -4,7 +4,7 @@
 
 Network Working Group                                           S. Huang
 Internet-Draft                                       Cisco Systems, Inc.
-Intended status: Standards Track                                S. Qiong
+Intended status: Standards Track                                   F. Yu
 Expires: 2 May 2027                                        China Telecom
                                                          29 October 2026
 
@@ -1704,7 +1704,7 @@ Contributors
 
    *  Nirali Vasoya, Cisco Systems, Inc., nvasoya@cisco.com
 
-   *  Fu Yu, China Telecom, fuy44@chinatelecom.cn
+   *  Sun Qiong, China Telecom, sunqiong@chinatelecom.cn
 
 Authors' Addresses
 
@@ -1713,6 +1713,6 @@ Authors' Addresses
    Email: scohuang@cisco.com
 
 
-   Sun Qiong
+   Fu Yu
    China Telecom
-   Email: sunqiong@chinatelecom.cn
+   Email: fuy44@chinatelecom.cn
