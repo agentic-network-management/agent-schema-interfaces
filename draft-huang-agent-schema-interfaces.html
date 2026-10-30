@@ -1837,17 +1837,41 @@ change but does not apply it; and<a href="#section-8-5.2.1" class="pilcrow">¶</
       </ul>
 <p id="section-8-6">These values describe behavior, not authorization. In every mode, the agent
 <span class="bcp14">MUST</span> perform the runtime authorization and approval checks required below.<a href="#section-8-6" class="pilcrow">¶</a></p>
-<p id="section-8-7">The interface version 1.0 A2A mapping identifies the protocol elements
+<p id="section-8-7">Version 1.0 permits both a separate skill for each operation and multiple
+operations within one skill. One operation per skill is preferred because it
+gives each operation an independent interface and authority declaration.
+Authors <span class="bcp14">SHOULD</span> expose operations with materially different effects or approval
+requirements as separate skills. The <code>authority</code> member describes the skill as
+a whole; it does not describe the effect of each operation selected within a
+multi-operation skill. If one skill supports multiple operations, its
+<code>input_schema</code> <span class="bcp14">MUST</span> require an unambiguous operation selector, enumerate the
+permitted operations, and define any operation-specific input requirements.
+Schema annotations <span class="bcp14">SHOULD</span> describe the effect of each operation so that a
+caller can understand the requested action before invocation. If any operation
+may require approval,
+<code>approval_may_be_required</code> <span class="bcp14">MUST</span> be <code>true</code>. The receiving agent <span class="bcp14">MUST</span> still
+authorize the selected operation and enforce its applicable approval policy
+for every request.<a href="#section-8-7" class="pilcrow">¶</a></p>
+<p id="section-8-8">For example, an agent that can read and delete a managed resource can
+advertise separate <code>read_resource</code> and <code>delete_resource</code> skills. This is the
+preferred design because reading and deleting have materially different
+effects. Alternatively, the agent can advertise one <code>manage_resource</code> skill
+whose <code>input_schema</code> requires a <code>resource_id</code> and an <code>operation</code> value of
+either <code>read</code> or <code>delete</code>. That schema should describe the effect of each
+value, and the skill must advertise <code>approval_may_be_required</code> as <code>true</code> if
+deletion may require approval. In either design, the agent authorizes the
+specific requested operation at invocation time.<a href="#section-8-8" class="pilcrow">¶</a></p>
+<p id="section-8-9">The interface version 1.0 A2A mapping identifies the protocol elements
 containing skill input, skill output, and supporting records. Those values
 are validated against the corresponding domain schemas in the selected Skill
-Interface Document.<a href="#section-8-7" class="pilcrow">¶</a></p>
-<p id="section-8-8">Successful schema or Skill Interface validation does not authorize execution.
+Interface Document.<a href="#section-8-9" class="pilcrow">¶</a></p>
+<p id="section-8-10">Successful schema or Skill Interface validation does not authorize execution.
 Before processing an invocation, the receiving agent or hosting platform <span class="bcp14">MUST</span>
 authenticate the caller and perform a current authorization decision covering
 the requested skill, resources, operation, and applicable constraints. Before
 causing a side effect, it <span class="bcp14">MUST</span> also enforce any approval or execution-control
 requirements imposed by current deployment policy. Advertised <code>authority</code>
-metadata does not replace these runtime decisions.<a href="#section-8-8" class="pilcrow">¶</a></p>
+metadata does not replace these runtime decisions.<a href="#section-8-10" class="pilcrow">¶</a></p>
 <div id="skill-input">
 <section id="section-8.1">
         <h3 id="name-skill-input">
@@ -1868,6 +1892,13 @@ delegating system need not be transmitted. The names, structures, and
 semantics of transmitted constraints are defined by the domain-specific input
 schema rather than by this framework. Protocol lifecycle and authorization
 controls remain the responsibility of A2A and deployment policy.<a href="#section-8.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.1-3">Version 1.0 applies <code>input_schema</code> to the complete <code>arguments</code> value in the
+initial domain-skill invocation. If an A2A Task enters
+<code>TASK_STATE_INPUT_REQUIRED</code>, a caller's follow-up Message may contain only the
+information requested by the agent. Version 1.0 does not define a schema for
+such follow-up data, and the follow-up is not independently validated against
+<code>input_schema</code>. A deployment that requires schema-governed multi-turn input
+needs an additional profile or separately advertised skill for that exchange.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="skill-output">
@@ -1886,6 +1917,18 @@ not part of the skill output. Completion of a protocol task does not by itself
 establish that a requested downstream network operation completed
 successfully. The domain output schema defines how the skill reports the
 result of that operation.<a href="#section-8.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.2-3">Version 1.0 applies <code>output_schema</code> to the complete final <code>result</code>, after any
+streamed Artifact updates have been assembled. It does not apply independently
+to A2A status Messages, progress updates, or incomplete Artifact chunks.
+Supporting records and the primary output are separate Artifacts within the
+same A2A Task. An agent <span class="bcp14">MAY</span> stream zero or more complete supporting-record
+Artifacts before it produces the primary result Artifact. Each supporting
+record validates independently against its declared supporting-record schema,
+while the complete primary result validates against <code>output_schema</code>. A
+supporting record does not merge with or replace the primary result, and the
+final result <span class="bcp14">MAY</span> reference it by its A2A <code>artifactId</code>. An early finding
+intended for independent machine consumption <span class="bcp14">SHOULD</span> be published as such a
+supporting record.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="supporting-record-schemas">
@@ -2096,20 +2139,24 @@ Interface Document for that skill.  It <span class="bcp14">MUST</span> reject th
 complete domain input and <span class="bcp14">MUST</span> validate against the selected Skill Interface
 Document's <code>input_schema</code>. The receiving agent <span class="bcp14">MUST</span> reject a nonconforming
 input with <code>input_invalid</code> before invoking domain logic.<a href="#section-9.4-3" class="pilcrow">¶</a></p>
-<p id="section-9.4-4">On success, the task <span class="bcp14">MUST</span> reach the completed state. It <span class="bcp14">MUST</span> contain one
-primary Artifact whose <code>name</code> equals the selected skill identifier and whose
-single Data Part contains this skill result object:<a href="#section-9.4-4" class="pilcrow">¶</a></p>
-<p id="section-9.4-5"><code>json
+<p id="section-9.4-4">Base A2A does not assign a primary role to an Artifact. This profile uses the
+term <em>primary result Artifact</em> for the one Artifact that carries the final
+skill output. It is identified by an Artifact <code>name</code> equal to the selected
+skill identifier and by a single Data Part containing the skill result object
+defined below.<a href="#section-9.4-4" class="pilcrow">¶</a></p>
+<p id="section-9.4-5">On success, the task <span class="bcp14">MUST</span> reach the completed state and contain exactly one
+primary result Artifact:<a href="#section-9.4-5" class="pilcrow">¶</a></p>
+<p id="section-9.4-6"><code>json
 {
   "skill": "example_skill",
   "result": {
     "status": "succeeded"
   }
 }
-</code><a href="#section-9.4-5" class="pilcrow">¶</a></p>
-<p id="section-9.4-6">The <code>result</code> value is the complete domain output and <span class="bcp14">MUST</span> validate against the
-selected Skill Interface Document's <code>output_schema</code>.<a href="#section-9.4-6" class="pilcrow">¶</a></p>
-<p id="section-9.4-7">Each supporting record, when present, <span class="bcp14">MUST</span> be carried in a separate Artifact.
+</code><a href="#section-9.4-6" class="pilcrow">¶</a></p>
+<p id="section-9.4-7">The <code>result</code> value is the complete domain output and <span class="bcp14">MUST</span> validate against the
+selected Skill Interface Document's <code>output_schema</code>.<a href="#section-9.4-7" class="pilcrow">¶</a></p>
+<p id="section-9.4-8">Each supporting record, when present, <span class="bcp14">MUST</span> be carried in a separate Artifact.
 The Artifact <code>name</code> <span class="bcp14">MUST</span> equal the record <code>kind</code> declared in
 <code>supporting_record_schemas</code>, and its single Data Part <span class="bcp14">MUST</span> contain the complete
 record value that validates against the Schema Reference associated with that
@@ -2117,11 +2164,112 @@ kind. The record <code>kind</code>, and therefore the supporting Artifact <code>
 equal the selected <code>skill_id</code>. The Artifact <code>artifactId</code> provides a stable
 task-scoped identifier that the domain output <span class="bcp14">MAY</span> reference. A record
 transported or retrieved outside the task requires a stable reference
-mechanism defined by its domain schema.<a href="#section-9.4-7" class="pilcrow">¶</a></p>
-<p id="section-9.4-8">The same final Task and Artifact requirements apply whether the client uses
+mechanism defined by its domain schema.<a href="#section-9.4-8" class="pilcrow">¶</a></p>
+<p id="section-9.4-9">The same final Task and Artifact requirements apply whether the client uses
 synchronous completion, streaming updates, or task retrieval and polling.
-Streaming may deliver the Artifacts incrementally, but it <span class="bcp14">MUST NOT</span> change
-their application-data structure or validation requirements.<a href="#section-9.4-8" class="pilcrow">¶</a></p>
+For streaming, A2A governs Artifact-update delivery through <code>artifactId</code>,
+<code>append</code>, and <code>lastChunk</code> <span>[<a href="#A2A" class="cite xref">A2A</a>]</span>. When <code>append</code> is <code>true</code>, the event content is
+appended to previously delivered content for the same Artifact. This profile
+does not assign additional semantics to <code>append</code> when it is <code>false</code> or absent,
+and does not define independent schema conformance for a partial update. A
+client <span class="bcp14">MAY</span> process the A2A updates incrementally or retrieve the completed Task
+using the A2A Get Task operation. In either case, the complete primary result
+<span class="bcp14">MUST</span> validate against <code>output_schema</code>.<a href="#section-9.4-9" class="pilcrow">¶</a></p>
+<p id="section-9.4-10">The following summary shows the schema boundary for intermediate exchanges in
+version 1.0:<a href="#section-9.4-10" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Exchange</th>
+              <th class="text-left" rowspan="1" colspan="1">Schema applied by this document</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Initial skill request <code>arguments</code>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <code>input_schema</code>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+                <code>TASK_STATE_INPUT_REQUIRED</code> status Message</td>
+              <td class="text-left" rowspan="1" colspan="1">None</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Caller follow-up Message answering that request</td>
+              <td class="text-left" rowspan="1" colspan="1">None</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Incomplete primary result Artifact update or chunk</td>
+              <td class="text-left" rowspan="1" colspan="1">No independent v1.0 validation; A2A update semantics apply</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Complete final primary result Artifact <code>result</code>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <code>output_schema</code>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Complete supporting-record Artifact</td>
+              <td class="text-left" rowspan="1" colspan="1">Matching entry in <code>supporting_record_schemas</code>
+</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-9.4-12">The <em>primary result Artifact</em> is the profile-defined Artifact described in
+<a href="#domain-skill-invocation" class="auto internal xref">Section 9.4</a>; base A2A does not assign a primary role to an
+Artifact. The following example combines the intermediate exchanges described
+above:<a href="#section-9.4-12" class="pilcrow">¶</a></p>
+<p id="section-9.4-13">```text
+1. Initial request
+   arguments validates against input_schema.<a href="#section-9.4-13" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-9.4-14">
+<li id="section-9.4-14.1">
+            <p id="section-9.4-14.1.1">Status update: TASK_STATE_INPUT_REQUIRED
+The agent requests one missing credential reference. No schema for this
+status Message is defined by version 1.0.<a href="#section-9.4-14.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-9.4-14.2">
+            <p id="section-9.4-14.2.1">Caller follow-up Message
+The caller sends only the requested credential reference. The reply
+augments the Task interaction; it does not replace the original input and
+is not independently validated against input_schema.<a href="#section-9.4-14.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-9.4-14.3">
+            <p id="section-9.4-14.3.1">Supporting-record Artifact update
+artifactId="record-1", name="observation-record"
+The complete record validates against the advertised observation-record
+schema.<a href="#section-9.4-14.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-9.4-14.4">
+            <p id="section-9.4-14.4.1">Incomplete primary result Artifact update
+artifactId="result-1", name="example_skill", lastChunk=false
+This update lacks fields required in the final result. A2A governs its
+delivery, and version 1.0 does not validate it independently against
+output_schema.<a href="#section-9.4-14.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-9.4-14.5">
+            <p id="section-9.4-14.5.1">Complete primary result Artifact update
+artifactId="result-1", name="example_skill", lastChunk=true
+This final update contains the complete primary result. It validates
+against output_schema and may reference "record-1" as supporting
+information. A client may instead retrieve this complete Artifact from the
+Task using the A2A Get Task operation.<a href="#section-9.4-14.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-9.4-14.6">
+            <p id="section-9.4-14.6.1">Status update: TASK_STATE_COMPLETED
+The agent reports completion only after validating the complete result.
+```<a href="#section-9.4-14.6.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-9.4-15">All Artifacts in this sequence belong to the same A2A Task. The supporting
+record and primary result remain separate and each is validated against its
+own advertised schema. Version 1.0 does not define separate schemas for
+partial primary results or input-required replies.<a href="#section-9.4-15" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="error-conditions">
@@ -2151,7 +2299,11 @@ carried using the error mechanism of the selected A2A protocol binding and
 <span class="bcp14">SHOULD</span> expose the same machine-readable code when that binding permits it.
 These conditions are not skill outputs and are not validated against the
 selected skill's <code>output_schema</code>.<a href="#section-9.5-4" class="pilcrow">¶</a></p>
-<p id="section-9.5-5">A remote Task <span class="bcp14">MUST</span> reach <code>TASK_STATE_REJECTED</code> when the request is understood
+<p id="section-9.5-5">The <code>interface_invalid</code> condition identifies a defect in the Skill Interface
+Document or an embedded schema. It <span class="bcp14">MUST NOT</span> be used when a valid interface
+rejects a particular data instance. Such instance failures use
+<code>input_invalid</code>, <code>output_invalid</code>, or <code>constraint_rejected</code>, as applicable.<a href="#section-9.5-5" class="pilcrow">¶</a></p>
+<p id="section-9.5-6">A remote Task <span class="bcp14">MUST</span> reach <code>TASK_STATE_REJECTED</code> when the request is understood
 but is not accepted for execution because of <code>interface_mismatch</code>,
 <code>input_invalid</code>, <code>constraint_rejected</code>, or <code>authorization_failed</code>. A remote
 Task <span class="bcp14">MUST</span> reach <code>TASK_STATE_FAILED</code> when an accepted operation cannot complete,
@@ -2159,72 +2311,94 @@ including when <code>describe_skill</code> cannot produce a valid advertised int
 when domain processing cannot produce valid output. A
 <code>resource_limit_exceeded</code> condition uses <code>TASK_STATE_REJECTED</code> when the limit
 is checked before acceptance and <code>TASK_STATE_FAILED</code> when the limit is reached
-during processing.<a href="#section-9.5-5" class="pilcrow">¶</a></p>
-<p id="section-9.5-6">An implementation <span class="bcp14">MUST</span> distinguish at least the following conditions:<a href="#section-9.5-6" class="pilcrow">¶</a></p>
+during processing.<a href="#section-9.5-6" class="pilcrow">¶</a></p>
+<p id="section-9.5-7">An implementation <span class="bcp14">MUST</span> distinguish at least the following conditions:<a href="#section-9.5-7" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-9.5-7.1">
-            <p id="section-9.5-7.1.1"><code>skill_not_advertised</code>: the requested <code>skill_id</code> is not advertised by the
-selected agent endpoint;<a href="#section-9.5-7.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9.5-8.1">
+            <p id="section-9.5-8.1.1"><code>skill_not_advertised</code>: the requested <code>skill_id</code> is not advertised by the
+selected agent endpoint;<a href="#section-9.5-8.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-9.5-7.2">
-            <p id="section-9.5-7.2.1"><code>unsupported_interface_version</code>: the advertised or returned Skill Interface
-version is not supported by the client;<a href="#section-9.5-7.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-9.5-8.2">
+            <p id="section-9.5-8.2.1"><code>unsupported_interface_version</code>: the advertised or returned Skill Interface
+version is not supported by the client;<a href="#section-9.5-8.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-9.5-7.3">
-            <p id="section-9.5-7.3.1"><code>interface_unavailable</code>: the selected interface is advertised but cannot
-currently be returned;<a href="#section-9.5-7.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-9.5-8.3">
+            <p id="section-9.5-8.3.1"><code>interface_unavailable</code>: the selected interface is advertised but cannot
+currently be returned;<a href="#section-9.5-8.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-9.5-7.4">
-            <p id="section-9.5-7.4.1"><code>interface_invalid</code>: a Skill Interface Document is malformed, does not match
+          <li class="normal" id="section-9.5-8.4">
+            <p id="section-9.5-8.4.1"><code>interface_invalid</code>: a Skill Interface Document is malformed, does not match
 the selected skill, fails validation against the version 1.0 Skill
 Interface Schema, or contains an embedded schema that fails digest or
-schema validation;<a href="#section-9.5-7.4.1" class="pilcrow">¶</a></p>
+schema validation;<a href="#section-9.5-8.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-9.5-7.5">
-            <p id="section-9.5-7.5.1"><code>interface_mismatch</code>: a domain-skill invocation carries a <code>skill_version</code> or
+          <li class="normal" id="section-9.5-8.5">
+            <p id="section-9.5-8.5.1"><code>interface_mismatch</code>: a domain-skill invocation carries a <code>skill_version</code> or
 <code>interface_digest</code> that does not match the receiving agent's currently
-active Skill Interface Document for that skill;<a href="#section-9.5-7.5.1" class="pilcrow">¶</a></p>
+active Skill Interface Document for that skill;<a href="#section-9.5-8.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-9.5-7.6">
-            <p id="section-9.5-7.6.1"><code>input_invalid</code>: the domain input does not validate against the selected
-Skill Interface Document's <code>input_schema</code>;<a href="#section-9.5-7.6.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-9.5-8.6">
+            <p id="section-9.5-8.6.1"><code>input_invalid</code>: the domain input does not validate against the selected
+Skill Interface Document's <code>input_schema</code>;<a href="#section-9.5-8.6.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-9.5-7.7">
-            <p id="section-9.5-7.7.1"><code>output_invalid</code>: the produced domain output does not validate against the
-selected Skill Interface Document's <code>output_schema</code>;<a href="#section-9.5-7.7.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-9.5-8.7">
+            <p id="section-9.5-8.7.1"><code>output_invalid</code>: the produced domain output does not validate against the
+selected Skill Interface Document's <code>output_schema</code>;<a href="#section-9.5-8.7.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-9.5-7.8">
-            <p id="section-9.5-7.8.1"><code>constraint_rejected</code>: a structurally valid requested constraint cannot be
-honored or enforced by the receiving agent;<a href="#section-9.5-7.8.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-9.5-8.8">
+            <p id="section-9.5-8.8.1"><code>constraint_rejected</code>: a structurally valid requested constraint cannot be
+honored or enforced by the receiving agent;<a href="#section-9.5-8.8.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-9.5-7.9">
-            <p id="section-9.5-7.9.1"><code>authorization_failed</code>: authentication, authorization, or a required
-approval check does not permit the requested invocation or side effect; and<a href="#section-9.5-7.9.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-9.5-8.9">
+            <p id="section-9.5-8.9.1"><code>authorization_failed</code>: authentication, authorization, or a required
+approval check does not permit the requested invocation or side effect; and<a href="#section-9.5-8.9.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-9.5-7.10">
-            <p id="section-9.5-7.10.1"><code>resource_limit_exceeded</code>: processing the interface, schema, input, output,
-or supporting records would exceed an implementation resource limit.<a href="#section-9.5-7.10.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-9.5-8.10">
+            <p id="section-9.5-8.10.1"><code>resource_limit_exceeded</code>: processing the interface, schema, input, output,
+or supporting records would exceed an implementation resource limit.<a href="#section-9.5-8.10.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-9.5-8">The <code>skill_not_advertised</code> condition can be detected by a client before it
+<p id="section-9.5-9">The <code>skill_not_advertised</code> condition can be detected by a client before it
 sends <code>describe_skill</code>. A client <span class="bcp14">MUST NOT</span> send the request when the Agent Card
 does not advertise the selected skill. A client detects
 <code>unsupported_interface_version</code> when the extension advertisement or returned
 document uses an interface version it does not support. Neither client-side
 condition creates a remote failed Task. If a server receives a domain-skill
 invocation based on a stale interface, it <span class="bcp14">MUST</span> report <code>interface_mismatch</code>
-through the interface version 1.0 A2A mapping using <code>TASK_STATE_REJECTED</code>.<a href="#section-9.5-8" class="pilcrow">¶</a></p>
-<p id="section-9.5-9">A client that detects <code>interface_invalid</code> locally <span class="bcp14">MUST</span> reject the document and
+through the interface version 1.0 A2A mapping using <code>TASK_STATE_REJECTED</code>.<a href="#section-9.5-9" class="pilcrow">¶</a></p>
+<p id="section-9.5-10">A client that detects <code>interface_invalid</code> locally <span class="bcp14">MUST</span> reject the document and
 <span class="bcp14">MUST NOT</span> delegate the domain skill under this framework. An implementation
-<span class="bcp14">MAY</span> include additional diagnostic details, but those details <span class="bcp14">MUST NOT</span> disclose
-credentials, sensitive policy state, or information prohibited by local
-security policy.<a href="#section-9.5-9" class="pilcrow">¶</a></p>
-<p id="section-9.5-10">The receiving agent <span class="bcp14">MUST</span> validate domain output before it reports
+<span class="bcp14">MAY</span> include a <code>details</code> array for <code>input_invalid</code> and <code>output_invalid</code>. Each
+entry <span class="bcp14">MUST</span> contain an <code>instance_path</code> identifying the invalid field using a
+JSON Pointer <span>[<a href="#JSON-POINTER" class="cite xref">JSON-POINTER</a>]</span>. It <span class="bcp14">MAY</span> contain a <code>schema_path</code>, <code>keyword</code>,
+<code>expected</code>, and <code>actual</code> value. These fields are diagnostic and do not replace
+the machine-readable error <code>code</code>. For example:<a href="#section-9.5-10" class="pilcrow">¶</a></p>
+<p id="section-9.5-11"><code>json
+{
+  "error": {
+    "code": "input_invalid",
+    "message": "The threshold must be numeric",
+    "details": [
+      {
+        "instance_path": "/threshold",
+        "schema_path": "/properties/threshold/type",
+        "keyword": "type",
+        "expected": "number",
+        "actual": "string"
+      }
+    ]
+  }
+}
+</code><a href="#section-9.5-11" class="pilcrow">¶</a></p>
+<p id="section-9.5-12">Diagnostic details <span class="bcp14">MUST NOT</span> disclose credentials, sensitive policy state,
+input values prohibited by local security policy, or other information that
+the caller is not authorized to receive.<a href="#section-9.5-12" class="pilcrow">¶</a></p>
+<p id="section-9.5-13">The receiving agent <span class="bcp14">MUST</span> validate domain output before it reports
 <code>TASK_STATE_COMPLETED</code>; invalid output results in <code>output_invalid</code> and
 <code>TASK_STATE_FAILED</code>. A client <span class="bcp14">MUST</span> independently validate received output. If
 it detects invalid output after the remote agent reported completion, it <span class="bcp14">MUST</span>
 treat the output as unusable and report <code>output_invalid</code> locally; it cannot
-retroactively change the remote Task state.<a href="#section-9.5-10" class="pilcrow">¶</a></p>
+retroactively change the remote Task state.<a href="#section-9.5-13" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="client-behavior">
@@ -2738,6 +2912,10 @@ namespaces after the representation and protocol mapping stabilize.<a href="#sec
 <dt id="JCS">[JCS]</dt>
         <dd>
 <span class="refTitle">"JSON Canonicalization Scheme (JCS)"</span>, <span class="seriesInfo">RFC 8785</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8785">https://www.rfc-editor.org/rfc/rfc8785</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="JSON-POINTER">[JSON-POINTER]</dt>
+        <dd>
+<span class="refTitle">"JavaScript Object Notation (JSON) Pointer"</span>, <span class="seriesInfo">RFC 6901</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6901">https://www.rfc-editor.org/rfc/rfc6901</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="JSON-SCHEMA">[JSON-SCHEMA]</dt>
         <dd>
