@@ -150,6 +150,18 @@ Table of Contents
    document addresses that application-schema gap while leaving A2A task
    and transport semantics unchanged.
 
+   Network operations workflows may involve agents supplied by different
+   vendors, operating in different administrative domains, and
+   implemented using different model architectures.  These agents may
+   need to cooperate to decompose, delegate, execute, and verify complex
+   operational tasks.  Such cooperation requires exchanges of task
+   objectives, operational context, constraints, diagnostic requests,
+   supporting records, and risk assessments across agent boundaries.
+   When independently implemented agents govern these artifacts through
+   bilateral assumptions rather than declared, machine-readable per-
+   skill interfaces, end-to-end workflows become fragile, difficult to
+   reproduce, and difficult to audit.
+
    Agent discovery and the schema-interface procedure are distinct.
    Agent discovery determines which agent to contact and how to reach
    it.  The schema-interface procedure defined in this document occurs

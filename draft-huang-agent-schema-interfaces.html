@@ -1374,21 +1374,31 @@ does not define the domain-specific input, output, or supporting-record
 schemas used by individual skills, nor a common interface for retrieving and
 validating those schemas. This document addresses that application-schema gap
 while leaving A2A task and transport semantics unchanged.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">Agent discovery and the schema-interface procedure are distinct. Agent
+<p id="section-1-4">Network operations workflows may involve agents supplied by different
+vendors, operating in different administrative domains, and implemented using
+different model architectures. These agents may need to cooperate to
+decompose, delegate, execute, and verify complex operational tasks. Such
+cooperation requires exchanges of task objectives, operational context,
+constraints, diagnostic requests, supporting records, and risk assessments
+across agent boundaries. When independently implemented agents govern these
+artifacts through bilateral assumptions rather than declared, machine-readable
+per-skill interfaces, end-to-end workflows become fragile, difficult to
+reproduce, and difficult to audit.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">Agent discovery and the schema-interface procedure are distinct. Agent
 discovery determines which agent to contact and how to reach it. The
 schema-interface procedure defined in this document occurs after an agent has
 been identified and provides the machine-readable interface for invoking one
 of its advertised skills. This document does not define how agents are found,
-selected, ranked, or matched to user intent.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">A common protocol envelope can deliver a JSON object without making that
+selected, ranked, or matched to user intent.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">A common protocol envelope can deliver a JSON object without making that
 object semantically interoperable. If the original input and an upstream
 agent's result are opaque text or unconstrained JSON, a downstream agent must
 infer their meaning. Such inference may be useful for human-oriented content,
 but it is not an adequate substitute for a declared interface when agents make
-operational decisions or generate network changes.<a href="#section-1-5" class="pilcrow">¶</a></p>
-<p id="section-1-6">The framework is intended to support independently developed agents from
+operational decisions or generate network changes.<a href="#section-1-6" class="pilcrow">¶</a></p>
+<p id="section-1-7">The framework is intended to support independently developed agents from
 different network-management domains without forcing their domain payloads
-into one universal schema.<a href="#section-1-6" class="pilcrow">¶</a></p>
+into one universal schema.<a href="#section-1-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="relationship-to-other-work">
