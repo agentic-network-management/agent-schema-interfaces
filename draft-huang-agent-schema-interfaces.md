@@ -28,6 +28,10 @@ author:
     fullname: "Fu Yu"
     organization: "China Telecom"
     email: "fuy44@chinatelecom.cn"
+  -
+    fullname: "Dan Voyer"
+    organization: "Cisco Systems, Inc."
+    email: "davoyer@cisco.com"
 
 normative:
   A2A:
@@ -1688,7 +1692,6 @@ interface invalid and prevents delegation.
 
 The following individuals made significant contributions to this document:
 
-- Dan Voyer, Cisco Systems, Inc., davoyer@cisco.com
 - Muthumayan Madhayyan, Cisco Systems, Inc., muthu@cisco.com
 - David Chuck, Cisco Systems, Inc., dachuck@cisco.com
 - Nirali Vasoya, Cisco Systems, Inc., nvasoya@cisco.com
