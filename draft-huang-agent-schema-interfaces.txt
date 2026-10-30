@@ -5,8 +5,10 @@
 Network Working Group                                           S. Huang
 Internet-Draft                                       Cisco Systems, Inc.
 Intended status: Standards Track                                   F. Yu
-Expires: 2 May 2027                                        China Telecom
-                                                         29 October 2026
+Expires: 3 May 2027                                        China Telecom
+                                                                D. Voyer
+                                                     Cisco Systems, Inc.
+                                                         30 October 2026
 
 
          Schema Interfaces for Network Management Agent Skills
@@ -53,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 May 2027.
+   This Internet-Draft will expire on 3 May 2027.
 
 Copyright Notice
 
@@ -1696,8 +1698,6 @@ Contributors
    The following individuals made significant contributions to this
    document:
 
-   *  Dan Voyer, Cisco Systems, Inc., davoyer@cisco.com
-
    *  Muthumayan Madhayyan, Cisco Systems, Inc., muthu@cisco.com
 
    *  David Chuck, Cisco Systems, Inc., dachuck@cisco.com
@@ -1716,3 +1716,8 @@ Authors' Addresses
    Fu Yu
    China Telecom
    Email: fuy44@chinatelecom.cn
+
+
+   Dan Voyer
+   Cisco Systems, Inc.
+   Email: davoyer@cisco.com
