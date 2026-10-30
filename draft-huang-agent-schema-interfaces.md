@@ -47,6 +47,10 @@ normative:
   JSON-SCHEMA-VALIDATION:
     title: "JSON Schema Validation: A Vocabulary for Structural Validation of JSON"
     target: "https://json-schema.org/draft/2020-12/json-schema-validation.html"
+  JSON-POINTER:
+    title: "JavaScript Object Notation (JSON) Pointer"
+    seriesinfo:
+      RFC: 6901
   TIMESTAMP:
     title: "Date and Time on the Internet: Timestamps"
     seriesinfo:
@@ -446,6 +450,32 @@ Version 1.0 defines the following `default_mode` values:
 These values describe behavior, not authorization. In every mode, the agent
 MUST perform the runtime authorization and approval checks required below.
 
+Version 1.0 permits both a separate skill for each operation and multiple
+operations within one skill. One operation per skill is preferred because it
+gives each operation an independent interface and authority declaration.
+Authors SHOULD expose operations with materially different effects or approval
+requirements as separate skills. The `authority` member describes the skill as
+a whole; it does not describe the effect of each operation selected within a
+multi-operation skill. If one skill supports multiple operations, its
+`input_schema` MUST require an unambiguous operation selector, enumerate the
+permitted operations, and define any operation-specific input requirements.
+Schema annotations SHOULD describe the effect of each operation so that a
+caller can understand the requested action before invocation. If any operation
+may require approval,
+`approval_may_be_required` MUST be `true`. The receiving agent MUST still
+authorize the selected operation and enforce its applicable approval policy
+for every request.
+
+For example, an agent that can read and delete a managed resource can
+advertise separate `read_resource` and `delete_resource` skills. This is the
+preferred design because reading and deleting have materially different
+effects. Alternatively, the agent can advertise one `manage_resource` skill
+whose `input_schema` requires a `resource_id` and an `operation` value of
+either `read` or `delete`. That schema should describe the effect of each
+value, and the skill must advertise `approval_may_be_required` as `true` if
+deletion may require approval. In either design, the agent authorizes the
+specific requested operation at invocation time.
+
 The interface version 1.0 A2A mapping identifies the protocol elements
 containing skill input, skill output, and supporting records. Those values
 are validated against the corresponding domain schemas in the selected Skill
@@ -478,6 +508,14 @@ semantics of transmitted constraints are defined by the domain-specific input
 schema rather than by this framework. Protocol lifecycle and authorization
 controls remain the responsibility of A2A and deployment policy.
 
+Version 1.0 applies `input_schema` to the complete `arguments` value in the
+initial domain-skill invocation. If an A2A Task enters
+`TASK_STATE_INPUT_REQUIRED`, a caller's follow-up Message may contain only the
+information requested by the agent. Version 1.0 does not define a schema for
+such follow-up data, and the follow-up is not independently validated against
+`input_schema`. A deployment that requires schema-governed multi-turn input
+needs an additional profile or separately advertised skill for that exchange.
+
 ## Skill output
 
 The skill output is the domain-specific application data produced by a skill
@@ -492,6 +530,19 @@ not part of the skill output. Completion of a protocol task does not by itself
 establish that a requested downstream network operation completed
 successfully. The domain output schema defines how the skill reports the
 result of that operation.
+
+Version 1.0 applies `output_schema` to the complete final `result`, after any
+streamed Artifact updates have been assembled. It does not apply independently
+to A2A status Messages, progress updates, or incomplete Artifact chunks.
+Supporting records and the primary output are separate Artifacts within the
+same A2A Task. An agent MAY stream zero or more complete supporting-record
+Artifacts before it produces the primary result Artifact. Each supporting
+record validates independently against its declared supporting-record schema,
+while the complete primary result validates against `output_schema`. A
+supporting record does not merge with or replace the primary result, and the
+final result MAY reference it by its A2A `artifactId`. An early finding
+intended for independent machine consumption SHOULD be published as such a
+supporting record.
 
 ## Supporting-record schemas
 
@@ -699,9 +750,14 @@ complete domain input and MUST validate against the selected Skill Interface
 Document's `input_schema`. The receiving agent MUST reject a nonconforming
 input with `input_invalid` before invoking domain logic.
 
-On success, the task MUST reach the completed state. It MUST contain one
-primary Artifact whose `name` equals the selected skill identifier and whose
-single Data Part contains this skill result object:
+Base A2A does not assign a primary role to an Artifact. This profile uses the
+term *primary result Artifact* for the one Artifact that carries the final
+skill output. It is identified by an Artifact `name` equal to the selected
+skill identifier and by a single Data Part containing the skill result object
+defined below.
+
+On success, the task MUST reach the completed state and contain exactly one
+primary result Artifact:
 
 ```json
 {
@@ -727,8 +783,70 @@ mechanism defined by its domain schema.
 
 The same final Task and Artifact requirements apply whether the client uses
 synchronous completion, streaming updates, or task retrieval and polling.
-Streaming may deliver the Artifacts incrementally, but it MUST NOT change
-their application-data structure or validation requirements.
+For streaming, A2A governs Artifact-update delivery through `artifactId`,
+`append`, and `lastChunk` {{A2A}}. When `append` is `true`, the event content is
+appended to previously delivered content for the same Artifact. This profile
+does not assign additional semantics to `append` when it is `false` or absent,
+and does not define independent schema conformance for a partial update. A
+client MAY process the A2A updates incrementally or retrieve the completed Task
+using the A2A Get Task operation. In either case, the complete primary result
+MUST validate against `output_schema`.
+
+The following summary shows the schema boundary for intermediate exchanges in
+version 1.0:
+
+| Exchange | Schema applied by this document |
+| Initial skill request `arguments` | `input_schema` |
+| `TASK_STATE_INPUT_REQUIRED` status Message | None |
+| Caller follow-up Message answering that request | None |
+| Incomplete primary result Artifact update or chunk | No independent v1.0 validation; A2A update semantics apply |
+| Complete final primary result Artifact `result` | `output_schema` |
+| Complete supporting-record Artifact | Matching entry in `supporting_record_schemas` |
+
+The *primary result Artifact* is the profile-defined Artifact described in
+{{domain-skill-invocation}}; base A2A does not assign a primary role to an
+Artifact. The following example combines the intermediate exchanges described
+above:
+
+```text
+1. Initial request
+   arguments validates against input_schema.
+
+2. Status update: TASK_STATE_INPUT_REQUIRED
+   The agent requests one missing credential reference. No schema for this
+   status Message is defined by version 1.0.
+
+3. Caller follow-up Message
+   The caller sends only the requested credential reference. The reply
+   augments the Task interaction; it does not replace the original input and
+   is not independently validated against input_schema.
+
+4. Supporting-record Artifact update
+   artifactId="record-1", name="observation-record"
+   The complete record validates against the advertised observation-record
+   schema.
+
+5. Incomplete primary result Artifact update
+   artifactId="result-1", name="example_skill", lastChunk=false
+   This update lacks fields required in the final result. A2A governs its
+   delivery, and version 1.0 does not validate it independently against
+   output_schema.
+
+6. Complete primary result Artifact update
+   artifactId="result-1", name="example_skill", lastChunk=true
+   This final update contains the complete primary result. It validates
+   against output_schema and may reference "record-1" as supporting
+   information. A client may instead retrieve this complete Artifact from the
+   Task using the A2A Get Task operation.
+
+7. Status update: TASK_STATE_COMPLETED
+   The agent reports completion only after validating the complete result.
+```
+
+All Artifacts in this sequence belong to the same A2A Task. The supporting
+record and primary result remain separate and each is validated against its
+own advertised schema. Version 1.0 does not define separate schemas for
+partial primary results or input-required replies.
 
 ## Machine-readable error conditions {#error-conditions}
 
@@ -757,6 +875,11 @@ carried using the error mechanism of the selected A2A protocol binding and
 SHOULD expose the same machine-readable code when that binding permits it.
 These conditions are not skill outputs and are not validated against the
 selected skill's `output_schema`.
+
+The `interface_invalid` condition identifies a defect in the Skill Interface
+Document or an embedded schema. It MUST NOT be used when a valid interface
+rejects a particular data instance. Such instance failures use
+`input_invalid`, `output_invalid`, or `constraint_rejected`, as applicable.
 
 A remote Task MUST reach `TASK_STATE_REJECTED` when the request is understood
 but is not accepted for execution because of `interface_mismatch`,
@@ -805,9 +928,33 @@ through the interface version 1.0 A2A mapping using `TASK_STATE_REJECTED`.
 
 A client that detects `interface_invalid` locally MUST reject the document and
 MUST NOT delegate the domain skill under this framework. An implementation
-MAY include additional diagnostic details, but those details MUST NOT disclose
-credentials, sensitive policy state, or information prohibited by local
-security policy.
+MAY include a `details` array for `input_invalid` and `output_invalid`. Each
+entry MUST contain an `instance_path` identifying the invalid field using a
+JSON Pointer {{JSON-POINTER}}. It MAY contain a `schema_path`, `keyword`,
+`expected`, and `actual` value. These fields are diagnostic and do not replace
+the machine-readable error `code`. For example:
+
+```json
+{
+  "error": {
+    "code": "input_invalid",
+    "message": "The threshold must be numeric",
+    "details": [
+      {
+        "instance_path": "/threshold",
+        "schema_path": "/properties/threshold/type",
+        "keyword": "type",
+        "expected": "number",
+        "actual": "string"
+      }
+    ]
+  }
+}
+```
+
+Diagnostic details MUST NOT disclose credentials, sensitive policy state,
+input values prohibited by local security policy, or other information that
+the caller is not authorized to receive.
 
 The receiving agent MUST validate domain output before it reports
 `TASK_STATE_COMPLETED`; invalid output results in `output_invalid` and
