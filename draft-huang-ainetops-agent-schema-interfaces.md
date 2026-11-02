@@ -234,7 +234,7 @@ It is not a globally portable record identifier.
 
 The following figure summarizes the structure of a Skill Interface Document:
 
-```text
+~~~ ascii-art
 Skill Interface Document
 |-- interface_version
 |-- skill_id
@@ -257,7 +257,7 @@ Skill Interface Document
 `-- authority
     |-- default_mode
     `-- approval_may_be_required
-```
+~~~
 
 # Conventions and Definitions
 
@@ -654,9 +654,9 @@ An agent conforming to this framework MUST advertise `describe_skill` and each
 schema-governed domain skill in its Agent Card.  It MUST also advertise the
 following A2A extension in `AgentCapabilities.extensions`:
 
-```text
+~~~ text
 https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1
-```
+~~~
 
 The extension MAY be marked `required: false` so that extension-unaware
 clients can continue to use the agent through base A2A procedures.  A client
@@ -680,7 +680,7 @@ binding for each `skill_id` in an Agent Card.
 
 The following fragment illustrates the extension advertisement:
 
-```json
+~~~ json
 {
   "uri": "https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1",
   "description": "Schema interfaces for advertised skills",
@@ -696,7 +696,7 @@ The following fragment illustrates the extension advertisement:
     ]
   }
 }
-```
+~~~
 
 The client selects the advertised `skill_id`, `skill_version`, and
 `interface_digest` before calling `describe_skill`.  Version 1.0 does not
@@ -743,14 +743,14 @@ The client MUST invoke the A2A Send Message or Send Streaming Message
 operation with a user-role Message containing exactly one Data Part. The
 Data Part's `data` value MUST be the following request object:
 
-```json
+~~~ json
 {
   "skill": "describe_skill",
   "arguments": {
     "skill_id": "example_skill"
   }
 }
-```
+~~~
 
 ## `describe_skill` response
 
@@ -760,7 +760,7 @@ MUST contain exactly one Data Part. Its `data` value MUST be the following
 object, where the notation in angle brackets represents the complete Skill
 Interface Document rather than a JSON string:
 
-```text
+~~~ text
 {
   "skill": "describe_skill",
   "result": {
@@ -768,7 +768,7 @@ Interface Document rather than a JSON string:
     "interface": <Skill Interface Document>
   }
 }
-```
+~~~
 
 The `result.interface` value is a Skill Interface Document conforming to the
 advertised and previously selected version of the standardized Skill
@@ -802,7 +802,7 @@ domain skill with the A2A Send Message or Send Streaming Message operation.
 The user-role Message MUST contain exactly one Data Part. The Data Part's
 `data` value MUST be this skill request object:
 
-```json
+~~~ json
 {
   "skill": "example_skill",
   "skill_version": "1.0",
@@ -811,7 +811,7 @@ The user-role Message MUST contain exactly one Data Part. The Data Part's
     "objective": "Evaluate the selected network resource"
   }
 }
-```
+~~~
 
 The `skill` value MUST equal the selected Agent Card skill identifier.  The
 `skill_version` and `interface_digest` values MUST equal the values selected
@@ -833,14 +833,14 @@ defined below.
 On success, the task MUST reach the completed state and contain exactly one
 primary result Artifact:
 
-```json
+~~~ json
 {
   "skill": "example_skill",
   "result": {
     "status": "succeeded"
   }
 }
-```
+~~~
 
 The `result` value is the complete domain output and MUST validate against the
 selected Skill Interface Document's `output_schema`.
@@ -882,7 +882,7 @@ The *primary result Artifact* is the profile-defined Artifact described in
 Artifact. The following example combines the intermediate exchanges described
 above:
 
-```text
+~~~ text
 1. Initial request
    arguments validates against input_schema.
 
@@ -915,7 +915,7 @@ above:
 
 7. Status update: TASK_STATE_COMPLETED
    The agent reports completion only after validating the complete result.
-```
+~~~
 
 If the receiving agent delegates work to another agent during this sequence,
 that delegation creates a distinct downstream A2A Task. An input-required
@@ -940,14 +940,14 @@ When the remote agent reports one of the conditions below through an A2A Task,
 the Task's final status Message MUST contain exactly one Data Part whose
 `data` value has this form:
 
-```json
+~~~ json
 {
   "error": {
     "code": "interface_invalid",
     "message": "The selected interface document is invalid"
   }
 }
-```
+~~~
 
 The `code` value MUST be one of the machine-readable conditions below or an
 additional value defined by a future profile. The human-readable `message`
@@ -1015,7 +1015,7 @@ JSON Pointer {{JSON-POINTER}}. It MAY contain a `schema_path`, `keyword`,
 `expected`, and `actual` value. These fields are diagnostic and do not replace
 the machine-readable error `code`. For example:
 
-```json
+~~~ json
 {
   "error": {
     "code": "input_invalid",
@@ -1031,7 +1031,7 @@ the machine-readable error `code`. For example:
     ]
   }
 }
-```
+~~~
 
 Diagnostic details MUST NOT disclose credentials, sensitive policy state,
 input values prohibited by local security policy, or other information that
@@ -1646,7 +1646,7 @@ Assume an Agent Card advertises `describe_skill`, the
 extension.  The digest value is repeated below to show the required binding
 among advertisement, interface retrieval, and invocation:
 
-```json
+~~~ json
 {
   "uri": "https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1",
   "required": false,
@@ -1661,195 +1661,195 @@ among advertisement, interface retrieval, and invocation:
     ]
   }
 }
-```
+~~~
 
 The client activates the extension.  With the HTTP binding, the request
 includes:
 
-```http
+~~~ http
 A2A-Extensions: https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1
-```
+~~~
 
 The A2A Message also lists that URI in `extensions` and carries the following
 skill request object as the Data Part's `data` value:
 
-```json
+~~~ json
 {
   "skill": "describe_skill",
   "arguments": {
     "skill_id": "evaluate_resource_condition"
   }
 }
-```
+~~~
 
 The agent returns the complete `describe_skill` skill result object below.
 Its `result.interface` member is the Skill Interface Document, and
 `result.interface_digest` carries the advertised digest outside that
 document:
 
-```json
+~~~ json
 {
   "skill": "describe_skill",
   "result": {
     "interface_digest": "sha256:4dedea3f7ddf19e94d9fd0b30886624f50afb5aadc1b407508a05dd3c40f380d",
     "interface": {
-    "interface_version": "1.0",
-    "skill_id": "evaluate_resource_condition",
-    "skill_version": "1.0",
-    "input_schema": {
-      "schema_uri": "urn:example:resource-condition:input:1.0",
-      "version": "1.0",
-      "dialect": "https://json-schema.org/draft/2020-12/schema",
-      "digest": "sha256:a593fb695fd727eaa36602d9b539e53e54cde50aec6f4b7df5d624b70148f26a",
-      "resolution": {
-        "type": "inline",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "resource_id": {
-              "type": "string"
-            },
-            "condition": {
-              "type": "object",
-              "properties": {
-                "metric": {
-                  "type": "string"
-                },
-                "operator": {
-                  "enum": [
-                    "gt",
-                    "gte",
-                    "lt",
-                    "lte"
-                  ]
-                },
-                "threshold": {
-                  "type": "number"
-                },
-                "unit": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "metric",
-                "operator",
-                "threshold",
-                "unit"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "required": [
-            "resource_id",
-            "condition"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "output_schema": {
-      "schema_uri": "urn:example:resource-condition:output:1.0",
-      "version": "1.0",
-      "dialect": "https://json-schema.org/draft/2020-12/schema",
-      "digest": "sha256:11ee18a8c1ab8821e083d61298ef07c4f2ce2e29c3eafb82f4742f1e1e969bce",
-      "resolution": {
-        "type": "inline",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "result": {
-              "enum": [
-                "condition_met",
-                "condition_not_met"
-              ]
-            },
-            "observed_value": {
-              "type": "number"
-            },
-            "unit": {
-              "type": "string"
-            },
-            "supporting_record_refs": {
-              "type": "array",
-              "items": {
+      "interface_version": "1.0",
+      "skill_id": "evaluate_resource_condition",
+      "skill_version": "1.0",
+      "input_schema": {
+        "schema_uri": "urn:example:resource-condition:input:1.0",
+        "version": "1.0",
+        "dialect": "https://json-schema.org/draft/2020-12/schema",
+        "digest": "sha256:a593fb695fd727eaa36602d9b539e53e54cde50aec6f4b7df5d624b70148f26a",
+        "resolution": {
+          "type": "inline",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "resource_id": {
                 "type": "string"
               },
-              "minItems": 1,
-              "uniqueItems": true
-            }
-          },
-          "required": [
-            "result",
-            "observed_value",
-            "unit",
-            "supporting_record_refs"
-          ],
-          "additionalProperties": false
+              "condition": {
+                "type": "object",
+                "properties": {
+                  "metric": {
+                    "type": "string"
+                  },
+                  "operator": {
+                    "enum": [
+                      "gt",
+                      "gte",
+                      "lt",
+                      "lte"
+                    ]
+                  },
+                  "threshold": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "metric",
+                  "operator",
+                  "threshold",
+                  "unit"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "resource_id",
+              "condition"
+            ],
+            "additionalProperties": false
+          }
         }
-      }
-    },
-    "supporting_record_schemas": [
-      {
-        "kind": "resource-observation",
-        "schema_reference": {
-          "schema_uri": "urn:example:resource-observation:1.0",
-          "version": "1.0",
-          "dialect": "https://json-schema.org/draft/2020-12/schema",
-          "digest": "sha256:3cf0d51c1d6e97d03fa80d5b9435c55d955f824bc9e58d053bb2095e18a0a8c4",
-          "resolution": {
-            "type": "inline",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "record_id": {
-                  "type": "string"
-                },
-                "resource_id": {
-                  "type": "string"
-                },
-                "metric": {
-                  "type": "string"
-                },
-                "value": {
-                  "type": "number"
-                },
-                "unit": {
-                  "type": "string"
-                },
-                "observed_at": {
-                  "type": "string",
-                  "format": "date-time"
-                }
+      },
+      "output_schema": {
+        "schema_uri": "urn:example:resource-condition:output:1.0",
+        "version": "1.0",
+        "dialect": "https://json-schema.org/draft/2020-12/schema",
+        "digest": "sha256:11ee18a8c1ab8821e083d61298ef07c4f2ce2e29c3eafb82f4742f1e1e969bce",
+        "resolution": {
+          "type": "inline",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "result": {
+                "enum": [
+                  "condition_met",
+                  "condition_not_met"
+                ]
               },
-              "required": [
-                "record_id",
-                "resource_id",
-                "metric",
-                "value",
-                "unit",
-                "observed_at"
-              ],
-              "additionalProperties": false
+              "observed_value": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "supporting_record_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "result",
+              "observed_value",
+              "unit",
+              "supporting_record_refs"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "supporting_record_schemas": [
+        {
+          "kind": "resource-observation",
+          "schema_reference": {
+            "schema_uri": "urn:example:resource-observation:1.0",
+            "version": "1.0",
+            "dialect": "https://json-schema.org/draft/2020-12/schema",
+            "digest": "sha256:3cf0d51c1d6e97d03fa80d5b9435c55d955f824bc9e58d053bb2095e18a0a8c4",
+            "resolution": {
+              "type": "inline",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "record_id": {
+                    "type": "string"
+                  },
+                  "resource_id": {
+                    "type": "string"
+                  },
+                  "metric": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "observed_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "record_id",
+                  "resource_id",
+                  "metric",
+                  "value",
+                  "unit",
+                  "observed_at"
+                ],
+                "additionalProperties": false
+              }
             }
           }
         }
-      }
-    ],
-    "interaction": {
-      "supported_response_modes": [
-        "sync",
-        "stream"
       ],
-      "cancellable": true
-    },
-    "authority": {
-      "default_mode": "observe_only",
-      "approval_may_be_required": false
-    }
-    }
+      "interaction": {
+        "supported_response_modes": [
+          "sync",
+          "stream"
+        ],
+        "cancellable": true
+      },
+      "authority": {
+        "default_mode": "observe_only",
+        "approval_may_be_required": false
+      }
+      }
   }
 }
-```
+~~~
 
 The client validates the document against the trusted version 1.0 Skill
 Interface Schema, verifies `interface_version`, `skill_id`, and
@@ -1859,7 +1859,7 @@ all three inline-schema digests. It then validates the `arguments` value below
 against `input_schema` and sends this domain-skill request object as the Data
 Part's `data` value:
 
-```json
+~~~ json
 {
   "skill": "evaluate_resource_condition",
   "skill_version": "1.0",
@@ -1874,7 +1874,7 @@ Part's `data` value:
     }
   }
 }
-```
+~~~
 
 The receiving agent first verifies that `skill_version` and
 `interface_digest` identify its currently active Skill Interface Document. It
@@ -1882,7 +1882,7 @@ then validates the same input, performs the evaluation, and returns the
 following completed A2A Task. The first ordinary Artifact carries the skill
 result object. The second ordinary Artifact carries the supporting record:
 
-```json
+~~~ json
 {
   "id": "task-123",
   "status": {
@@ -1924,7 +1924,7 @@ result object. The second ordinary Artifact carries the supporting record:
     }
   ]
 }
-```
+~~~
 
 The client validates the output against `output_schema`, validates the record
 against the schema selected by its kind, and resolves `observation-7` to that
