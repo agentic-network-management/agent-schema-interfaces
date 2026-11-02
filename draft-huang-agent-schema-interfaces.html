@@ -1055,11 +1055,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Agent Schema Interfaces</td>
-<td class="right">October 2026</td>
+<td class="right">November 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Huang, et al.</td>
-<td class="center">Expires 3 May 2027</td>
+<td class="center">Expires 6 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1072,12 +1072,12 @@ svg {
 <dd class="internet-draft">draft-huang-agent-schema-interfaces-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-10-30" class="published">30 October 2026</time>
+<time datetime="2026-11-02" class="published">2 November 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-05-03">3 May 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-06">6 May 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1137,7 +1137,7 @@ skill inputs, outputs, and supporting records.<a href="#section-abstract-2" clas
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 3 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 6 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1170,48 +1170,57 @@ skill inputs, outputs, and supporting records.<a href="#section-abstract-2" clas
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-relationship-to-other-work" class="internal xref">Relationship to Other Work</a></p>
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-network-management-agent" class="internal xref">Network Management Agent</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1" class="keepWithNext"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-client-agent" class="internal xref">Client Agent</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-remote-agent" class="internal xref">Remote Agent</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
+                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-network-management-domain" class="internal xref">Network-Management Domain</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.5">
+                <p id="section-toc.1-1.2.2.5.1"><a href="#section-2.5" class="auto internal xref">2.5</a>.  <a href="#name-delegation-hop" class="internal xref">Delegation Hop</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.6">
+                <p id="section-toc.1-1.2.2.6.1"><a href="#section-2.6" class="auto internal xref">2.6</a>.  <a href="#name-schema-reference" class="internal xref">Schema Reference</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.7">
+                <p id="section-toc.1-1.2.2.7.1"><a href="#section-2.7" class="auto internal xref">2.7</a>.  <a href="#name-version-string" class="internal xref">Version String</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.8">
+                <p id="section-toc.1-1.2.2.8.1"><a href="#section-2.8" class="auto internal xref">2.8</a>.  <a href="#name-skill" class="internal xref">Skill</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.9">
+                <p id="section-toc.1-1.2.2.9.1"><a href="#section-2.9" class="auto internal xref">2.9</a>.  <a href="#name-skill-interface-schema" class="internal xref">Skill Interface Schema</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.10">
+                <p id="section-toc.1-1.2.2.10.1"><a href="#section-2.10" class="auto internal xref">2.10</a>. <a href="#name-skill-interface-document" class="internal xref">Skill Interface Document</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.11">
+                <p id="section-toc.1-1.2.2.11.1"><a href="#section-2.11" class="auto internal xref">2.11</a>. <a href="#name-skill-interface-document-di" class="internal xref">Skill Interface Document Digest</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.12">
+                <p id="section-toc.1-1.2.2.12.1"><a href="#section-2.12" class="auto internal xref">2.12</a>. <a href="#name-supporting-record" class="internal xref">Supporting Record</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.13">
+                <p id="section-toc.1-1.2.2.13.1"><a href="#section-2.13" class="auto internal xref">2.13</a>. <a href="#name-a2a-artifact-identifier" class="internal xref">A2A Artifact Identifier</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-scope" class="internal xref">Scope</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
-                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-network-management-agent" class="internal xref">Network Management Agent</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
-                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-client-agent" class="internal xref">Client Agent</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
-                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-remote-agent" class="internal xref">Remote Agent</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
-                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-schema-reference" class="internal xref">Schema Reference</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5">
-                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-version-string" class="internal xref">Version String</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6">
-                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="auto internal xref">5.6</a>.  <a href="#name-skill" class="internal xref">Skill</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.7">
-                <p id="section-toc.1-1.5.2.7.1"><a href="#section-5.7" class="auto internal xref">5.7</a>.  <a href="#name-skill-interface-schema" class="internal xref">Skill Interface Schema</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.8">
-                <p id="section-toc.1-1.5.2.8.1"><a href="#section-5.8" class="auto internal xref">5.8</a>.  <a href="#name-skill-interface-document" class="internal xref">Skill Interface Document</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.9">
-                <p id="section-toc.1-1.5.2.9.1"><a href="#section-5.9" class="auto internal xref">5.9</a>.  <a href="#name-skill-interface-document-di" class="internal xref">Skill Interface Document Digest</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.10">
-                <p id="section-toc.1-1.5.2.10.1"><a href="#section-5.10" class="auto internal xref">5.10</a>. <a href="#name-supporting-record" class="internal xref">Supporting Record</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-relationship-to-other-work" class="internal xref">Relationship to Other Work</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-design-principles" class="internal xref">Design Principles</a></p>
@@ -1401,25 +1410,193 @@ different network-management domains without forcing their domain payloads
 into one universal schema.<a href="#section-1-7" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="relationship-to-other-work">
+<div id="terminology">
 <section id="section-2">
-      <h2 id="name-relationship-to-other-work">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-relationship-to-other-work" class="section-name selfRef">Relationship to Other Work</a>
+      <h2 id="name-terminology">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
       </h2>
-<p id="section-2-1">The "IDL: A Semantic Information Model for Agent Communication"
-Internet-Draft <span>[<a href="#IDL" class="cite xref">IDL</a>]</span> describes agent-wide identity, capabilities, autonomy
-boundaries, context requirements, governance interfaces, and intent
-participation. It includes optional input-context and output-schema
-declarations, but it does not define a normative serialization or a per-skill
-interface-retrieval procedure.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<p id="section-2-2">This document has a narrower scope. It defines a normative representation for
-one version of one callable skill, including its input, output, and
-supporting-record schemas, and defines the <code>describe_skill</code> retrieval and
-validation procedure. The two models can be used together: an agent-wide
-semantic description can identify a capability, while a Skill Interface
-Document supplies the concrete application schemas used to invoke a selected
-skill. A formal mapping between the two models is outside the scope of this
-document.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<div id="network-management-agent">
+<section id="section-2.1">
+        <h3 id="name-network-management-agent">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-network-management-agent" class="section-name selfRef">Network Management Agent</a>
+        </h3>
+<p id="section-2.1-1">A software component that performs or assists with network-management work,
+including analysis, configuration, assurance, incident handling, validation,
+simulation, or remediation.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="client-agent">
+<section id="section-2.2">
+        <h3 id="name-client-agent">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-client-agent" class="section-name selfRef">Client Agent</a>
+        </h3>
+<p id="section-2.2-1">An A2A Client that identifies and contacts a remote agent, obtains and
+validates its Skill Interface Documents, and delegates tasks on behalf of a
+user or another system. This term describes a protocol role and does not imply
+administrative control over the remote agent.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="remote-agent">
+<section id="section-2.3">
+        <h3 id="name-remote-agent">
+<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-remote-agent" class="section-name selfRef">Remote Agent</a>
+        </h3>
+<p id="section-2.3-1">An A2A Server that publishes an Agent Card, exposes skills, receives delegated
+tasks, and returns task status and results.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="network-management-domain">
+<section id="section-2.4">
+        <h3 id="name-network-management-domain">
+<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-network-management-domain" class="section-name selfRef">Network-Management Domain</a>
+        </h3>
+<p id="section-2.4-1">An application subject area, such as planning, assurance, configuration, or
+incident analysis, whose owner defines the meaning of its skill inputs,
+outputs, and supporting records. A domain is a schema-governance boundary; it
+does not create a global namespace for skill identifiers.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="delegation-hop">
+<section id="section-2.5">
+        <h3 id="name-delegation-hop">
+<a href="#section-2.5" class="section-number selfRef">2.5. </a><a href="#name-delegation-hop" class="section-name selfRef">Delegation Hop</a>
+        </h3>
+<p id="section-2.5-1">The relationship created when an agent handling one A2A Task invokes a skill
+at another agent, thereby creating a distinct downstream A2A Task. The task
+handled by the invoking agent is the upstream task, and the newly created task
+is the downstream task.<a href="#section-2.5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="schema-reference">
+<section id="section-2.6">
+        <h3 id="name-schema-reference">
+<a href="#section-2.6" class="section-number selfRef">2.6. </a><a href="#name-schema-reference" class="section-name selfRef">Schema Reference</a>
+        </h3>
+<p id="section-2.6-1">A portable schema identity, integrity information, and inline schema content.
+The identity and digest remain independent of any deployment-local mechanism
+used to manage the schema before the Skill Interface Document is assembled.<a href="#section-2.6-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="version-string">
+<section id="section-2.7">
+        <h3 id="name-version-string">
+<a href="#section-2.7" class="section-number selfRef">2.7. </a><a href="#name-version-string" class="section-name selfRef">Version String</a>
+        </h3>
+<p id="section-2.7-1">A canonical version identifier consisting of two dot-separated non-negative
+decimal integers, <code>MAJOR.MINOR</code>. A component has no leading zero unless its
+value is zero. Two versions are equal only when both numeric components are
+equal; the canonical representation makes this equivalent to string equality.
+A change that is not backward compatible with consumers of the prior version
+increments <code>MAJOR</code> and resets <code>MINOR</code> to zero. A backward-compatible change
+increments <code>MINOR</code>. This syntax and comparison rule apply to <code>skill_version</code>
+and to the <code>version</code> in each Schema Reference. The version of the Skill
+Interface Schema is separately identified by <code>interface_version</code>, which this
+document fixes at <code>1.0</code>.<a href="#section-2.7-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="skill">
+<section id="section-2.8">
+        <h3 id="name-skill">
+<a href="#section-2.8" class="section-number selfRef">2.8. </a><a href="#name-skill" class="section-name selfRef">Skill</a>
+        </h3>
+<p id="section-2.8-1">A named capability advertised by an agent and invokable through an
+Agent-to-Agent protocol. A skill identifier is scoped to the Agent Card in
+which it is advertised and is not globally unique. Portable schema identity is
+provided by the Schema Reference rather than by the skill identifier alone.<a href="#section-2.8-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="skill-interface-schema">
+<section id="section-2.9">
+        <h3 id="name-skill-interface-schema">
+<a href="#section-2.9" class="section-number selfRef">2.9. </a><a href="#name-skill-interface-schema" class="section-name selfRef">Skill Interface Schema</a>
+        </h3>
+<p id="section-2.9-1">The standardized, language-neutral schema that defines the permitted
+structure and interpretation of a Skill Interface Document. An agent uses a
+local or otherwise trusted copy of this schema to validate the documents it
+publishes. A client agent uses the same schema version to validate retrieved
+documents.<a href="#section-2.9-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="skill-interface-document">
+<section id="section-2.10">
+        <h3 id="name-skill-interface-document">
+<a href="#section-2.10" class="section-number selfRef">2.10. </a><a href="#name-skill-interface-document" class="section-name selfRef">Skill Interface Document</a>
+        </h3>
+<p id="section-2.10-1">A machine-readable description of a skill's accepted input, produced output,
+possible supporting records, interaction behavior, and applicable constraints.
+It is an instance of the Skill Interface Schema. It contains domain-specific
+Schema References supplied by the agent without modifying the standardized
+Skill Interface Schema.<a href="#section-2.10-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="skill-interface-document-digest">
+<section id="section-2.11">
+        <h3 id="name-skill-interface-document-di">
+<a href="#section-2.11" class="section-number selfRef">2.11. </a><a href="#name-skill-interface-document-di" class="section-name selfRef">Skill Interface Document Digest</a>
+        </h3>
+<p id="section-2.11-1">The <code>interface_digest</code> value identifies the exact Skill Interface Document
+selected by a client.  It is the string <code>sha256:</code> followed by the lowercase
+hexadecimal representation of the SHA-256 digest of the UTF-8 encoding of the
+complete Skill Interface Document serialized using the JSON Canonicalization
+Scheme (JCS) <span>[<a href="#JCS" class="cite xref">JCS</a>]</span>.<a href="#section-2.11-1" class="pilcrow">¶</a></p>
+<p id="section-2.11-2">The digest covers every member of the Skill Interface Document, including its
+inline domain schemas.  It does not cover the standardized Skill Interface
+Schema used to validate the document, the Agent Card, a <code>describe_skill</code>
+response wrapper, or a domain-skill invocation.  The <code>interface_digest</code> is
+carried outside the Skill Interface Document so that the document does not
+contain a digest of itself.<a href="#section-2.11-2" class="pilcrow">¶</a></p>
+<p id="section-2.11-3">The same Skill Interface Document Digest <span class="bcp14">MUST</span> be carried in the Agent Card
+extension advertisement, the <code>describe_skill</code> response, and each domain-skill
+invocation that uses the document.  All three carried values and the digest
+calculated from the returned document <span class="bcp14">MUST</span> match.<a href="#section-2.11-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="supporting-record">
+<section id="section-2.12">
+        <h3 id="name-supporting-record">
+<a href="#section-2.12" class="section-number selfRef">2.12. </a><a href="#name-supporting-record" class="section-name selfRef">Supporting Record</a>
+        </h3>
+<p id="section-2.12-1">A domain-specific observation or artifact used to derive, validate, reproduce,
+or audit a skill output. A supporting record is validated against the
+applicable schema identified by the Skill Interface Document.<a href="#section-2.12-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="a2a-artifact-identifier">
+<section id="section-2.13">
+        <h3 id="name-a2a-artifact-identifier">
+<a href="#section-2.13" class="section-number selfRef">2.13. </a><a href="#name-a2a-artifact-identifier" class="section-name selfRef">A2A Artifact Identifier</a>
+        </h3>
+<p id="section-2.13-1">The task-scoped <code>artifactId</code> assigned to an A2A Artifact as defined by A2A
+<span>[<a href="#A2A" class="cite xref">A2A</a>]</span>. It identifies an Artifact within an A2A Task and can be used by a
+skill output to reference a supporting-record Artifact carried by that Task.
+It is not a globally portable record identifier.<a href="#section-2.13-1" class="pilcrow">¶</a></p>
+<p id="section-2.13-2">The following figure summarizes the structure of a Skill Interface Document:<a href="#section-2.13-2" class="pilcrow">¶</a></p>
+<p id="section-2.13-3"><code>text
+Skill Interface Document
+|-- interface_version
+|-- skill_id
+|-- skill_version
+|-- input_schema -------------------- Schema Reference
+|   |-- schema_uri
+|   |-- version
+|   |-- dialect
+|   |-- digest
+|   `-- resolution
+|       |-- type = "inline"
+|       `-- schema
+|-- output_schema ------------------- Schema Reference
+|-- supporting_record_schemas[]
+|   |-- kind
+|   `-- schema_reference ------------ Schema Reference
+|-- interaction
+|   |-- supported_response_modes[]
+|   `-- cancellable
+`-- authority
+    |-- default_mode
+    `-- approval_may_be_required
+</code><a href="#section-2.13-3" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1492,133 +1669,25 @@ engines, or approval workflows;<a href="#section-4-5.6.1" class="pilcrow">¶</a>
       </ul>
 </section>
 </div>
-<div id="terminology">
+<div id="relationship-to-other-work">
 <section id="section-5">
-      <h2 id="name-terminology">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+      <h2 id="name-relationship-to-other-work">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-relationship-to-other-work" class="section-name selfRef">Relationship to Other Work</a>
       </h2>
-<div id="network-management-agent">
-<section id="section-5.1">
-        <h3 id="name-network-management-agent">
-<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-network-management-agent" class="section-name selfRef">Network Management Agent</a>
-        </h3>
-<p id="section-5.1-1">A software component that performs or assists with network-management work,
-including analysis, configuration, assurance, incident handling, validation,
-simulation, or remediation.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="client-agent">
-<section id="section-5.2">
-        <h3 id="name-client-agent">
-<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-client-agent" class="section-name selfRef">Client Agent</a>
-        </h3>
-<p id="section-5.2-1">An A2A Client that identifies and contacts a remote agent, obtains and
-validates its Skill Interface Documents, and delegates tasks on behalf of a
-user or another system. This term describes a protocol role and does not imply
-administrative control over the remote agent.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="remote-agent">
-<section id="section-5.3">
-        <h3 id="name-remote-agent">
-<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-remote-agent" class="section-name selfRef">Remote Agent</a>
-        </h3>
-<p id="section-5.3-1">An A2A Server that publishes an Agent Card, exposes skills, receives delegated
-tasks, and returns task status and results.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="schema-reference">
-<section id="section-5.4">
-        <h3 id="name-schema-reference">
-<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-schema-reference" class="section-name selfRef">Schema Reference</a>
-        </h3>
-<p id="section-5.4-1">A portable schema identity, integrity information, and inline schema content.
-The identity and digest remain independent of any deployment-local mechanism
-used to manage the schema before the Skill Interface Document is assembled.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="version-string">
-<section id="section-5.5">
-        <h3 id="name-version-string">
-<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-version-string" class="section-name selfRef">Version String</a>
-        </h3>
-<p id="section-5.5-1">A canonical version identifier consisting of two dot-separated non-negative
-decimal integers, <code>MAJOR.MINOR</code>. A component has no leading zero unless its
-value is zero. Two versions are equal only when both numeric components are
-equal; the canonical representation makes this equivalent to string equality.
-A change that is not backward compatible with consumers of the prior version
-increments <code>MAJOR</code> and resets <code>MINOR</code> to zero. A backward-compatible change
-increments <code>MINOR</code>. This syntax and comparison rule apply to <code>skill_version</code>
-and to the <code>version</code> in each Schema Reference. The version of the Skill
-Interface Schema is separately identified by <code>interface_version</code>, which this
-document fixes at <code>1.0</code>.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="skill">
-<section id="section-5.6">
-        <h3 id="name-skill">
-<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-skill" class="section-name selfRef">Skill</a>
-        </h3>
-<p id="section-5.6-1">A named capability advertised by an agent and invokable through an
-Agent-to-Agent protocol.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="skill-interface-schema">
-<section id="section-5.7">
-        <h3 id="name-skill-interface-schema">
-<a href="#section-5.7" class="section-number selfRef">5.7. </a><a href="#name-skill-interface-schema" class="section-name selfRef">Skill Interface Schema</a>
-        </h3>
-<p id="section-5.7-1">The standardized, language-neutral schema that defines the permitted
-structure and interpretation of a Skill Interface Document. An agent uses a
-local or otherwise trusted copy of this schema to validate the documents it
-publishes. A client agent uses the same schema version to validate retrieved
-documents.<a href="#section-5.7-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="skill-interface-document">
-<section id="section-5.8">
-        <h3 id="name-skill-interface-document">
-<a href="#section-5.8" class="section-number selfRef">5.8. </a><a href="#name-skill-interface-document" class="section-name selfRef">Skill Interface Document</a>
-        </h3>
-<p id="section-5.8-1">A machine-readable description of a skill's accepted input, produced output,
-possible supporting records, interaction behavior, and applicable constraints.
-It is an instance of the Skill Interface Schema. It contains domain-specific
-Schema References supplied by the agent without modifying the standardized
-Skill Interface Schema.<a href="#section-5.8-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="skill-interface-document-digest">
-<section id="section-5.9">
-        <h3 id="name-skill-interface-document-di">
-<a href="#section-5.9" class="section-number selfRef">5.9. </a><a href="#name-skill-interface-document-di" class="section-name selfRef">Skill Interface Document Digest</a>
-        </h3>
-<p id="section-5.9-1">The <code>interface_digest</code> value identifies the exact Skill Interface Document
-selected by a client.  It is the string <code>sha256:</code> followed by the lowercase
-hexadecimal representation of the SHA-256 digest of the UTF-8 encoding of the
-complete Skill Interface Document serialized using the JSON Canonicalization
-Scheme (JCS) <span>[<a href="#JCS" class="cite xref">JCS</a>]</span>.<a href="#section-5.9-1" class="pilcrow">¶</a></p>
-<p id="section-5.9-2">The digest covers every member of the Skill Interface Document, including its
-inline domain schemas.  It does not cover the standardized Skill Interface
-Schema used to validate the document, the Agent Card, a <code>describe_skill</code>
-response wrapper, or a domain-skill invocation.  The <code>interface_digest</code> is
-carried outside the Skill Interface Document so that the document does not
-contain a digest of itself.<a href="#section-5.9-2" class="pilcrow">¶</a></p>
-<p id="section-5.9-3">The same Skill Interface Document Digest <span class="bcp14">MUST</span> be carried in the Agent Card
-extension advertisement, the <code>describe_skill</code> response, and each domain-skill
-invocation that uses the document.  All three carried values and the digest
-calculated from the returned document <span class="bcp14">MUST</span> match.<a href="#section-5.9-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="supporting-record">
-<section id="section-5.10">
-        <h3 id="name-supporting-record">
-<a href="#section-5.10" class="section-number selfRef">5.10. </a><a href="#name-supporting-record" class="section-name selfRef">Supporting Record</a>
-        </h3>
-<p id="section-5.10-1">A domain-specific observation or artifact used to derive, validate, reproduce,
-or audit a skill output. A supporting record is validated against the
-applicable schema identified by the Skill Interface Document.<a href="#section-5.10-1" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-5-1">The "IDL: A Semantic Information Model for Agent Communication"
+Internet-Draft <span>[<a href="#IDL" class="cite xref">IDL</a>]</span> describes agent-wide identity, capabilities, autonomy
+boundaries, context requirements, governance interfaces, and intent
+participation. It includes optional input-context and output-schema
+declarations, but it does not define a normative serialization or a per-skill
+interface-retrieval procedure.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">This document has a narrower scope. It defines a normative representation for
+one version of one callable skill, including its input, output, and
+supporting-record schemas, and defines the <code>describe_skill</code> retrieval and
+validation procedure. The two models can be used together: an agent-wide
+semantic description can identify a capability, while a Skill Interface
+Document supplies the concrete application schemas used to invoke a selected
+skill. A formal mapping between the two models is outside the scope of this
+document.<a href="#section-5-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="design-principles">
@@ -1631,11 +1700,13 @@ applicable schema identified by the Skill Interface Document.<a href="#section-5
         <h3 id="name-preserve-task-identity-acro">
 <a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-preserve-task-identity-acro" class="section-name selfRef">Preserve task identity across delegation hops</a>
         </h3>
-<p id="section-6.1-1">Each delegation hop creates a separate Agent-to-Agent task at the receiving
-agent. A delegating component <span class="bcp14">MUST NOT</span> reuse an upstream task identifier as the
+<p id="section-6.1-1">When an agent handling an upstream A2A Task invokes another agent, the
+downstream invocation creates a distinct A2A Task at the receiving agent. A
+delegating component <span class="bcp14">MUST NOT</span> reuse the upstream task identifier as the
 downstream protocol task identifier. Protocol task identifiers are interpreted
-in the scope of the agent or endpoint that issued them; implementations <span class="bcp14">MUST NOT</span> assume that they are globally unique. Cross-hop correlation <span class="bcp14">MUST</span> use
-separately named metadata rather than overloading protocol task identifiers.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+in the scope of the agent or endpoint that issued them; implementations <span class="bcp14">MUST NOT</span> assume that they are globally unique. An implementation that needs to
+correlate the two tasks <span class="bcp14">MUST</span> record their relationship using separately named
+metadata rather than overloading either protocol task identifier.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="standardize-reusable-structures-not-all-domain-semantics">
@@ -1646,7 +1717,9 @@ separately named metadata rather than overloading protocol task identifiers.<a h
 <p id="section-6.2-1">This framework standardizes reusable interface metadata, not the semantics of
 every network-management domain. A vendor or domain owner defines the input,
 output, and supporting-record schemas used by a particular skill and combines
-them with the common structure; it does not redefine that structure.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+them with the common structure; it does not redefine that structure. The
+domain determines schema meaning and governance, while the skill identifier
+selects one callable capability within an agent's advertised Agent Card.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="distinguish-structural-conformance-from-semantic-conformance">
@@ -1669,15 +1742,6 @@ makes the schema available before delegation.  The receiving agent <span class="
 validate the representation and use a domain-specific implementation for
 semantic validation, policy evaluation, simulation, or application, as
 applicable.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
-<p id="section-6.3-3">This document does not define a common configuration-change model.  A
-skill-specific specification can reuse an existing model where appropriate.
-For example, YANG-modeled data can be encoded in JSON as specified by
-<span>[<a href="#YANG-JSON" class="cite xref">YANG-JSON</a>]</span>, and configuration edits can use YANG Patch <span>[<a href="#YANG-PATCH" class="cite xref">YANG-PATCH</a>]</span>.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
-<p id="section-6.3-4">As non-normative guidance, device-specific rendering can remain a local
-implementation responsibility.  Rendered CLI or CLI diffs can also be
-exchanged as supporting records when useful.  Their presence does not imply
-that generic JSON Schema validation establishes command syntax, operational
-meaning, safety, or correctness.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="deliver-schemas-inline-in-version-10">
@@ -1715,7 +1779,9 @@ annotation. In particular, an instance validated against <code>"format":
 <p id="section-6.4-5">Registries, bundles, caches, and agent packaging <span class="bcp14">MAY</span> be used locally to store,
 govern, distribute, or prepare schemas. Their use does not alter the v1.0
 wire representation, and a client agent is not required to know which local
-mechanism supplied an inline schema.<a href="#section-6.4-5" class="pilcrow">¶</a></p>
+mechanism supplied an inline schema. Version 1.0 does not require the schema to
+originate in either an agent package or a central registry; either can be a
+deployment-local source used before the complete inline document is served.<a href="#section-6.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="distinguish-outputs-from-supporting-records">
@@ -1726,8 +1792,8 @@ mechanism supplied an inline schema.<a href="#section-6.4-5" class="pilcrow">¶<
 <p id="section-6.5-1">The skill output states what the agent concluded or delivered. Supporting
 records explain why that output can be trusted, reproduced, or audited. An
 output and a supporting record use separate A2A Artifacts. An output that
-depends on a supporting record <span class="bcp14">SHOULD</span> reference that record's <code>artifactId</code>
-rather than duplicate its content.<a href="#section-6.5-1" class="pilcrow">¶</a></p>
+depends on a supporting record <span class="bcp14">SHOULD</span> reference that record's task-scoped A2A
+<code>artifactId</code> rather than duplicate its content.<a href="#section-6.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="assemble-and-validate-before-advertisement">
@@ -1785,19 +1851,26 @@ over exactly those bytes.  The <code>digest</code> value <span class="bcp14">MUS
 that result.  The digest covers only the <code>resolution.schema</code> value.  It does
 not cover <code>resolution.type</code> or any other member of the enclosing Schema
 Reference, including <code>schema_uri</code>, <code>version</code>, <code>dialect</code>, or <code>digest</code>.<a href="#section-7-4" class="pilcrow">¶</a></p>
-<p id="section-7-5">The embedded schema <span class="bcp14">MUST</span> satisfy the JCS input requirements.  Differences in
+<p id="section-7-5">This separation is intentional. The schema digest is a content digest for the
+embedded JSON Schema value, while <code>schema_uri</code>, <code>version</code>, and <code>dialect</code>
+provide identity and interpretation metadata. A conforming implementation
+compares the complete Schema Reference, not the digest alone. The Skill
+Interface Document Digest additionally covers the complete document, including
+each Schema Reference's identity, version, dialect, digest, and inline content,
+and therefore detects modification or substitution of that metadata.<a href="#section-7-5" class="pilcrow">¶</a></p>
+<p id="section-7-6">The embedded schema <span class="bcp14">MUST</span> satisfy the JCS input requirements.  Differences in
 insignificant JSON whitespace, object-member order, or a permitted alternate
 JSON string escape do not change the digest because they produce the same JCS
 representation.  A change to the JSON value represented by
 <code>resolution.schema</code> changes the digest.  Version 1.0 does not define
 digest-algorithm negotiation, and a value using another algorithm identifier
-is invalid.<a href="#section-7-5" class="pilcrow">¶</a></p>
-<p id="section-7-6">Version 1.0 Schema References <span class="bcp14">MUST</span> use <code>resolution.type</code> equal to <code>inline</code> and
+is invalid.<a href="#section-7-6" class="pilcrow">¶</a></p>
+<p id="section-7-7">Version 1.0 Schema References <span class="bcp14">MUST</span> use <code>resolution.type</code> equal to <code>inline</code> and
 <span class="bcp14">MUST</span> include the schema in <code>resolution.schema</code>. They <span class="bcp14">MUST NOT</span> contain an
-external schema locator in place of the embedded content.<a href="#section-7-6" class="pilcrow">¶</a></p>
+external schema locator in place of the embedded content.<a href="#section-7-7" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="skill-interface-schema-and-documents">
+<div id="skill-interface-documents">
 <section id="section-8">
       <h2 id="name-skill-interface-schema-and-">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-skill-interface-schema-and-" class="section-name selfRef">Skill Interface Schema and Documents</a>
@@ -1812,7 +1885,11 @@ service assembles the complete document. Interaction declarations reflect the
 agent implementation.
 Authority declarations may additionally reflect deployment policy. Assembly
 <span class="bcp14">MUST NOT</span> modify the standardized Skill Interface Schema.<a href="#section-8-2" class="pilcrow">¶</a></p>
-<p id="section-8-3">The <code>authority</code> member is descriptive metadata about the operating posture an
+<p id="section-8-3">The normative definitions of <code>authority</code>, <code>default_mode</code>, and
+<code>approval_may_be_required</code> appear in <a href="#skill-interface-json-schema" class="auto internal xref">Appendix A</a>. The
+structural figure in <a href="#terminology" class="auto internal xref">Section 2</a> shows their location within a Skill
+Interface Document.<a href="#section-8-3" class="pilcrow">¶</a></p>
+<p id="section-8-4">The <code>authority</code> member is descriptive metadata about the operating posture an
 agent advertises for a skill. <code>default_mode</code> describes that advertised default
 posture; it does not grant the caller permission to use that mode.
 <code>approval_may_be_required</code> indicates that an approval requirement may apply;
@@ -1820,24 +1897,24 @@ it does not assert that approval has been requested, granted, or remains
 valid. The <code>authority</code> member is not a credential, capability, entitlement,
 access-control decision, approval record, or authorization token. A client or
 remote agent <span class="bcp14">MUST NOT</span> treat it as permission to execute a skill or cause a
-side effect.<a href="#section-8-3" class="pilcrow">¶</a></p>
-<p id="section-8-4">Version 1.0 defines the following <code>default_mode</code> values:<a href="#section-8-4" class="pilcrow">¶</a></p>
+side effect.<a href="#section-8-4" class="pilcrow">¶</a></p>
+<p id="section-8-5">Version 1.0 defines the following <code>default_mode</code> values:<a href="#section-8-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8-5.1">
-          <p id="section-8-5.1.1"><code>observe_only</code>: the default behavior reads or analyzes information and does
-not propose or apply an operational change;<a href="#section-8-5.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8-6.1">
+          <p id="section-8-6.1.1"><code>observe_only</code>: the default behavior reads or analyzes information and does
+not propose or apply an operational change;<a href="#section-8-6.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-5.2">
-          <p id="section-8-5.2.1"><code>recommend_only</code>: the default behavior may produce a proposed action or
-change but does not apply it; and<a href="#section-8-5.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-6.2">
+          <p id="section-8-6.2.1"><code>recommend_only</code>: the default behavior may produce a proposed action or
+change but does not apply it; and<a href="#section-8-6.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-5.3">
-          <p id="section-8-5.3.1"><code>execute</code>: the default behavior may cause an operational side effect.<a href="#section-8-5.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-6.3">
+          <p id="section-8-6.3.1"><code>execute</code>: the default behavior may cause an operational side effect.<a href="#section-8-6.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-8-6">These values describe behavior, not authorization. In every mode, the agent
-<span class="bcp14">MUST</span> perform the runtime authorization and approval checks required below.<a href="#section-8-6" class="pilcrow">¶</a></p>
-<p id="section-8-7">Version 1.0 permits both a separate skill for each operation and multiple
+<p id="section-8-7">These values describe behavior, not authorization. In every mode, the agent
+<span class="bcp14">MUST</span> perform the runtime authorization and approval checks required below.<a href="#section-8-7" class="pilcrow">¶</a></p>
+<p id="section-8-8">Version 1.0 permits both a separate skill for each operation and multiple
 operations within one skill. One operation per skill is preferred because it
 gives each operation an independent interface and authority declaration.
 Authors <span class="bcp14">SHOULD</span> expose operations with materially different effects or approval
@@ -1851,8 +1928,8 @@ caller can understand the requested action before invocation. If any operation
 may require approval,
 <code>approval_may_be_required</code> <span class="bcp14">MUST</span> be <code>true</code>. The receiving agent <span class="bcp14">MUST</span> still
 authorize the selected operation and enforce its applicable approval policy
-for every request.<a href="#section-8-7" class="pilcrow">¶</a></p>
-<p id="section-8-8">For example, an agent that can read and delete a managed resource can
+for every request.<a href="#section-8-8" class="pilcrow">¶</a></p>
+<p id="section-8-9">For example, an agent that can read and delete a managed resource can
 advertise separate <code>read_resource</code> and <code>delete_resource</code> skills. This is the
 preferred design because reading and deleting have materially different
 effects. Alternatively, the agent can advertise one <code>manage_resource</code> skill
@@ -1860,18 +1937,23 @@ whose <code>input_schema</code> requires a <code>resource_id</code> and an <code
 either <code>read</code> or <code>delete</code>. That schema should describe the effect of each
 value, and the skill must advertise <code>approval_may_be_required</code> as <code>true</code> if
 deletion may require approval. In either design, the agent authorizes the
-specific requested operation at invocation time.<a href="#section-8-8" class="pilcrow">¶</a></p>
-<p id="section-8-9">The interface version 1.0 A2A mapping identifies the protocol elements
+specific requested operation at invocation time.<a href="#section-8-9" class="pilcrow">¶</a></p>
+<p id="section-8-10">The interface version 1.0 A2A mapping identifies the protocol elements
 containing skill input, skill output, and supporting records. Those values
 are validated against the corresponding domain schemas in the selected Skill
-Interface Document.<a href="#section-8-9" class="pilcrow">¶</a></p>
-<p id="section-8-10">Successful schema or Skill Interface validation does not authorize execution.
+Interface Document.<a href="#section-8-10" class="pilcrow">¶</a></p>
+<p id="section-8-11">Successful schema or Skill Interface validation does not authorize execution.
 Before processing an invocation, the receiving agent or hosting platform <span class="bcp14">MUST</span>
 authenticate the caller and perform a current authorization decision covering
 the requested skill, resources, operation, and applicable constraints. Before
 causing a side effect, it <span class="bcp14">MUST</span> also enforce any approval or execution-control
 requirements imposed by current deployment policy. Advertised <code>authority</code>
-metadata does not replace these runtime decisions.<a href="#section-8-10" class="pilcrow">¶</a></p>
+metadata does not replace these runtime decisions.<a href="#section-8-11" class="pilcrow">¶</a></p>
+<p id="section-8-12">The receiving agent or hosting platform remains authoritative for every
+runtime authorization and approval decision. The <code>authority</code> member can help a
+client understand a skill's advertised operating posture, but it is not an A2A
+capability declaration and cannot establish what a particular caller is
+permitted to do.<a href="#section-8-12" class="pilcrow">¶</a></p>
 <div id="skill-input">
 <section id="section-8.1">
         <h3 id="name-skill-input">
@@ -1898,7 +1980,10 @@ initial domain-skill invocation. If an A2A Task enters
 information requested by the agent. Version 1.0 does not define a schema for
 such follow-up data, and the follow-up is not independently validated against
 <code>input_schema</code>. A deployment that requires schema-governed multi-turn input
-needs an additional profile or separately advertised skill for that exchange.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
+needs an additional profile or separately advertised skill for that exchange.
+The combined intermediate-exchange example in <a href="#domain-skill-invocation" class="auto internal xref">Section 9.4</a>
+illustrates an input-required request, the caller's partial reply, and the
+separate task identifiers used when another agent is invoked.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="skill-output">
@@ -1920,6 +2005,11 @@ result of that operation.<a href="#section-8.2-2" class="pilcrow">¶</a></p>
 <p id="section-8.2-3">Version 1.0 applies <code>output_schema</code> to the complete final <code>result</code>, after any
 streamed Artifact updates have been assembled. It does not apply independently
 to A2A status Messages, progress updates, or incomplete Artifact chunks.
+Version 1.0 therefore defines no separate streaming-output schema: A2A governs
+delivery of partial Artifact updates, while this document validates the
+assembled final result and each complete supporting record. The schema boundary
+for each intermediate exchange is summarized in
+<a href="#domain-skill-invocation" class="auto internal xref">Section 9.4</a>.
 Supporting records and the primary output are separate Artifacts within the
 same A2A Task. An agent <span class="bcp14">MAY</span> stream zero or more complete supporting-record
 Artifacts before it produces the primary result Artifact. Each supporting
@@ -2027,11 +2117,20 @@ binding for each <code>skill_id</code> in an Agent Card.<a href="#section-9.1-4"
 define request parameters for negotiating or selecting another interface or
 skill version within <code>describe_skill</code>.  An agent that needs to advertise
 concurrent incompatible versions in version 1.0 <span class="bcp14">MUST</span> expose them using
-distinct skill identifiers.<a href="#section-9.1-7" class="pilcrow">¶</a></p>
-<p id="section-9.1-8">The <code>describe_skill</code> skill <span class="bcp14">MUST</span> accept structured input identifying the
+distinct skill identifiers. A client selects one of those identifiers from
+the Agent Card; it <span class="bcp14">MUST NOT</span> infer a version range or negotiate an unadvertised
+version.<a href="#section-9.1-7" class="pilcrow">¶</a></p>
+<p id="section-9.1-8">When an agent replaces an advertised interface with a backward-compatible
+revision, it increments the minor <code>skill_version</code> and advertises the new
+version and digest. During a migration in which old and new incompatible
+interfaces must remain callable concurrently, the agent advertises them under
+distinct skill identifiers. Deprecation periods and removal policy are
+deployment concerns, but removal of an advertised version <span class="bcp14">MUST</span> be reflected
+in a newly retrieved Agent Card before clients can select it for new work.<a href="#section-9.1-8" class="pilcrow">¶</a></p>
+<p id="section-9.1-9">The <code>describe_skill</code> skill <span class="bcp14">MUST</span> accept structured input identifying the
 selected <code>skill_id</code> and <span class="bcp14">MUST</span> produce structured output containing the
-corresponding Skill Interface Document and its <code>interface_digest</code>.<a href="#section-9.1-8" class="pilcrow">¶</a></p>
-<p id="section-9.1-9">A caller <span class="bcp14">MUST NOT</span> assume that every Agent-to-Agent implementation conforms to
+corresponding Skill Interface Document and its <code>interface_digest</code>.<a href="#section-9.1-9" class="pilcrow">¶</a></p>
+<p id="section-9.1-10">A caller <span class="bcp14">MUST NOT</span> assume that every Agent-to-Agent implementation conforms to
 this framework. Absence of either the schema-interface extension or the
 <code>describe_skill</code> skill from the Agent Card means that the agent does not
 provide the schema-interface procedure defined here.
@@ -2043,7 +2142,7 @@ schema-governed compatibility for such an invocation. Supporting multiple
 non-conforming agents requires separately configured contracts, adapters, or
 other bilateral integration mechanisms. This is the scaling problem addressed
 by this document: replacing an expanding collection of bilateral integrations
-with one standardized interface-retrieval procedure.<a href="#section-9.1-9" class="pilcrow">¶</a></p>
+with one standardized interface-retrieval procedure.<a href="#section-9.1-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="describe-skill-request">
@@ -2266,10 +2365,16 @@ The agent reports completion only after validating the complete result.
 ```<a href="#section-9.4-14.6.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
-<p id="section-9.4-15">All Artifacts in this sequence belong to the same A2A Task. The supporting
+<p id="section-9.4-15">If the receiving agent delegates work to another agent during this sequence,
+that delegation creates a distinct downstream A2A Task. An input-required
+status or Artifact belongs to the Task that emitted it. The delegating
+component records the association between the upstream and downstream task
+identifiers, qualified by their respective agent identities or endpoints; it
+does not reuse either identifier for the other Task.<a href="#section-9.4-15" class="pilcrow">¶</a></p>
+<p id="section-9.4-16">All Artifacts in this sequence belong to the same A2A Task. The supporting
 record and primary result remain separate and each is validated against its
 own advertised schema. Version 1.0 does not define separate schemas for
-partial primary results or input-required replies.<a href="#section-9.4-15" class="pilcrow">¶</a></p>
+partial primary results or input-required replies.<a href="#section-9.4-16" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="error-conditions">
@@ -2868,7 +2973,7 @@ selected;<a href="#section-13-3.1.1" class="pilcrow">¶</a></p>
           <p id="section-13-3.4.1">validation failures;<a href="#section-13-3.4.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-13-3.5">
-          <p id="section-13-3.5.1">missing, malformed, or untrusted schemas; and<a href="#section-13-3.5.1" class="pilcrow">¶</a></p>
+          <p id="section-13-3.5.1">missing, malformed, or untrusted schemas;<a href="#section-13-3.5.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-13-3.6">
           <p id="section-13-3.6.1">compatibility or policy failures; and<a href="#section-13-3.6.1" class="pilcrow">¶</a></p>
@@ -2878,10 +2983,17 @@ selected;<a href="#section-13-3.1.1" class="pilcrow">¶</a></p>
 endpoint.<a href="#section-13-3.7.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-13-4">Deployments using a registry or another management service <span class="bcp14">SHOULD</span> test that a
+<p id="section-13-4">For each delegation hop, diagnostics <span class="bcp14">SHOULD</span> preserve the upstream and
+downstream agent identities or endpoints, their distinct task identifiers,
+the selected skill identifier and version, the interface digest, and the
+observed terminal state. This information supports audit and troubleshooting
+across multi-hop workflows. It does not define a distributed-tracing protocol;
+an A2A extension or deployment-specific mechanism may carry additional trace
+context.<a href="#section-13-4" class="pilcrow">¶</a></p>
+<p id="section-13-5">Deployments using a registry or another management service <span class="bcp14">SHOULD</span> test that a
 running agent can continue serving previously assembled and validated Skill
 Interface Documents during temporary management-service unavailability. They
-<span class="bcp14">SHOULD</span> also define cache refresh and schema-revocation behavior.<a href="#section-13-4" class="pilcrow">¶</a></p>
+<span class="bcp14">SHOULD</span> also define cache refresh and schema-revocation behavior.<a href="#section-13-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana">
@@ -2947,16 +3059,8 @@ namespaces after the representation and protocol mapping stabilize.<a href="#sec
         </h3>
 <dl class="references">
 <dt id="IDL">[IDL]</dt>
-        <dd>
-<span class="refTitle">"IDL: A Semantic Information Model for Agent Communication"</span>, <span>n.d.</span>, <span>&lt;<a href="https://datatracker.ietf.org/doc/draft-feng-agentproto-idl-info-model/">https://datatracker.ietf.org/doc/draft-feng-agentproto-idl-info-model/</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="YANG-JSON">[YANG-JSON]</dt>
-        <dd>
-<span class="refTitle">"JSON Encoding of Data Modeled with YANG"</span>, <span class="seriesInfo">RFC 7951</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7951">https://www.rfc-editor.org/rfc/rfc7951</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="YANG-PATCH">[YANG-PATCH]</dt>
       <dd>
-<span class="refTitle">"YANG Patch Media Type"</span>, <span class="seriesInfo">RFC 8072</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8072">https://www.rfc-editor.org/rfc/rfc8072</a>&gt;</span>. </dd>
+<span class="refTitle">"IDL: A Semantic Information Model for Agent Communication"</span>, <span>n.d.</span>, <span>&lt;<a href="https://datatracker.ietf.org/doc/draft-feng-agentproto-idl-info-model/">https://datatracker.ietf.org/doc/draft-feng-agentproto-idl-info-model/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
