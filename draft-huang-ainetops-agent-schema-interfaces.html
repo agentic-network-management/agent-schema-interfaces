@@ -1571,7 +1571,8 @@ applicable schema identified by the Skill Interface Document.<a href="#section-2
 skill output to reference a supporting-record Artifact carried by that Task.
 It is not a globally portable record identifier.<a href="#section-2.13-1" class="pilcrow">¶</a></p>
 <p id="section-2.13-2">The following figure summarizes the structure of a Skill Interface Document:<a href="#section-2.13-2" class="pilcrow">¶</a></p>
-<p id="section-2.13-3"><code>text
+<div class="alignLeft art-ascii-art art-text artwork" id="section-2.13-3">
+<pre>
 Skill Interface Document
 |-- interface_version
 |-- skill_id
@@ -1594,7 +1595,8 @@ Skill Interface Document
 `-- authority
     |-- default_mode
     `-- approval_may_be_required
-</code><a href="#section-2.13-3" class="pilcrow">¶</a></p>
+</pre><a href="#section-2.13-3" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 </section>
@@ -2073,9 +2075,11 @@ these protocol elements and their semantics.<a href="#section-9-1" class="pilcro
 <p id="section-9.1-1">An agent conforming to this framework <span class="bcp14">MUST</span> advertise <code>describe_skill</code> and each
 schema-governed domain skill in its Agent Card.  It <span class="bcp14">MUST</span> also advertise the
 following A2A extension in <code>AgentCapabilities.extensions</code>:<a href="#section-9.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.1-2"><code>text
+<div class="lang-text sourcecode" id="section-9.1-2">
+<pre>
 https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1
-</code><a href="#section-9.1-2" class="pilcrow">¶</a></p>
+</pre><a href="#section-9.1-2" class="pilcrow">¶</a>
+</div>
 <p id="section-9.1-3">The extension <span class="bcp14">MAY</span> be marked <code>required: false</code> so that extension-unaware
 clients can continue to use the agent through base A2A procedures.  A client
 using the procedure in this document <span class="bcp14">MUST</span> activate the extension for
@@ -2095,7 +2099,8 @@ Digest for the document returned by <code>describe_skill</code> for that skill. 
 1.0 permits exactly one advertised <code>skill_version</code> and <code>interface_digest</code>
 binding for each <code>skill_id</code> in an Agent Card.<a href="#section-9.1-4" class="pilcrow">¶</a></p>
 <p id="section-9.1-5">The following fragment illustrates the extension advertisement:<a href="#section-9.1-5" class="pilcrow">¶</a></p>
-<p id="section-9.1-6"><code>json
+<div class="lang-json sourcecode" id="section-9.1-6">
+<pre>
 {
   "uri": "https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1",
   "description": "Schema interfaces for advertised skills",
@@ -2111,7 +2116,8 @@ binding for each <code>skill_id</code> in an Agent Card.<a href="#section-9.1-4"
     ]
   }
 }
-</code><a href="#section-9.1-6" class="pilcrow">¶</a></p>
+</pre><a href="#section-9.1-6" class="pilcrow">¶</a>
+</div>
 <p id="section-9.1-7">The client selects the advertised <code>skill_id</code>, <code>skill_version</code>, and
 <code>interface_digest</code> before calling <code>describe_skill</code>.  Version 1.0 does not
 define request parameters for negotiating or selecting another interface or
@@ -2156,14 +2162,16 @@ negotiation parameter.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
 <p id="section-9.2-2">The client <span class="bcp14">MUST</span> invoke the A2A Send Message or Send Streaming Message
 operation with a user-role Message containing exactly one Data Part. The
 Data Part's <code>data</code> value <span class="bcp14">MUST</span> be the following request object:<a href="#section-9.2-2" class="pilcrow">¶</a></p>
-<p id="section-9.2-3"><code>json
+<div class="lang-json sourcecode" id="section-9.2-3">
+<pre>
 {
   "skill": "describe_skill",
   "arguments": {
     "skill_id": "example_skill"
   }
 }
-</code><a href="#section-9.2-3" class="pilcrow">¶</a></p>
+</pre><a href="#section-9.2-3" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="describeskill-response">
@@ -2176,7 +2184,8 @@ one Artifact. The Artifact <code>name</code> <span class="bcp14">MUST</span> be 
 <span class="bcp14">MUST</span> contain exactly one Data Part. Its <code>data</code> value <span class="bcp14">MUST</span> be the following
 object, where the notation in angle brackets represents the complete Skill
 Interface Document rather than a JSON string:<a href="#section-9.3-1" class="pilcrow">¶</a></p>
-<p id="section-9.3-2"><code>text
+<div class="lang-text sourcecode" id="section-9.3-2">
+<pre>
 {
   "skill": "describe_skill",
   "result": {
@@ -2184,7 +2193,8 @@ Interface Document rather than a JSON string:<a href="#section-9.3-1" class="pil
     "interface": &lt;Skill Interface Document&gt;
   }
 }
-</code><a href="#section-9.3-2" class="pilcrow">¶</a></p>
+</pre><a href="#section-9.3-2" class="pilcrow">¶</a>
+</div>
 <p id="section-9.3-3">The <code>result.interface</code> value is a Skill Interface Document conforming to the
 advertised and previously selected version of the standardized Skill
 Interface Schema.  Its <code>skill_version</code> <span class="bcp14">MUST</span> equal the advertised
@@ -2218,7 +2228,8 @@ payload as a substitute.<a href="#section-9.3-5" class="pilcrow">¶</a></p>
 domain skill with the A2A Send Message or Send Streaming Message operation.
 The user-role Message <span class="bcp14">MUST</span> contain exactly one Data Part. The Data Part's
 <code>data</code> value <span class="bcp14">MUST</span> be this skill request object:<a href="#section-9.4-1" class="pilcrow">¶</a></p>
-<p id="section-9.4-2"><code>json
+<div class="lang-json sourcecode" id="section-9.4-2">
+<pre>
 {
   "skill": "example_skill",
   "skill_version": "1.0",
@@ -2227,7 +2238,8 @@ The user-role Message <span class="bcp14">MUST</span> contain exactly one Data P
     "objective": "Evaluate the selected network resource"
   }
 }
-</code><a href="#section-9.4-2" class="pilcrow">¶</a></p>
+</pre><a href="#section-9.4-2" class="pilcrow">¶</a>
+</div>
 <p id="section-9.4-3">The <code>skill</code> value <span class="bcp14">MUST</span> equal the selected Agent Card skill identifier.  The
 <code>skill_version</code> and <code>interface_digest</code> values <span class="bcp14">MUST</span> equal the values selected
 from the Agent Card extension, returned by <code>describe_skill</code>, and validated by
@@ -2245,14 +2257,16 @@ skill identifier and by a single Data Part containing the skill result object
 defined below.<a href="#section-9.4-4" class="pilcrow">¶</a></p>
 <p id="section-9.4-5">On success, the task <span class="bcp14">MUST</span> reach the completed state and contain exactly one
 primary result Artifact:<a href="#section-9.4-5" class="pilcrow">¶</a></p>
-<p id="section-9.4-6"><code>json
+<div class="lang-json sourcecode" id="section-9.4-6">
+<pre>
 {
   "skill": "example_skill",
   "result": {
     "status": "succeeded"
   }
 }
-</code><a href="#section-9.4-6" class="pilcrow">¶</a></p>
+</pre><a href="#section-9.4-6" class="pilcrow">¶</a>
+</div>
 <p id="section-9.4-7">The <code>result</code> value is the complete domain output and <span class="bcp14">MUST</span> validate against the
 selected Skill Interface Document's <code>output_schema</code>.<a href="#section-9.4-7" class="pilcrow">¶</a></p>
 <p id="section-9.4-8">Each supporting record, when present, <span class="bcp14">MUST</span> be carried in a separate Artifact.
@@ -2323,58 +2337,52 @@ version 1.0:<a href="#section-9.4-10" class="pilcrow">¶</a></p>
 <a href="#domain-skill-invocation" class="auto internal xref">Section 9.4</a>; base A2A does not assign a primary role to an
 Artifact. The following example combines the intermediate exchanges described
 above:<a href="#section-9.4-12" class="pilcrow">¶</a></p>
-<p id="section-9.4-13">```text
+<div class="lang-text sourcecode" id="section-9.4-13">
+<pre>
 1. Initial request
-   arguments validates against input_schema.<a href="#section-9.4-13" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-9.4-14">
-<li id="section-9.4-14.1">
-            <p id="section-9.4-14.1.1">Status update: TASK_STATE_INPUT_REQUIRED
-The agent requests one missing credential reference. No schema for this
-status Message is defined by version 1.0.<a href="#section-9.4-14.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-9.4-14.2">
-            <p id="section-9.4-14.2.1">Caller follow-up Message
-The caller sends only the requested credential reference. The reply
-augments the Task interaction; it does not replace the original input and
-is not independently validated against input_schema.<a href="#section-9.4-14.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-9.4-14.3">
-            <p id="section-9.4-14.3.1">Supporting-record Artifact update
-artifactId="record-1", name="observation-record"
-The complete record validates against the advertised observation-record
-schema.<a href="#section-9.4-14.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-9.4-14.4">
-            <p id="section-9.4-14.4.1">Incomplete primary result Artifact update
-artifactId="result-1", name="example_skill", lastChunk=false
-This update lacks fields required in the final result. A2A governs its
-delivery, and version 1.0 does not validate it independently against
-output_schema.<a href="#section-9.4-14.4.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-9.4-14.5">
-            <p id="section-9.4-14.5.1">Complete primary result Artifact update
-artifactId="result-1", name="example_skill", lastChunk=true
-This final update contains the complete primary result. It validates
-against output_schema and may reference "record-1" as supporting
-information. A client may instead retrieve this complete Artifact from the
-Task using the A2A Get Task operation.<a href="#section-9.4-14.5.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-9.4-14.6">
-            <p id="section-9.4-14.6.1">Status update: TASK_STATE_COMPLETED
-The agent reports completion only after validating the complete result.
-```<a href="#section-9.4-14.6.1" class="pilcrow">¶</a></p>
-</li>
-        </ol>
-<p id="section-9.4-15">If the receiving agent delegates work to another agent during this sequence,
+   arguments validates against input_schema.
+
+2. Status update: TASK_STATE_INPUT_REQUIRED
+   The agent requests one missing credential reference. No schema for this
+   status Message is defined by version 1.0.
+
+3. Caller follow-up Message
+   The caller sends only the requested credential reference. The reply
+   augments the Task interaction; it does not replace the original input and
+   is not independently validated against input_schema.
+
+4. Supporting-record Artifact update
+   artifactId="record-1", name="observation-record"
+   The complete record validates against the advertised observation-record
+   schema.
+
+5. Incomplete primary result Artifact update
+   artifactId="result-1", name="example_skill", lastChunk=false
+   This update lacks fields required in the final result. A2A governs its
+   delivery, and version 1.0 does not validate it independently against
+   output_schema.
+
+6. Complete primary result Artifact update
+   artifactId="result-1", name="example_skill", lastChunk=true
+   This final update contains the complete primary result. It validates
+   against output_schema and may reference "record-1" as supporting
+   information. A client may instead retrieve this complete Artifact from the
+   Task using the A2A Get Task operation.
+
+7. Status update: TASK_STATE_COMPLETED
+   The agent reports completion only after validating the complete result.
+</pre><a href="#section-9.4-13" class="pilcrow">¶</a>
+</div>
+<p id="section-9.4-14">If the receiving agent delegates work to another agent during this sequence,
 that delegation creates a distinct downstream A2A Task. An input-required
 status or Artifact belongs to the Task that emitted it. The delegating
 component records the association between the upstream and downstream task
 identifiers, qualified by their respective agent identities or endpoints; it
-does not reuse either identifier for the other Task.<a href="#section-9.4-15" class="pilcrow">¶</a></p>
-<p id="section-9.4-16">All Artifacts in this sequence belong to the same A2A Task. The supporting
+does not reuse either identifier for the other Task.<a href="#section-9.4-14" class="pilcrow">¶</a></p>
+<p id="section-9.4-15">All Artifacts in this sequence belong to the same A2A Task. The supporting
 record and primary result remain separate and each is validated against its
 own advertised schema. Version 1.0 does not define separate schemas for
-partial primary results or input-required replies.<a href="#section-9.4-16" class="pilcrow">¶</a></p>
+partial primary results or input-required replies.<a href="#section-9.4-15" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="error-conditions">
@@ -2389,14 +2397,16 @@ locally or through the error mechanism of its enclosing system.<a href="#section
 <p id="section-9.5-2">When the remote agent reports one of the conditions below through an A2A Task,
 the Task's final status Message <span class="bcp14">MUST</span> contain exactly one Data Part whose
 <code>data</code> value has this form:<a href="#section-9.5-2" class="pilcrow">¶</a></p>
-<p id="section-9.5-3"><code>json
+<div class="lang-json sourcecode" id="section-9.5-3">
+<pre>
 {
   "error": {
     "code": "interface_invalid",
     "message": "The selected interface document is invalid"
   }
 }
-</code><a href="#section-9.5-3" class="pilcrow">¶</a></p>
+</pre><a href="#section-9.5-3" class="pilcrow">¶</a>
+</div>
 <p id="section-9.5-4">The <code>code</code> value <span class="bcp14">MUST</span> be one of the machine-readable conditions below or an
 additional value defined by a future profile. The human-readable <code>message</code>
           <span class="bcp14">MAY</span> be omitted. A server-side error detected before task creation <span class="bcp14">MUST</span> be
@@ -2478,7 +2488,8 @@ entry <span class="bcp14">MUST</span> contain an <code>instance_path</code> iden
 JSON Pointer <span>[<a href="#JSON-POINTER" class="cite xref">JSON-POINTER</a>]</span>. It <span class="bcp14">MAY</span> contain a <code>schema_path</code>, <code>keyword</code>,
 <code>expected</code>, and <code>actual</code> value. These fields are diagnostic and do not replace
 the machine-readable error <code>code</code>. For example:<a href="#section-9.5-10" class="pilcrow">¶</a></p>
-<p id="section-9.5-11"><code>json
+<div class="lang-json sourcecode" id="section-9.5-11">
+<pre>
 {
   "error": {
     "code": "input_invalid",
@@ -2494,7 +2505,8 @@ the machine-readable error <code>code</code>. For example:<a href="#section-9.5-
     ]
   }
 }
-</code><a href="#section-9.5-11" class="pilcrow">¶</a></p>
+</pre><a href="#section-9.5-11" class="pilcrow">¶</a>
+</div>
 <p id="section-9.5-12">Diagnostic details <span class="bcp14">MUST NOT</span> disclose credentials, sensitive policy state,
 input values prohibited by local security policy, or other information that
 the caller is not authorized to receive.<a href="#section-9.5-12" class="pilcrow">¶</a></p>
@@ -3284,7 +3296,8 @@ distinct Artifact types defined by A2A.<a href="#appendix-B-4" class="pilcrow">�
 <code>evaluate_resource_condition</code> skill, and the following schema-interface
 extension.  The digest value is repeated below to show the required binding
 among advertisement, interface retrieval, and invocation:<a href="#appendix-B-5" class="pilcrow">¶</a></p>
-<p id="appendix-B-6"><code>json
+<div class="lang-json sourcecode" id="appendix-B-6">
+<pre>
 {
   "uri": "https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1",
   "required": false,
@@ -3299,189 +3312,196 @@ among advertisement, interface retrieval, and invocation:<a href="#appendix-B-5"
     ]
   }
 }
-</code><a href="#appendix-B-6" class="pilcrow">¶</a></p>
+</pre><a href="#appendix-B-6" class="pilcrow">¶</a>
+</div>
 <p id="appendix-B-7">The client activates the extension.  With the HTTP binding, the request
 includes:<a href="#appendix-B-7" class="pilcrow">¶</a></p>
-<p id="appendix-B-8"><code>http
+<div class="lang-http sourcecode" id="appendix-B-8">
+<pre>
 A2A-Extensions: https://agentic-network-management.github.io/agent-schema-interfaces/extensions/schema-interface/v1
-</code><a href="#appendix-B-8" class="pilcrow">¶</a></p>
+</pre><a href="#appendix-B-8" class="pilcrow">¶</a>
+</div>
 <p id="appendix-B-9">The A2A Message also lists that URI in <code>extensions</code> and carries the following
 skill request object as the Data Part's <code>data</code> value:<a href="#appendix-B-9" class="pilcrow">¶</a></p>
-<p id="appendix-B-10"><code>json
+<div class="lang-json sourcecode" id="appendix-B-10">
+<pre>
 {
   "skill": "describe_skill",
   "arguments": {
     "skill_id": "evaluate_resource_condition"
   }
 }
-</code><a href="#appendix-B-10" class="pilcrow">¶</a></p>
+</pre><a href="#appendix-B-10" class="pilcrow">¶</a>
+</div>
 <p id="appendix-B-11">The agent returns the complete <code>describe_skill</code> skill result object below.
 Its <code>result.interface</code> member is the Skill Interface Document, and
 <code>result.interface_digest</code> carries the advertised digest outside that
 document:<a href="#appendix-B-11" class="pilcrow">¶</a></p>
-<p id="appendix-B-12"><code>json
+<div class="breakable lang-json sourcecode" id="appendix-B-12">
+<pre>
 {
   "skill": "describe_skill",
   "result": {
     "interface_digest": "sha256:4dedea3f7ddf19e94d9fd0b30886624f50afb5aadc1b407508a05dd3c40f380d",
     "interface": {
-    "interface_version": "1.0",
-    "skill_id": "evaluate_resource_condition",
-    "skill_version": "1.0",
-    "input_schema": {
-      "schema_uri": "urn:example:resource-condition:input:1.0",
-      "version": "1.0",
-      "dialect": "https://json-schema.org/draft/2020-12/schema",
-      "digest": "sha256:a593fb695fd727eaa36602d9b539e53e54cde50aec6f4b7df5d624b70148f26a",
-      "resolution": {
-        "type": "inline",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "resource_id": {
-              "type": "string"
-            },
-            "condition": {
-              "type": "object",
-              "properties": {
-                "metric": {
-                  "type": "string"
-                },
-                "operator": {
-                  "enum": [
-                    "gt",
-                    "gte",
-                    "lt",
-                    "lte"
-                  ]
-                },
-                "threshold": {
-                  "type": "number"
-                },
-                "unit": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "metric",
-                "operator",
-                "threshold",
-                "unit"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "required": [
-            "resource_id",
-            "condition"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "output_schema": {
-      "schema_uri": "urn:example:resource-condition:output:1.0",
-      "version": "1.0",
-      "dialect": "https://json-schema.org/draft/2020-12/schema",
-      "digest": "sha256:11ee18a8c1ab8821e083d61298ef07c4f2ce2e29c3eafb82f4742f1e1e969bce",
-      "resolution": {
-        "type": "inline",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "result": {
-              "enum": [
-                "condition_met",
-                "condition_not_met"
-              ]
-            },
-            "observed_value": {
-              "type": "number"
-            },
-            "unit": {
-              "type": "string"
-            },
-            "supporting_record_refs": {
-              "type": "array",
-              "items": {
+      "interface_version": "1.0",
+      "skill_id": "evaluate_resource_condition",
+      "skill_version": "1.0",
+      "input_schema": {
+        "schema_uri": "urn:example:resource-condition:input:1.0",
+        "version": "1.0",
+        "dialect": "https://json-schema.org/draft/2020-12/schema",
+        "digest": "sha256:a593fb695fd727eaa36602d9b539e53e54cde50aec6f4b7df5d624b70148f26a",
+        "resolution": {
+          "type": "inline",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "resource_id": {
                 "type": "string"
               },
-              "minItems": 1,
-              "uniqueItems": true
-            }
-          },
-          "required": [
-            "result",
-            "observed_value",
-            "unit",
-            "supporting_record_refs"
-          ],
-          "additionalProperties": false
+              "condition": {
+                "type": "object",
+                "properties": {
+                  "metric": {
+                    "type": "string"
+                  },
+                  "operator": {
+                    "enum": [
+                      "gt",
+                      "gte",
+                      "lt",
+                      "lte"
+                    ]
+                  },
+                  "threshold": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "metric",
+                  "operator",
+                  "threshold",
+                  "unit"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "resource_id",
+              "condition"
+            ],
+            "additionalProperties": false
+          }
         }
-      }
-    },
-    "supporting_record_schemas": [
-      {
-        "kind": "resource-observation",
-        "schema_reference": {
-          "schema_uri": "urn:example:resource-observation:1.0",
-          "version": "1.0",
-          "dialect": "https://json-schema.org/draft/2020-12/schema",
-          "digest": "sha256:3cf0d51c1d6e97d03fa80d5b9435c55d955f824bc9e58d053bb2095e18a0a8c4",
-          "resolution": {
-            "type": "inline",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "record_id": {
-                  "type": "string"
-                },
-                "resource_id": {
-                  "type": "string"
-                },
-                "metric": {
-                  "type": "string"
-                },
-                "value": {
-                  "type": "number"
-                },
-                "unit": {
-                  "type": "string"
-                },
-                "observed_at": {
-                  "type": "string",
-                  "format": "date-time"
-                }
+      },
+      "output_schema": {
+        "schema_uri": "urn:example:resource-condition:output:1.0",
+        "version": "1.0",
+        "dialect": "https://json-schema.org/draft/2020-12/schema",
+        "digest": "sha256:11ee18a8c1ab8821e083d61298ef07c4f2ce2e29c3eafb82f4742f1e1e969bce",
+        "resolution": {
+          "type": "inline",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "result": {
+                "enum": [
+                  "condition_met",
+                  "condition_not_met"
+                ]
               },
-              "required": [
-                "record_id",
-                "resource_id",
-                "metric",
-                "value",
-                "unit",
-                "observed_at"
-              ],
-              "additionalProperties": false
+              "observed_value": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "supporting_record_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "result",
+              "observed_value",
+              "unit",
+              "supporting_record_refs"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "supporting_record_schemas": [
+        {
+          "kind": "resource-observation",
+          "schema_reference": {
+            "schema_uri": "urn:example:resource-observation:1.0",
+            "version": "1.0",
+            "dialect": "https://json-schema.org/draft/2020-12/schema",
+            "digest": "sha256:3cf0d51c1d6e97d03fa80d5b9435c55d955f824bc9e58d053bb2095e18a0a8c4",
+            "resolution": {
+              "type": "inline",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "record_id": {
+                    "type": "string"
+                  },
+                  "resource_id": {
+                    "type": "string"
+                  },
+                  "metric": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "observed_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "record_id",
+                  "resource_id",
+                  "metric",
+                  "value",
+                  "unit",
+                  "observed_at"
+                ],
+                "additionalProperties": false
+              }
             }
           }
         }
-      }
-    ],
-    "interaction": {
-      "supported_response_modes": [
-        "sync",
-        "stream"
       ],
-      "cancellable": true
-    },
-    "authority": {
-      "default_mode": "observe_only",
-      "approval_may_be_required": false
-    }
-    }
+      "interaction": {
+        "supported_response_modes": [
+          "sync",
+          "stream"
+        ],
+        "cancellable": true
+      },
+      "authority": {
+        "default_mode": "observe_only",
+        "approval_may_be_required": false
+      }
+      }
   }
 }
-</code><a href="#appendix-B-12" class="pilcrow">¶</a></p>
+</pre><a href="#appendix-B-12" class="pilcrow">¶</a>
+</div>
 <p id="appendix-B-13">The client validates the document against the trusted version 1.0 Skill
 Interface Schema, verifies <code>interface_version</code>, <code>skill_id</code>, and
 <code>skill_version</code>, calculates its Skill Interface Document Digest, compares it
@@ -3489,7 +3509,8 @@ with the values in the Agent Card and <code>describe_skill</code> response, and 
 all three inline-schema digests. It then validates the <code>arguments</code> value below
 against <code>input_schema</code> and sends this domain-skill request object as the Data
 Part's <code>data</code> value:<a href="#appendix-B-13" class="pilcrow">¶</a></p>
-<p id="appendix-B-14"><code>json
+<div class="lang-json sourcecode" id="appendix-B-14">
+<pre>
 {
   "skill": "evaluate_resource_condition",
   "skill_version": "1.0",
@@ -3504,13 +3525,15 @@ Part's <code>data</code> value:<a href="#appendix-B-13" class="pilcrow">¶</a></
     }
   }
 }
-</code><a href="#appendix-B-14" class="pilcrow">¶</a></p>
+</pre><a href="#appendix-B-14" class="pilcrow">¶</a>
+</div>
 <p id="appendix-B-15">The receiving agent first verifies that <code>skill_version</code> and
 <code>interface_digest</code> identify its currently active Skill Interface Document. It
 then validates the same input, performs the evaluation, and returns the
 following completed A2A Task. The first ordinary Artifact carries the skill
 result object. The second ordinary Artifact carries the supporting record:<a href="#appendix-B-15" class="pilcrow">¶</a></p>
-<p id="appendix-B-16"><code>json
+<div class="lang-json sourcecode" id="appendix-B-16">
+<pre>
 {
   "id": "task-123",
   "status": {
@@ -3552,7 +3575,8 @@ result object. The second ordinary Artifact carries the supporting record:<a hre
     }
   ]
 }
-</code><a href="#appendix-B-16" class="pilcrow">¶</a></p>
+</pre><a href="#appendix-B-16" class="pilcrow">¶</a>
+</div>
 <p id="appendix-B-17">The client validates the output against <code>output_schema</code>, validates the record
 against the schema selected by its kind, and resolves <code>observation-7</code> to that
 record. The stable reference shows which observation supports the result
