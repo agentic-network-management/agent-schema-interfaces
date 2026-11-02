@@ -12,7 +12,7 @@ Expires: 6 May 2027                                        China Telecom
 
 
          Schema Interfaces for Network Management Agent Skills
-               draft-huang-agent-schema-interfaces-latest
+          draft-huang-ainetops-agent-schema-interfaces-latest
 
 Abstract
 
@@ -33,7 +33,7 @@ About This Document
    This note is to be removed before publishing as an RFC.
 
    Status information for this document may be found at
-   https://datatracker.ietf.org/doc/draft-huang-agent-schema-
+   https://datatracker.ietf.org/doc/draft-huang-ainetops-agent-schema-
    interfaces/.
 
    Source for this draft and an issue tracker can be found at
