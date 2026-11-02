@@ -3,7 +3,7 @@ title: "Schema Interfaces for Network Management Agent Skills"
 abbrev: "Agent Schema Interfaces"
 category: std
 
-docname: draft-huang-agent-schema-interfaces-latest
+docname: draft-huang-ainetops-agent-schema-interfaces-latest
 submissiontype: IETF
 number:
 date:
