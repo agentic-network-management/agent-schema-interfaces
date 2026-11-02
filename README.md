@@ -6,10 +6,8 @@ This is the working area for the individual Internet-Draft, "Schema Interfaces
 for Network Management Agent Skills".
 
 * [Main Draft Source](https://github.com/agentic-network-management/agent-schema-interfaces/blob/main/draft-huang-ainetops-agent-schema-interfaces.md?plain=1)
-
-The rendered Editor's Copy will be linked here after the GitHub Pages workflow
-has published the current `main` branch. Datatracker and comparison links will
-be added after revision `-00` has been submitted and published by the IETF.
+* [Datatracker](https://datatracker.ietf.org/doc/draft-huang-ainetops-agent-schema-interfaces/)
+* [Published Revision -00](https://datatracker.ietf.org/doc/html/draft-huang-ainetops-agent-schema-interfaces-00)
 
 
 ## Contributing
