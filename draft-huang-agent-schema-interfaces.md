@@ -60,14 +60,6 @@ informative:
   IDL:
     title: "IDL: A Semantic Information Model for Agent Communication"
     target: "https://datatracker.ietf.org/doc/draft-feng-agentproto-idl-info-model/"
-  YANG-JSON:
-    title: "JSON Encoding of Data Modeled with YANG"
-    seriesinfo:
-      RFC: 7951
-  YANG-PATCH:
-    title: "YANG Patch Media Type"
-    seriesinfo:
-      RFC: 8072
 
 ...
 
@@ -131,60 +123,7 @@ The framework is intended to support independently developed agents from
 different network-management domains without forcing their domain payloads
 into one universal schema.
 
-# Relationship to Other Work
-
-The "IDL: A Semantic Information Model for Agent Communication"
-Internet-Draft {{IDL}} describes agent-wide identity, capabilities, autonomy
-boundaries, context requirements, governance interfaces, and intent
-participation. It includes optional input-context and output-schema
-declarations, but it does not define a normative serialization or a per-skill
-interface-retrieval procedure.
-
-This document has a narrower scope. It defines a normative representation for
-one version of one callable skill, including its input, output, and
-supporting-record schemas, and defines the `describe_skill` retrieval and
-validation procedure. The two models can be used together: an agent-wide
-semantic description can identify a capability, while a Skill Interface
-Document supplies the concrete application schemas used to invoke a selected
-skill. A formal mapping between the two models is outside the scope of this
-document.
-
-# Conventions and Definitions
-
-{::boilerplate bcp14-tagged}
-
-# Scope
-
-This document standardizes:
-
-- a common Schema Reference structure for identifying, verifying, and
-  carrying inline schemas;
-- a Skill Interface Schema and a conforming per-skill Skill Interface
-  Document;
-- a Skill Interface advertisement and retrieval procedure using an A2A
-  extension and `describe_skill`; and
-- an A2A mapping for carrying domain-skill inputs, outputs, supporting
-  records, and machine-readable errors for interface version 1.0.
-
-The mapping operates on top of A2A. It maps the fields defined by this
-document to existing A2A Messages, Data Parts, Tasks, Artifacts, and status
-messages without changing A2A operations, data objects, lifecycle semantics,
-or protocol bindings. An implementation claiming conformance to interface
-version 1.0 for exchanges over A2A MUST use this mapping.
-
-This document does not define:
-
-- the internal algorithm used by an agent;
-- a universal schema for every network-management domain;
-- a required schema-registry product or API;
-- a globally centralized schema service;
-- agent hosting, process lifecycle, or platform onboarding;
-- an authorization policy model, including RBAC, ABAC, capabilities, policy
-  engines, or approval workflows;
-- a grant of authority based on schema or interface validation; or
-- a new A2A transport or protocol binding.
-
-# Terminology
+# Terminology {#terminology}
 
 ## Network Management Agent
 
@@ -203,6 +142,20 @@ administrative control over the remote agent.
 
 An A2A Server that publishes an Agent Card, exposes skills, receives delegated
 tasks, and returns task status and results.
+
+## Network-Management Domain
+
+An application subject area, such as planning, assurance, configuration, or
+incident analysis, whose owner defines the meaning of its skill inputs,
+outputs, and supporting records. A domain is a schema-governance boundary; it
+does not create a global namespace for skill identifiers.
+
+## Delegation Hop
+
+The relationship created when an agent handling one A2A Task invokes a skill
+at another agent, thereby creating a distinct downstream A2A Task. The task
+handled by the invoking agent is the upstream task, and the newly created task
+is the downstream task.
 
 ## Schema Reference
 
@@ -226,7 +179,9 @@ document fixes at `1.0`.
 ## Skill
 
 A named capability advertised by an agent and invokable through an
-Agent-to-Agent protocol.
+Agent-to-Agent protocol. A skill identifier is scoped to the Agent Card in
+which it is advertised and is not globally unique. Portable schema identity is
+provided by the Schema Reference rather than by the skill identifier alone.
 
 ## Skill Interface Schema
 
@@ -270,23 +225,114 @@ A domain-specific observation or artifact used to derive, validate, reproduce,
 or audit a skill output. A supporting record is validated against the
 applicable schema identified by the Skill Interface Document.
 
+## A2A Artifact Identifier
+
+The task-scoped `artifactId` assigned to an A2A Artifact as defined by A2A
+{{A2A}}. It identifies an Artifact within an A2A Task and can be used by a
+skill output to reference a supporting-record Artifact carried by that Task.
+It is not a globally portable record identifier.
+
+The following figure summarizes the structure of a Skill Interface Document:
+
+```text
+Skill Interface Document
+|-- interface_version
+|-- skill_id
+|-- skill_version
+|-- input_schema -------------------- Schema Reference
+|   |-- schema_uri
+|   |-- version
+|   |-- dialect
+|   |-- digest
+|   `-- resolution
+|       |-- type = "inline"
+|       `-- schema
+|-- output_schema ------------------- Schema Reference
+|-- supporting_record_schemas[]
+|   |-- kind
+|   `-- schema_reference ------------ Schema Reference
+|-- interaction
+|   |-- supported_response_modes[]
+|   `-- cancellable
+`-- authority
+    |-- default_mode
+    `-- approval_may_be_required
+```
+
+# Conventions and Definitions
+
+{::boilerplate bcp14-tagged}
+
+# Scope
+
+This document standardizes:
+
+- a common Schema Reference structure for identifying, verifying, and
+  carrying inline schemas;
+- a Skill Interface Schema and a conforming per-skill Skill Interface
+  Document;
+- a Skill Interface advertisement and retrieval procedure using an A2A
+  extension and `describe_skill`; and
+- an A2A mapping for carrying domain-skill inputs, outputs, supporting
+  records, and machine-readable errors for interface version 1.0.
+
+The mapping operates on top of A2A. It maps the fields defined by this
+document to existing A2A Messages, Data Parts, Tasks, Artifacts, and status
+messages without changing A2A operations, data objects, lifecycle semantics,
+or protocol bindings. An implementation claiming conformance to interface
+version 1.0 for exchanges over A2A MUST use this mapping.
+
+This document does not define:
+
+- the internal algorithm used by an agent;
+- a universal schema for every network-management domain;
+- a required schema-registry product or API;
+- a globally centralized schema service;
+- agent hosting, process lifecycle, or platform onboarding;
+- an authorization policy model, including RBAC, ABAC, capabilities, policy
+  engines, or approval workflows;
+- a grant of authority based on schema or interface validation; or
+- a new A2A transport or protocol binding.
+
+# Relationship to Other Work
+
+The "IDL: A Semantic Information Model for Agent Communication"
+Internet-Draft {{IDL}} describes agent-wide identity, capabilities, autonomy
+boundaries, context requirements, governance interfaces, and intent
+participation. It includes optional input-context and output-schema
+declarations, but it does not define a normative serialization or a per-skill
+interface-retrieval procedure.
+
+This document has a narrower scope. It defines a normative representation for
+one version of one callable skill, including its input, output, and
+supporting-record schemas, and defines the `describe_skill` retrieval and
+validation procedure. The two models can be used together: an agent-wide
+semantic description can identify a capability, while a Skill Interface
+Document supplies the concrete application schemas used to invoke a selected
+skill. A formal mapping between the two models is outside the scope of this
+document.
+
 # Design Principles
 
 ## Preserve task identity across delegation hops
 
-Each delegation hop creates a separate Agent-to-Agent task at the receiving
-agent. A delegating component MUST NOT reuse an upstream task identifier as the
+When an agent handling an upstream A2A Task invokes another agent, the
+downstream invocation creates a distinct A2A Task at the receiving agent. A
+delegating component MUST NOT reuse the upstream task identifier as the
 downstream protocol task identifier. Protocol task identifiers are interpreted
 in the scope of the agent or endpoint that issued them; implementations MUST
-NOT assume that they are globally unique. Cross-hop correlation MUST use
-separately named metadata rather than overloading protocol task identifiers.
+NOT assume that they are globally unique. An implementation that needs to
+correlate the two tasks MUST record their relationship using separately named
+metadata rather than overloading either protocol task identifier.
 
 ## Standardize reusable structures, not all domain semantics
 
 This framework standardizes reusable interface metadata, not the semantics of
 every network-management domain. A vendor or domain owner defines the input,
 output, and supporting-record schemas used by a particular skill and combines
-them with the common structure; it does not redefine that structure.
+them with the common structure; it does not redefine that structure. The
+domain determines schema meaning and governance, while the skill identifier
+selects one callable capability within an agent's advertised Agent Card.
 
 ## Distinguish structural conformance from semantic conformance
 
@@ -306,17 +352,6 @@ makes the schema available before delegation.  The receiving agent MUST
 validate the representation and use a domain-specific implementation for
 semantic validation, policy evaluation, simulation, or application, as
 applicable.
-
-This document does not define a common configuration-change model.  A
-skill-specific specification can reuse an existing model where appropriate.
-For example, YANG-modeled data can be encoded in JSON as specified by
-{{YANG-JSON}}, and configuration edits can use YANG Patch {{YANG-PATCH}}.
-
-As non-normative guidance, device-specific rendering can remain a local
-implementation responsibility.  Rendered CLI or CLI diffs can also be
-exchanged as supporting records when useful.  Their presence does not imply
-that generic JSON Schema validation establishes command syntax, operational
-meaning, safety, or correctness.
 
 ## Deliver schemas inline in version 1.0
 
@@ -354,15 +389,17 @@ annotation. In particular, an instance validated against `"format":
 Registries, bundles, caches, and agent packaging MAY be used locally to store,
 govern, distribute, or prepare schemas. Their use does not alter the v1.0
 wire representation, and a client agent is not required to know which local
-mechanism supplied an inline schema.
+mechanism supplied an inline schema. Version 1.0 does not require the schema to
+originate in either an agent package or a central registry; either can be a
+deployment-local source used before the complete inline document is served.
 
 ## Distinguish outputs from supporting records
 
 The skill output states what the agent concluded or delivered. Supporting
 records explain why that output can be trusted, reproduced, or audited. An
 output and a supporting record use separate A2A Artifacts. An output that
-depends on a supporting record SHOULD reference that record's `artifactId`
-rather than duplicate its content.
+depends on a supporting record SHOULD reference that record's task-scoped A2A
+`artifactId` rather than duplicate its content.
 
 ## Assemble and validate before advertisement
 
@@ -403,6 +440,14 @@ that result.  The digest covers only the `resolution.schema` value.  It does
 not cover `resolution.type` or any other member of the enclosing Schema
 Reference, including `schema_uri`, `version`, `dialect`, or `digest`.
 
+This separation is intentional. The schema digest is a content digest for the
+embedded JSON Schema value, while `schema_uri`, `version`, and `dialect`
+provide identity and interpretation metadata. A conforming implementation
+compares the complete Schema Reference, not the digest alone. The Skill
+Interface Document Digest additionally covers the complete document, including
+each Schema Reference's identity, version, dialect, digest, and inline content,
+and therefore detects modification or substitution of that metadata.
+
 The embedded schema MUST satisfy the JCS input requirements.  Differences in
 insignificant JSON whitespace, object-member order, or a permitted alternate
 JSON string escape do not change the digest because they produce the same JCS
@@ -415,7 +460,7 @@ Version 1.0 Schema References MUST use `resolution.type` equal to `inline` and
 MUST include the schema in `resolution.schema`. They MUST NOT contain an
 external schema locator in place of the embedded content.
 
-# Skill Interface Schema and Documents
+# Skill Interface Schema and Documents {#skill-interface-documents}
 
 The Skill Interface Schema standardizes the structure shown in this section.
 A Skill Interface Document is a conforming instance for one skill version. It
@@ -428,6 +473,11 @@ service assembles the complete document. Interaction declarations reflect the
 agent implementation.
 Authority declarations may additionally reflect deployment policy. Assembly
 MUST NOT modify the standardized Skill Interface Schema.
+
+The normative definitions of `authority`, `default_mode`, and
+`approval_may_be_required` appear in {{skill-interface-json-schema}}. The
+structural figure in {{terminology}} shows their location within a Skill
+Interface Document.
 
 The `authority` member is descriptive metadata about the operating posture an
 agent advertises for a skill. `default_mode` describes that advertised default
@@ -489,6 +539,12 @@ causing a side effect, it MUST also enforce any approval or execution-control
 requirements imposed by current deployment policy. Advertised `authority`
 metadata does not replace these runtime decisions.
 
+The receiving agent or hosting platform remains authoritative for every
+runtime authorization and approval decision. The `authority` member can help a
+client understand a skill's advertised operating posture, but it is not an A2A
+capability declaration and cannot establish what a particular caller is
+permitted to do.
+
 ## Skill input
 
 The skill input is the domain-specific application data submitted to a skill
@@ -515,6 +571,9 @@ information requested by the agent. Version 1.0 does not define a schema for
 such follow-up data, and the follow-up is not independently validated against
 `input_schema`. A deployment that requires schema-governed multi-turn input
 needs an additional profile or separately advertised skill for that exchange.
+The combined intermediate-exchange example in {{domain-skill-invocation}}
+illustrates an input-required request, the caller's partial reply, and the
+separate task identifiers used when another agent is invoked.
 
 ## Skill output
 
@@ -534,6 +593,11 @@ result of that operation.
 Version 1.0 applies `output_schema` to the complete final `result`, after any
 streamed Artifact updates have been assembled. It does not apply independently
 to A2A status Messages, progress updates, or incomplete Artifact chunks.
+Version 1.0 therefore defines no separate streaming-output schema: A2A governs
+delivery of partial Artifact updates, while this document validates the
+assembled final result and each complete supporting record. The schema boundary
+for each intermediate exchange is summarized in
+{{domain-skill-invocation}}.
 Supporting records and the primary output are separate Artifacts within the
 same A2A Task. An agent MAY stream zero or more complete supporting-record
 Artifacts before it produces the primary result Artifact. Each supporting
@@ -639,7 +703,17 @@ The client selects the advertised `skill_id`, `skill_version`, and
 define request parameters for negotiating or selecting another interface or
 skill version within `describe_skill`.  An agent that needs to advertise
 concurrent incompatible versions in version 1.0 MUST expose them using
-distinct skill identifiers.
+distinct skill identifiers. A client selects one of those identifiers from
+the Agent Card; it MUST NOT infer a version range or negotiate an unadvertised
+version.
+
+When an agent replaces an advertised interface with a backward-compatible
+revision, it increments the minor `skill_version` and advertises the new
+version and digest. During a migration in which old and new incompatible
+interfaces must remain callable concurrently, the agent advertises them under
+distinct skill identifiers. Deprecation periods and removal policy are
+deployment concerns, but removal of an advertised version MUST be reflected
+in a newly retrieved Agent Card before clients can select it for new work.
 
 The `describe_skill` skill MUST accept structured input identifying the
 selected `skill_id` and MUST produce structured output containing the
@@ -842,6 +916,13 @@ above:
 7. Status update: TASK_STATE_COMPLETED
    The agent reports completion only after validating the complete result.
 ```
+
+If the receiving agent delegates work to another agent during this sequence,
+that delegation creates a distinct downstream A2A Task. An input-required
+status or Artifact belongs to the Task that emitted it. The delegating
+component records the association between the upstream and downstream task
+identifiers, qualified by their respective agent identities or endpoints; it
+does not reuse either identifier for the other Task.
 
 All Artifacts in this sequence belong to the same A2A Task. The supporting
 record and primary result remain separate and each is validated against its
@@ -1327,10 +1408,18 @@ An implementation SHOULD expose diagnostics identifying:
 - schema URIs, versions, and digests used;
 - inline-schema digest verification results;
 - validation failures;
-- missing, malformed, or untrusted schemas; and
+- missing, malformed, or untrusted schemas;
 - compatibility or policy failures; and
 - upstream-to-downstream task mappings, qualified by agent identity or
   endpoint.
+
+For each delegation hop, diagnostics SHOULD preserve the upstream and
+downstream agent identities or endpoints, their distinct task identifiers,
+the selected skill identifier and version, the interface digest, and the
+observed terminal state. This information supports audit and troubleshooting
+across multi-hop workflows. It does not define a distributed-tracing protocol;
+an A2A extension or deployment-specific mechanism may carry additional trace
+context.
 
 Deployments using a registry or another management service SHOULD test that a
 running agent can continue serving previously assembled and validated Skill
@@ -1345,7 +1434,7 @@ namespaces after the representation and protocol mapping stabilize.
 
 --- back
 
-# Skill Interface JSON Schema
+# Skill Interface JSON Schema {#skill-interface-json-schema}
 
 The following JSON Schema is the complete version 1.0 Skill Interface Schema
 defined by this document.  The same machine-readable artifact is published in
