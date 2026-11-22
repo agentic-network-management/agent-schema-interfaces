@@ -13,6 +13,23 @@ contains non-integer numbers, escaped Unicode, and nested objects whose source
 member order is not canonical.  `jcs_utf8` is the RFC 8785 serialization whose
 UTF-8 bytes are hashed, and `digest` is the expected SHA-256 result.
 
+`interface-digest-test-vectors.json` gives the expected Skill Interface
+Document Digest (`interface_digest`) of each example document: the SHA-256
+digest of the RFC 8785 serialization of the complete document, inline domain
+schemas included.
+
+## Validation
+
+`tools/validate_examples.py` checks the schema, the test vectors, the
+examples, and the end-to-end example of the draft, with schema retrieval
+disabled and `format` evaluated as an assertion.  It runs on every pull
+request and can be run locally from the repository root:
+
+```
+pip install -r tools/requirements.txt
+python3 tools/validate_examples.py
+```
+
 ## Agent identification and interface retrieval sequence
 
 The Skill Interface is the result of the second of two distinct protocol
