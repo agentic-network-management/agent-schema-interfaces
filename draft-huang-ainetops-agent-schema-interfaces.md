@@ -25,13 +25,17 @@ author:
     organization: "Cisco Systems, Inc."
     email: "scohuang@cisco.com"
   -
+    fullname: "Dan Voyer"
+    organization: "Cisco Systems, Inc."
+    email: "davoyer@cisco.com"
+  -
     fullname: "Fu Yu"
     organization: "China Telecom"
     email: "fuy44@chinatelecom.cn"
   -
-    fullname: "Dan Voyer"
-    organization: "Cisco Systems, Inc."
-    email: "davoyer@cisco.com"
+    fullname: "Roland Schott"
+    organization: "Deutsche Telekom"
+    email: "Roland.Schott@telekom.de"
 
 normative:
   A2A:
@@ -279,8 +283,7 @@ This document standardizes:
 The mapping operates on top of A2A. It maps the fields defined by this
 document to existing A2A Messages, Data Parts, Tasks, Artifacts, and status
 messages without changing A2A operations, data objects, lifecycle semantics,
-or protocol bindings. An implementation claiming conformance to interface
-version 1.0 for exchanges over A2A MUST use this mapping.
+or protocol bindings.
 
 This document does not define:
 
@@ -293,6 +296,32 @@ This document does not define:
   engines, or approval workflows;
 - a grant of authority based on schema or interface validation; or
 - a new A2A transport or protocol binding.
+
+# Conformance
+
+An implementation claiming conformance to interface version 1.0 MUST use the
+A2A mapping in {{a2a-mapping}} and satisfy all applicable normative
+requirements for each role it performs:
+
+- A client agent discovers, retrieves, verifies, and selects interfaces;
+  validates inputs and received results; and invokes skills and handles
+  errors as specified in {{a2a-mapping}} and {{security}}.
+- For each skill it advertises under this extension, a remote agent serves
+  the interface, verifies invocation pins, validates domain data, and
+  reports errors as specified in {{a2a-mapping}}. The remote agent or its
+  hosting platform authenticates callers and authorizes invocations as
+  specified in {{security}}.
+
+A conforming Skill Interface Document identifies interface version 1.0,
+validates against the Skill Interface JSON Schema, and meets the additional
+normative requirements in {{skill-interface-documents}}. A skill is
+schema-governed under interface version 1.0 when it is advertised and served
+as specified above. Its `skill_version` versions the domain contract, not
+this framework.
+
+A remote agent MAY also support base A2A exchanges without the extension.
+Those exchanges are outside the scope of this document's conformance
+requirements.
 
 # Relationship to Other Work
 
@@ -641,7 +670,7 @@ support that output. They MUST be published in separate Artifacts. The output
 SHOULD reference a supporting record by its `artifactId` instead of embedding
 a duplicate copy.
 
-# A2A Mapping for Interface Version 1.0
+# A2A Mapping for Interface Version 1.0 {#a2a-mapping}
 
 This section defines how interface version 1.0 maps schema-interface
 operations and data to A2A Messages, Data Parts, Tasks, Artifacts, and status
@@ -707,13 +736,15 @@ distinct skill identifiers. A client selects one of those identifiers from
 the Agent Card; it MUST NOT infer a version range or negotiate an unadvertised
 version.
 
-When an agent replaces an advertised interface with a backward-compatible
-revision, it increments the minor `skill_version` and advertises the new
-version and digest. During a migration in which old and new incompatible
-interfaces must remain callable concurrently, the agent advertises them under
-distinct skill identifiers. Deprecation periods and removal policy are
-deployment concerns, but removal of an advertised version MUST be reflected
-in a newly retrieved Agent Card before clients can select it for new work.
+When a remote agent makes a backward-compatible change to an advertised
+skill's contract, it increments the minor `skill_version` and advertises
+the new `skill_version` and `interface_digest`. During a migration in which
+old and new incompatible interfaces must remain callable concurrently, the
+agent advertises them under
+distinct skill identifiers. Deprecation periods and withdrawal policy are
+deployment concerns. After withdrawal, the remote agent MUST NOT advertise
+the withdrawn interface as active or accept new invocations pinned to it.
+See {{error-conditions}} for the rejection behavior.
 
 The `describe_skill` skill MUST accept structured input identifying the
 selected `skill_id` and MUST produce structured output containing the
@@ -963,7 +994,7 @@ rejects a particular data instance. Such instance failures use
 `input_invalid`, `output_invalid`, or `constraint_rejected`, as applicable.
 
 A remote Task MUST reach `TASK_STATE_REJECTED` when the request is understood
-but is not accepted for execution because of `interface_mismatch`,
+but is not accepted for execution because of `skill_not_advertised`, `interface_mismatch`,
 `input_invalid`, `constraint_rejected`, or `authorization_failed`. A remote
 Task MUST reach `TASK_STATE_FAILED` when an accepted operation cannot complete,
 including when `describe_skill` cannot produce a valid advertised interface or
@@ -1003,9 +1034,13 @@ sends `describe_skill`. A client MUST NOT send the request when the Agent Card
 does not advertise the selected skill. A client detects
 `unsupported_interface_version` when the extension advertisement or returned
 document uses an interface version it does not support. Neither client-side
-condition creates a remote failed Task. If a server receives a domain-skill
-invocation based on a stale interface, it MUST report `interface_mismatch`
-through the interface version 1.0 A2A mapping using `TASK_STATE_REJECTED`.
+condition creates a remote failed Task. For a domain-skill invocation received
+under this mapping, the remote agent MUST report `skill_not_advertised` if
+the skill is no longer advertised under the extension. If the skill is
+still advertised but the invocation pin no longer matches the active
+interface, it MUST report `interface_mismatch`. If a Task is created, its
+state MUST be `TASK_STATE_REJECTED`; otherwise the pre-task error mapping
+above applies.
 
 A client that detects `interface_invalid` locally MUST reject the document and
 MUST NOT delegate the domain skill under this framework. An implementation
@@ -1087,8 +1122,8 @@ behavior.
 
 A client agent performs the following sequence:
 
-1. retrieve the target Agent Card and obtain its A2A endpoint and schema-
-   interface extension advertisement;
+1. obtain the target Agent Card through trusted discovery and establish the
+   agent-to-endpoint binding described in {{agent-endpoint-binding}};
 2. verify that both `describe_skill` and the selected domain skill are
    advertised, and select the advertised `skill_version` and
    `interface_digest` for that domain skill;
@@ -1118,12 +1153,21 @@ a document for a different skill or version, or returns a document that cannot
 be validated, the client agent MUST NOT delegate the domain request using the
 procedure defined in this document.
 
-The client agent MAY reuse a cached Skill Interface Document without calling
-`describe_skill` before every task when the cache entry is bound to the same
-target identity, skill identifier, skill version, and interface digest
-advertised by the current Agent Card. A change to any of those values
-invalidates the entry and requires a new `describe_skill` exchange before the
-next delegation.
+The client agent MAY reuse a cached Skill Interface Document when the entry
+is bound to the same authenticated agent and matches the selected skill
+identifier, skill version, interface version, and interface digest in the
+Agent Card accepted as current under local freshness policy. A change to
+any of these values invalidates reuse of the entry for that selection and
+requires a new `describe_skill` exchange before delegation. If only the
+endpoint changes, the client MUST re-establish the binding as specified in
+{{agent-endpoint-binding}} before reusing the entry.
+
+On receiving `interface_mismatch` or `skill_not_advertised` for an
+invocation, the client MUST stop using the affected cache entry and refresh
+trusted discovery before invoking that skill again. If the skill remains
+advertised, the client MUST retrieve and validate its currently advertised
+interface and validate the input against it before making a new invocation.
+These requirements do not imply an automatic retry.
 
 A generic client agent can validate and route an unfamiliar vendor schema
 without understanding its domain semantics. A domain-aware orchestrator may
@@ -1392,14 +1436,27 @@ Interface Document before it validates or acts on the domain input. This check
 prevents a document change between interface retrieval and invocation from
 silently changing the contract applied to a request.
 
+## Agent identity and endpoint binding {#agent-endpoint-binding}
+
+An interface digest binds content to an advertised value; it does not
+authenticate the advertising agent or prove that an endpoint is authorized to
+serve that agent. The client MUST use trusted discovery and authentication
+to establish that the Agent Card belongs to the intended agent and that the
+endpoint used for retrieval and invocation is authorized for that agent.
+An endpoint identifier MAY serve as the agent identity when the deployment
+authenticates and scopes it to that agent.
+
+The client MUST NOT reuse a cache entry across agent identities merely
+because the skill identifier, version, and digest match. This specification
+does not mandate a particular agent identity, trust infrastructure, or
+signature format.
+
 # Operational Considerations
 
 Interface retrieval and validation SHOULD NOT add a `describe_skill` exchange
 to every task. A client agent caches validated Skill Interface Documents,
-verified inline domain schemas, and compiled validators. A cache entry is
-bound to the agent identity, skill identifier, skill version, interface
-version, and interface digest. A changed advertised version or digest
-invalidates the corresponding entry.
+verified inline domain schemas, and compiled validators, subject to the
+reuse rules in {{client-behavior}}.
 
 An implementation SHOULD expose diagnostics identifying:
 
@@ -1423,8 +1480,10 @@ context.
 
 Deployments using a registry or another management service SHOULD test that a
 running agent can continue serving previously assembled and validated Skill
-Interface Documents during temporary management-service unavailability. They
-SHOULD also define cache refresh and schema-revocation behavior.
+Interface Documents that remain active during temporary management-service
+unavailability. Cache freshness, withdrawal notification, and the treatment
+of already accepted tasks remain deployment-specific; these policies do not
+override the rejection rules for new invocations in {{error-conditions}}.
 
 # IANA Considerations {#iana}
 
