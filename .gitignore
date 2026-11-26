@@ -1,6 +1,5 @@
 *.html
 *.pdf
-!docs/schema-interfaces-ietf127.pdf
 .DS_Store
 *.redxml
 *.swp
